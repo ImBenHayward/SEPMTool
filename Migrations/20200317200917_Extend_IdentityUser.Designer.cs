@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SEPMTool.Data;
 
 namespace SEPMTool.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200317200917_Extend_IdentityUser")]
+    partial class Extend_IdentityUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -190,119 +192,6 @@ namespace SEPMTool.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("SEPMTool.Models.Project", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("AwardEligibility");
-
-                    b.Property<DateTime>("Deadline");
-
-                    b.Property<string>("Description");
-
-                    b.Property<DateTime>("EstimatedCompletionDate");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int>("Priority");
-
-                    b.Property<decimal>("Progress");
-
-                    b.Property<DateTime>("StartDate");
-
-                    b.Property<int>("Status");
-
-                    b.HasKey("ProjectId");
-
-                    b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("SEPMTool.Models.ProjectRequirement", b =>
-                {
-                    b.Property<int>("ProjectRequirementId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Category");
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int>("Priority");
-
-                    b.Property<int?>("ProjectId");
-
-                    b.HasKey("ProjectRequirementId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("Requirements");
-                });
-
-            modelBuilder.Entity("SEPMTool.Models.ProjectTask", b =>
-                {
-                    b.Property<int>("ProjectTaskId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("AwardEligbility");
-
-                    b.Property<DateTime>("Deadline");
-
-                    b.Property<string>("Description");
-
-                    b.Property<TimeSpan>("EstimatedDuration");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int>("Priority");
-
-                    b.Property<decimal>("Progress");
-
-                    b.Property<int?>("ProjectId");
-
-                    b.Property<DateTime>("StartDate");
-
-                    b.Property<int>("Status");
-
-                    b.HasKey("ProjectTaskId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("Tasks");
-                });
-
-            modelBuilder.Entity("SEPMTool.Models.ProjectUser", b =>
-                {
-                    b.Property<int>("ProjectId");
-
-                    b.Property<string>("UserId");
-
-                    b.Property<int>("ProjectRole");
-
-                    b.HasKey("ProjectId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ProjectUser");
-                });
-
-            modelBuilder.Entity("SEPMTool.Models.TaskUser", b =>
-                {
-                    b.Property<int>("TaskId");
-
-                    b.Property<string>("UserId");
-
-                    b.HasKey("TaskId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TaskUser");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
@@ -344,46 +233,6 @@ namespace SEPMTool.Migrations
                 {
                     b.HasOne("SEPMTool.Models.ApplicationUser")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("SEPMTool.Models.ProjectRequirement", b =>
-                {
-                    b.HasOne("SEPMTool.Models.Project", "Project")
-                        .WithMany("ProjectRequirements")
-                        .HasForeignKey("ProjectId");
-                });
-
-            modelBuilder.Entity("SEPMTool.Models.ProjectTask", b =>
-                {
-                    b.HasOne("SEPMTool.Models.Project", "Project")
-                        .WithMany("Tasks")
-                        .HasForeignKey("ProjectId");
-                });
-
-            modelBuilder.Entity("SEPMTool.Models.ProjectUser", b =>
-                {
-                    b.HasOne("SEPMTool.Models.Project", "Project")
-                        .WithMany("Users")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("SEPMTool.Models.ApplicationUser", "User")
-                        .WithMany("Projects")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("SEPMTool.Models.TaskUser", b =>
-                {
-                    b.HasOne("SEPMTool.Models.ProjectTask", "Task")
-                        .WithMany("Users")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("SEPMTool.Models.ApplicationUser", "User")
-                        .WithMany("Tasks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

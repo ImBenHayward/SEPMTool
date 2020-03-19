@@ -19,12 +19,11 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
               crossorigin="anonymous"
               integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
-    </environment>
-
+    </environment>    
 </head>
 
 <body>
-
+    
     @*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SEPMTool</a>
@@ -190,9 +189,10 @@
                 </div>
             </div>
         </div>*@
-        <div class="main-container">
-            @RenderBody()
-        </div>
+    <div class="main-container">
+        <alerts></alerts>
+        @RenderBody()
+    </div>
 
         @*<div class="container">
             <div class="row justify-content-center">

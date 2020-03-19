@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@using SEPMTool.Models;
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 @if (SignInManager.IsSignedIn(User))
 {
@@ -95,7 +96,9 @@
                 <span class="text-small text-muted">Quick Links</span>
                 <ul class="nav nav-small flex-column mt-2">
                     <li class="nav-item">
-                        <a href="nav-side-team.html" class="nav-link">Team Overview</a>
+                        <a class="nav-link" asp-area="" asp-controller="Team" asp-action="Index">
+                            My Team Overview
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a href="nav-side-project.html" class="nav-link">Project</a>
@@ -104,7 +107,7 @@
                         <a href="nav-side-task.html" class="nav-link">Single Task</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Project" asp-action="Index">
+                        <a class="nav-link" asp-area="" asp-controller="Project" asp-action="Kanban">
                             Kanban Board
                         </a>
                     </li>
@@ -148,7 +151,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 }
 else

@@ -1,0 +1,124 @@
+﻿@model SEPMTool.Models.ViewModels.ProjectCreateViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="navbar bg-white breadcrumb-bar">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="index.html">Overview</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="pages-app.html#">App Pages</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Create a New Project</li>
+        </ol>
+    </nav>
+
+    <div class="dropdown">
+        <button class="btn btn-round" role="button" data-toggle="dropdown" aria-expanded="false">
+            <i class="material-icons">settings</i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
+
+            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#team-manage-modal">Edit Team</a>
+            <a class="dropdown-item" href="#">Share</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-danger" href="#">Leave</a>
+
+        </div>
+    </div>
+
+</div>
+<form asp-action="Create">
+    <ul class="nav nav-tabs nav-fill" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="project-add-details-tab" data-toggle="tab" href="#project-add-details" role="tab" aria-controls="project-add-details" aria-selected="true">Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="project-add-requirements-tab" data-toggle="tab" href="#project-add-requirements" role="tab" aria-controls="project-add-requirements" aria-selected="false">Requirements</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="project-add-members-tab" data-toggle="tab" href="#project-add-members" role="tab" aria-controls="project-add-members" aria-selected="false">Members</a>
+        </li>
+    </ul>
+    <div class="modal-body">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="project-add-details" role="tabpanel">
+                <h6>General Details</h6>
+                <div class="form-group row align-items-center">
+
+                    <label asp-for="Name" class="col-3"></label>
+                    <input asp-for="Name" class="form-control col" placeholder="Project name" />
+                </div>
+                <div class="form-group row align-items-center">
+                    <label asp-for="Description" class="col-3">Description</label>
+                    <textarea asp-for="Description" class="form-control col" rows="3" placeholder="Project description"></textarea>
+                </div>
+                <hr>
+                <h6>Timeline</h6>
+                <div class="form-group row align-items-center">
+                    <label asp-for="StartDate" class="col-3">Start Date</label>
+                    <input asp-for="StartDate" class="form-control col" placeholder="Select a date" data-flatpickr data-default-date="2021-04-21" data-alt-input="true" />
+                </div>
+                <div class="form-group row align-items-center">
+                    <label asp-for="Deadline" class="col-3">Due Date</label>
+                    <input asp-for="Deadline" class="form-control col" placeholder="Select a date" data-flatpickr data-default-date="2021-09-15" data-alt-input="true" />
+                </div>
+                <div class="alert alert-warning text-small" role="alert">
+                    <span>You can change due dates at any time.</span>
+                </div>
+                <hr>
+                <h6>Project Priority</h6>
+                <div class="form-group row align-items-center">
+                    <label asp-for="Priority" class="col-3"></label>
+                    <select asp-for="Priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col">
+                        <option value=""></option>
+                    </select>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="project-add-members" role="tabpanel">
+                <div class="users-manage" data-filter-list="form-group-users">
+                    <div class="input-group input-group-round">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="material-icons">filter_list</i>
+                            </span>
+                        </div>
+                        <input type="search" class="form-control filter-list-input" placeholder="Filter members" aria-label="Filter Members">
+                    </div>
+                    <div class="form-group-users">
+
+                        @for (int i = 0; i < Model.AllUsers.Count; i++)
+                        {
+                            <div class="custom-control custom-checkbox">
+                                <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input" />
+                                <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
+                                    <span class="d-flex align-items-center">
+                                        <img alt="Kenny Tran" src="~/assets/img/avatar-male-6.jpg" class="avatar mr-2" />
+                                        <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
+                                    </span>
+                                </label>
+                                <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="project-add-requirements" role="tabpanel">
+                <h6>Requirements</h6>
+            </div>
+        </div>
+    </div>
+    <!--end of modal body-->
+    <div class="modal-footer">
+        <button role="button" class="btn btn-primary" type="submit">
+            Create Project
+        </button>
+    </div>
+</form>
+
+<script>
+
+</script>

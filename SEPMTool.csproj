@@ -3,7 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <GenerateRuntimeConfigurationFiles>True</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20200317210026_Project_Model.cs" />
+    <Compile Remove="Migrations\20200317210026_Project_Model.Designer.cs" />
+    <Compile Remove="Migrations\20200318000148_Test.cs" />
+    <Compile Remove="Migrations\20200318000148_Test.Designer.cs" />
+    <Compile Remove="Migrations\20200318182933_test.cs" />
+    <Compile Remove="Migrations\20200318182933_test.Designer.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="copydeps.yml" />
@@ -216,6 +226,7 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="2.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
   </ItemGroup>
