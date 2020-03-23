@@ -1,4 +1,4 @@
-@charset "UTF-8";
+﻿@charset "UTF-8";
 /*!
  * Bootstrap v4.3.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors
@@ -4167,7 +4167,7 @@ a.close.disabled {
 .modal-footer {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   padding: 1.5rem;
   border-top: 0 solid #e9ecef;
   border-bottom-right-radius: 0.3rem;
@@ -9347,6 +9347,11 @@ pre[class*="language-"] {
 
 .token.entity {
   cursor: help; }
+
+/* Added by Ben */
+.form-validation {
+    margin-left: 10px;
+}
 
 @font-face {
   font-family: 'Inter UI';

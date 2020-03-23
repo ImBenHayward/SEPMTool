@@ -23,7 +23,7 @@
 </head>
 
 <body>
-    
+
     @*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SEPMTool</a>
@@ -178,36 +178,36 @@
     <div class="layout layout-nav-side">
         <partial name="_LoginPartial" />
         @*<div class="d-none d-lg-block">
-            <div class="dropup">
-                <a href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img alt="Image" src="~/assets/img/avatar-male-4.jpg" class="avatar" />
-                </a>
-                <div class="dropdown-menu">
-                    <a href="nav-side-user.html" class="dropdown-item">Profile</a>
-                    <a href="utility-account-settings.html" class="dropdown-item">Account Settings</a>
-                    <a href="#" class="dropdown-item">Log Out</a>
+                <div class="dropup">
+                    <a href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img alt="Image" src="~/assets/img/avatar-male-4.jpg" class="avatar" />
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="nav-side-user.html" class="dropdown-item">Profile</a>
+                        <a href="utility-account-settings.html" class="dropdown-item">Account Settings</a>
+                        <a href="#" class="dropdown-item">Log Out</a>
+                    </div>
                 </div>
-            </div>
-        </div>*@
-    <div class="main-container">
-        <alerts></alerts>
-        @RenderBody()
-    </div>
+            </div>*@
+        <div class="main-container">
+            <alerts></alerts>
+            @RenderBody()
+        </div>
 
         @*<div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-11 col-xl-9">
-                    <div class="text-center d-flex align-items-center justify-content-center pt-5">
-                        <div class="container">
-                            <partial name="_CookieConsentPartial" />
-                            <main role="main" class="pb-3">
+                <div class="row justify-content-center">
+                    <div class="col-lg-11 col-xl-9">
+                        <div class="text-center d-flex align-items-center justify-content-center pt-5">
+                            <div class="container">
+                                <partial name="_CookieConsentPartial" />
+                                <main role="main" class="pb-3">
 
-                            </main>
+                                </main>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>*@
+            </div>*@
 
     </div>
 
@@ -234,6 +234,8 @@
     <!-- Required theme scripts (Do not remove) -->
     <script type="text/javascript" src="~/dist/assets/js/theme.js"></script>
 
+    <script src="~/js/dist/site.js" asp-append-version="true"></script>
+
     @*<environment include="Development">
             <script src="~/lib/jquery/dist/jquery.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
@@ -257,5 +259,6 @@
     @*<script src="~/js/site.js" asp-append-version="true"></script>*@
 
     @RenderSection("Scripts", required: false)
+
 </body>
 </html>

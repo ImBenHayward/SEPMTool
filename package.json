@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "gulpfile.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ImBenHayward/SEPMTool.git"
@@ -17,31 +14,41 @@
   },
   "homepage": "https://github.com/ImBenHayward/SEPMTool#readme",
   "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
-    "@babel/preset-env": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
     "@rollup/plugin-node-resolve": "^7.1.1",
     "babel-core": "^6.26.3",
-    "babel-loader": "^8.0.6",
+    "babel-loader": "^8.1.0",
     "browser-sync": "^2.26.7",
     "del": "^5.1.0",
     "eslint": "^6.8.0",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^7.0.1",
-    "gulp-clean-css": "^4.2.0",
+    "gulp-clean-css": "^4.3.0",
     "gulp-eslint": "^6.0.0",
     "gulp-newer": "^1.4.0",
     "gulp-rename": "^2.0.0",
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
     "node-sass-css-importer": "0.0.3",
+    "parcel-bundler": "^1.12.4",
     "path": "^0.12.7",
-    "rollup": "^1.31.1",
-    "rollup-plugin-babel": "^4.3.3",
+    "rollup": "^1.32.1",
+    "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-uglify": "^6.0.4",
-    "yamljs": "^0.3.0"
+    "yamljs": "^0.3.0",
+    "@vue/component-compiler-utils": "^3.1.1",
+    "vue": "^2.6.11",
+    "vue-custom-element": "^3.2.13",
+    "vue-template-compiler": "^2.6.11"
   },
-  "dependencies": {}
+  "scripts": {
+    "build": "parcel build ./wwwroot/js/site.js --out-dir ./wwwroot/js/dist"
+  },
+  "dependencies": {
+
+  }
 }

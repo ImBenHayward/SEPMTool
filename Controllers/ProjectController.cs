@@ -64,11 +64,77 @@ namespace SEPMTool.Controllers
             return View();
         }
 
+        public IActionResult EditRequirement(ProjectCreateViewModel project, int i)
+        {
+            var newRequirement = new ProjectRequirement
+            {
+                Name = project.ProjectRequirements[i].Name,
+                Description = project.ProjectRequirements[i].Description,
+                Category = project.ProjectRequirements[i].Category,
+                Priority = project.ProjectRequirements[i].Priority
+            };
+            //project.NewRequirement.Name = project.ProjectRequirements[i].Name;
+            //project.NewRequirement.Description = project.ProjectRequirements[i].Description;
+            //project.NewRequirement.Category = project.ProjectRequirements[i].Category;
+            //project.NewRequirement.Priority = project.ProjectRequirements[i].Priority;
+
+            project.NewRequirement = newRequirement;
+            project.RequirementIndex = i;
+
+            project.AllUsers = GetAllUsers();
+            project.ShowRequirements = true;
+            project.ShowModal = true;
+
+            ModelState.Clear();
+
+            return View("NewProject", project);
+        }
+
+        public IActionResult SaveRequirement(ProjectCreateViewModel project)
+        {
+            var projectRequirement = new ProjectRequirement
+            {
+                Name = project.NewRequirement.Name,
+                Description = project.NewRequirement.Description,
+                Category = project.NewRequirement.Category,
+                Priority = project.NewRequirement.Priority
+            };
+
+            ModelState.Clear();
+
+            project.AllUsers = GetAllUsers();
+            project.ProjectRequirements[project.RequirementIndex] = projectRequirement;
+
+            project.NewRequirement = new ProjectRequirement();
+
+            return View("NewProject", project);
+        }
+
+        public IActionResult AddRequirement(ProjectCreateViewModel project)
+        {
+            var projectRequirement = new ProjectRequirement
+            {
+                Name = project.AddRequirement.Name,
+                Description = project.AddRequirement.Description,
+                Category = project.AddRequirement.Category,
+                Priority = project.AddRequirement.Priority
+            };
+
+            project.AddRequirement = new ProjectRequirement();
+
+            project.AllUsers = GetAllUsers();
+            project.ProjectRequirements.Add(projectRequirement);
+
+            ModelState.Clear();
+
+            return View("NewProject", project);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(ProjectCreateViewModel project)
         {
 
-            List<ProjectUser> selectedUsers = project.AllUsers.Where(u => u.IsSelected).Select(u => new ProjectUser { UserId = u.UserId }).ToList();
+            List<ProjectUser> selectedUsers = project.AllUsers.Where(u => u.IsSelected).Select(u => new ProjectUser { UserId = u.UserId, ProjectRole = ProjectRole.Developer }).ToList();
 
             Project proj = new Project
             {
@@ -77,6 +143,7 @@ namespace SEPMTool.Controllers
                 Priority = project.Priority,
                 Status = enums.Status.Active,
                 AwardEligibility = true,
+                ProjectRequirements = project.ProjectRequirements,
                 Progress = 0,
                 Users = selectedUsers,
                 StartDate = project.StartDate,
@@ -86,7 +153,13 @@ namespace SEPMTool.Controllers
 
             _context.Projects.Add(proj);
 
-            if(await _context.SaveChangesAsync() > 0)
+            //if (!ModelState.IsValid)
+            //{
+            //    this.AddAlertDanger($"{project.Name} was not created, model not valid, please try again.");
+            //    return View("NewProject", project);
+            //}
+
+            if (await _context.SaveChangesAsync() > 0)
             {
                 this.AddAlertSuccess($"{project.Name} was created successfully");
                 return RedirectToAction("Index");
@@ -95,7 +168,7 @@ namespace SEPMTool.Controllers
             {
                 this.AddAlertDanger($"{project.Name} was not created, please try again later.");
                 return View("Index");
-            }            
+            }
         }
 
     }
