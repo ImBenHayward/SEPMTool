@@ -7,7 +7,7 @@ namespace SEPMTool.Models
     public class ProjectTask
     {
         public int ProjectTaskId { get; set; }
-        public Project Project { get; set; }
+        public Projects Project { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public Priority Priority { get; set; }

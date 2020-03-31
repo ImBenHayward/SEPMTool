@@ -32,6 +32,7 @@ namespace SEPMTool
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddCloudscribePagination();
             services.AddSession();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ApplicationDbContextConnection")));

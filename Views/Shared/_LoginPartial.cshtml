@@ -96,8 +96,8 @@
                 <span class="text-small text-muted">Quick Links</span>
                 <ul class="nav nav-small flex-column mt-2">
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Team" asp-action="Index">
-                            My Team Overview
+                        <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="Index">
+                            My Projects
                         </a>
                     </li>
                     <li class="nav-item">
@@ -131,7 +131,7 @@
                     </button>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="#">Team</a>
-                        <a class="dropdown-item" href="#">Project</a>
+                        <a class="dropdown-item" href="#" onclick="location.href='@Url.Action("NewProject", "Projects")'">Project</a>
                         <a class="dropdown-item" href="#">Task</a>
                     </div>
                 </div>
