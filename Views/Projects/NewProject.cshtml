@@ -4,285 +4,248 @@
     ViewData["Title"] = "Index";
 }
 
-
-<div class="navbar bg-white breadcrumb-bar">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="index.html">Overview</a>
-            </li>
-            <li class="breadcrumb-item">
-                <a href="pages-app.html#">Projects</a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">Create a New Project</li>
-        </ol>
-    </nav>
-
-    <div class="dropdown">
-        <button class="btn btn-round" role="button" data-toggle="dropdown" aria-expanded="false">
-            <i class="material-icons">settings</i>
-        </button>
-        <div class="dropdown-menu dropdown-menu-right">
-
-            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#project-edit-modal">Edit Project</a>
-            <a class="dropdown-item" href="#">Share</a>
-            <a class="dropdown-item" href="#">Mark as Complete</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item text-danger" href="#">Archive</a>
-
-        </div>
-    </div>
-
-</div>
-
 <form asp-action="Create">
+    <div class="container">
+        <div class="page-header">
+            <h1>Create a New Project</h1>
+            <p class="lead">Project tasks can be added and assigned after the project is created.</p>
+        </div>
 
-    <div class="main-container">
-        <div class="container">
+        <div>
+            <ul class="nav nav-tabs nav-fill nav-form" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link @(Model.ShowRequirements ? "" : "active")" id="project-add-details-tab" data-toggle="tab" href="#project-add-details" role="tab" aria-controls="project-add-details" aria-selected="@(Model.ShowRequirements ? "false" : "true")">Details</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(Model.ShowRequirements ? "active" : "")" id="project-add-requirements-tab" data-toggle="tab" href="#project-add-requirements" role="tab" aria-controls="project-add-requirements" aria-selected="@(Model.ShowRequirements ? "true" : "false")">Requirements</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="project-add-members-tab" data-toggle="tab" href="#project-add-members" role="tab" aria-controls="project-add-members" aria-selected="@(Model.ShowRequirements ? "false" : "true")">Members</a>
+                </li>
+            </ul>
+        </div>
 
-            <div class="page-header">
-                <h1>Create a New Project</h1>
-                <p class="lead">Project tasks can be added and assigned after the project is created.</p>
-            </div>
-
-            <div>
-                <ul class="nav nav-tabs nav-fill nav-form" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link @(Model.ShowRequirements ? "" : "active")" id="project-add-details-tab" data-toggle="tab" href="#project-add-details" role="tab" aria-controls="project-add-details" aria-selected="@(Model.ShowRequirements ? "false" : "true")">Details</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(Model.ShowRequirements ? "active" : "")" id="project-add-requirements-tab" data-toggle="tab" href="#project-add-requirements" role="tab" aria-controls="project-add-requirements" aria-selected="@(Model.ShowRequirements ? "true" : "false")">Requirements</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="project-add-members-tab" data-toggle="tab" href="#project-add-members" role="tab" aria-controls="project-add-members" aria-selected="@(Model.ShowRequirements ? "false" : "true")">Members</a>
-                    </li>
-                </ul>
-            </div>
-
-            @* This is not a Modal *@
-            <div class="tab-content">
-                <div class="tab-pane fade @(Model.ShowRequirements ? "" : "show active")" id="project-add-details" role="tabpanel">
-                    <div class="col auto"></div>
-                    <h6>General Details</h6>
-                    <div class="form-group row align-items-center">
-                        <label asp-for="Name" class="col-2"></label>
-                        <input asp-for="Name" class="form-control col-4" placeholder="Project name" />
-                        <span asp-validation-for="Name" class="text-danger form-validation"> </span>
-                    </div>
-                    <div class="form-group row align-items-center">
-                        <label asp-for="Description" class="col-2">Description</label>
-                        <textarea asp-for="Description" class="form-control col-4" rows="3" placeholder="Project description"></textarea>
-                        <span asp-validation-for="Description" class="text-danger form-validation"></span>
-                    </div>
-                    <hr>
-                    <h6>Timeline</h6>
-                    <div class="form-group row align-items-center">
-                        <label asp-for="StartDate" class="col-2">Start Date</label>
-                        <input asp-for="StartDate" class="form-control col-2" placeholder="Select a date" data-flatpickr data-default-date="2021-04-21" data-alt-input="true" />
-                        <span asp-validation-for="StartDate" class="text-dange form-validationr"></span>
-                    </div>
-                    <div class="form-group row align-items-center">
-                        <label asp-for="Deadline" class="col-2">Due Date</label>
-                        <input asp-for="Deadline" class="form-control col-2" placeholder="Select a date" data-flatpickr data-default-date="2021-09-15" data-alt-input="true" />
-                        <span asp-validation-for="Deadline" class="text-danger form-validation"></span>
-                    </div>
-                    <hr>
-                    <h6>Project Priority</h6>
-                    <div class="form-group row align-items-center">
-                        <label asp-for="Priority" class="col-2"></label>
-                        <select asp-for="Priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-2">
-                            <option value=""></option>
-                        </select>
-                        <span asp-validation-for="Priority" class="text-danger form-validation"></span>
-                    </div>
-                    <hr>
-                    <h6>Award Eligibility</h6>
-                    <span>@Html.CheckBoxFor(m => m.AwardEligibility) Eligible for an Award</span>
-                    @*<input asp-for="AwardEligibility" type="radio" name="AwardEligibility" checked="" value="1">True<br />
-        <input asp-for="AwardEligibility" type="radio" name="AwardEligibility" checked="" value="0">False<br />*@
+        @* This is not a Modal *@
+        <div class="tab-content">
+            <div class="tab-pane fade @(Model.ShowRequirements ? "" : "show active")" id="project-add-details" role="tabpanel">
+                <div class="col auto"></div>
+                <h6>General Details</h6>
+                <div class="form-group row align-items-center">
+                    <label asp-for="Name" class="col-2"></label>
+                    <input asp-for="Name" class="form-control col-4" placeholder="Project name" />
+                    <span asp-validation-for="Name" class="text-danger form-validation"> </span>
                 </div>
-                <div class="tab-pane fade" id="project-add-members" role="tabpanel">
-                    <div class="users-manage" data-filter-list="form-group-users">
-                        <div class="input-group input-group-round">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="material-icons">filter_list</i>
-                                </span>
+                <div class="form-group row align-items-center">
+                    <label asp-for="Description" class="col-2">Description</label>
+                    <textarea asp-for="Description" class="form-control col-4" rows="3" placeholder="Project description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger form-validation"></span>
+                </div>
+                <hr>
+                <h6>Timeline</h6>
+                <div class="form-group row align-items-center">
+                    <label asp-for="StartDate" class="col-2">Start Date</label>
+                    <input asp-for="StartDate" class="form-control col-2" placeholder="Select a date" data-flatpickr data-default-date="2021-04-21" data-alt-input="true" />
+                    <span asp-validation-for="StartDate" class="text-dange form-validationr"></span>
+                </div>
+                <div class="form-group row align-items-center">
+                    <label asp-for="Deadline" class="col-2">Due Date</label>
+                    <input asp-for="Deadline" class="form-control col-2" placeholder="Select a date" data-flatpickr data-default-date="2021-09-15" data-alt-input="true" />
+                    <span asp-validation-for="Deadline" class="text-danger form-validation"></span>
+                </div>
+                <hr>
+                <h6>Project Priority</h6>
+                <div class="form-group row align-items-center">
+                    <label asp-for="Priority" class="col-2"></label>
+                    <select asp-for="Priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-2">
+                        <option value=""></option>
+                    </select>
+                    <span asp-validation-for="Priority" class="text-danger form-validation"></span>
+                </div>
+                <hr>
+                <h6>Award Eligibility</h6>
+                <span>@Html.CheckBoxFor(m => m.AwardEligibility) Eligible for an Award</span>
+                @*<input asp-for="AwardEligibility" type="radio" name="AwardEligibility" checked="" value="1">True<br />
+                    <input asp-for="AwardEligibility" type="radio" name="AwardEligibility" checked="" value="0">False<br />*@
+            </div>
+            <div class="tab-pane fade" id="project-add-members" role="tabpanel">
+                <div class="users-manage" data-filter-list="form-group-users">
+                    <div class="input-group input-group-round">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="material-icons">filter_list</i>
+                            </span>
+                        </div>
+                        <input type="search" class="form-control filter-list-input" placeholder="Filter members" aria-label="Filter Members">
+                    </div>
+                    <div class="form-group-users">
+
+                        @for (int i = 0; i < Model.AllUsers.Count; i++)
+                        {
+                            <div class="custom-control custom-checkbox">
+                                <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input" />
+                                <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
+                                    <span class="d-flex align-items-center">
+                                        <img alt="Kenny Tran" src="~/assets/img/avatar-male-6.jpg" class="avatar mr-2" />
+                                        <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
+                                    </span>
+                                </label>
+                                <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
                             </div>
-                            <input type="search" class="form-control filter-list-input" placeholder="Filter members" aria-label="Filter Members">
-                        </div>
-                        <div class="form-group-users">
-
-                            @for (int i = 0; i < Model.AllUsers.Count; i++)
-                            {
-                                <div class="custom-control custom-checkbox">
-                                    <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input" />
-                                    <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
-                                        <span class="d-flex align-items-center">
-                                            <img alt="Kenny Tran" src="~/assets/img/avatar-male-6.jpg" class="avatar mr-2" />
-                                            <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
-                                        </span>
-                                    </label>
-                                    <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
-                                </div>
-                            }
-                        </div>
+                        }
                     </div>
                 </div>
-                <div class="tab-pane fade @(Model.ShowRequirements ? "show active" : "")" id="project-add-requirements" role="tabpanel">
+            </div>
+            <div class="tab-pane fade @(Model.ShowRequirements ? "show active" : "")" id="project-add-requirements" role="tabpanel">
 
-                    @if (Model.ProjectRequirements.Count > 0)
-                    {
-                        <table class="table" id="AddRequirementsTable">
+                @if (Model.ProjectRequirements.Count > 0)
+                {
+                    <table class="table" id="AddRequirementsTable">
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th></th>
+                        </tr>
+
+                        @for (int i = 0; i < Model.ProjectRequirements.Count; i++)
+                        {
                             <tr>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Category</th>
-                                <th>Priority</th>
-                                <th></th>
-                            </tr>
-
-                            @for (int i = 0; i < Model.ProjectRequirements.Count; i++)
-                            {
-                                <tr>
-                                    <td>
-                                        @Model.ProjectRequirements[i].Name
-                                        <input asp-for="ProjectRequirements[i].Name" type="hidden" />
-                                    </td>
-                                    <td>
-                                        @Model.ProjectRequirements[i].Description
-                                        <input asp-for="ProjectRequirements[i].Description" type="hidden" />
-                                    </td>
-                                    <td>
-                                        @Model.ProjectRequirements[i].Category
-                                        <input asp-for="ProjectRequirements[i].Category" type="hidden" />
-                                    </td>
-                                    <td>
-                                        @Model.ProjectRequirements[i].Priority
-                                        <input asp-for="ProjectRequirements[i].Priority" type="hidden" />
-                                        @i
-                                    </td>
-                                    <td>
-                                        <button role="button" class="btn btn-primary" type="submit" asp-action="EditRequirement" asp-route-i="@i">
-                                            Edit
-                                        </button>
-                                    </td>
-                                </tr>
-                            }
-                        </table>
-                    }
-
-                    @* New Requirements Modal *@
-                    <div class="modal fade" id="new-requirement-modal" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Add a New Requirement</h5>
-                                    <button type="button" class="close btn btn-round" data-dismiss="modal" aria-label="Close">
-                                        <i class="material-icons">close</i>
+                                <td>
+                                    @Model.ProjectRequirements[i].Name
+                                    <input asp-for="ProjectRequirements[i].Name" type="hidden" />
+                                </td>
+                                <td>
+                                    @Model.ProjectRequirements[i].Description
+                                    <input asp-for="ProjectRequirements[i].Description" type="hidden" />
+                                </td>
+                                <td>
+                                    @Model.ProjectRequirements[i].Category
+                                    <input asp-for="ProjectRequirements[i].Category" type="hidden" />
+                                </td>
+                                <td>
+                                    @Model.ProjectRequirements[i].Priority
+                                    <input asp-for="ProjectRequirements[i].Priority" type="hidden" />
+                                    @i
+                                </td>
+                                <td>
+                                    <button role="button" class="btn btn-primary" type="submit" asp-action="EditRequirement" asp-route-i="@i">
+                                        Edit
                                     </button>
-                                </div>
-                                <!--end of modal head-->
-                                <div class="modal-body">
-                                    <div>
-                                        <div class="tab-content">
-                                            <h6>Requirement Details</h6>
-                                            <div class="form-group row">
-                                                <label class="col-3">Title</label>
-                                                <input asp-for="AddRequirement.Name" class="form-control col" placeholder="Requirement title" />
-                                            </div>
-                                            <div class="form-group row align-items-center">
-                                                <label class="col-3">Description</label>
-                                                <input asp-for="AddRequirement.Description" class="form-control col" rows="3" placeholder="Requirement description" />
-                                            </div>
-                                            <div class="form-group row align-items-center">
-                                                <label class="col-3">Category</label>
-                                                <select asp-for="AddRequirement.Category" asp-items="Html.GetEnumSelectList<RequirementCategory>()" class="form-control col-3" id="priority">
-                                                    <option value=""></option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group row align-items-center">
-                                                <label class="col-3">Priority</label>
-                                                <select asp-for="AddRequirement.Priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-3" id="priority">
-                                                    <option value=""></option>
-                                                </select>
-                                            </div>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                }
+
+                @* New Requirements Modal *@
+                <div class="modal fade" id="new-requirement-modal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Add a New Requirement</h5>
+                                <button type="button" class="close btn btn-round" data-dismiss="modal" aria-label="Close">
+                                    <i class="material-icons">close</i>
+                                </button>
+                            </div>
+                            <!--end of modal head-->
+                            <div class="modal-body">
+                                <div>
+                                    <div class="tab-content">
+                                        <h6>Requirement Details</h6>
+                                        <div class="form-group row">
+                                            <label class="col-3">Title</label>
+                                            <input asp-for="AddRequirement.Name" class="form-control col" placeholder="Requirement title" />
+                                        </div>
+                                        <div class="form-group row align-items-center">
+                                            <label class="col-3">Description</label>
+                                            <input asp-for="AddRequirement.Description" class="form-control col" rows="3" placeholder="Requirement description" />
+                                        </div>
+                                        <div class="form-group row align-items-center">
+                                            <label class="col-3">Category</label>
+                                            <select asp-for="AddRequirement.Category" asp-items="Html.GetEnumSelectList<RequirementCategory>()" class="form-control col-3" id="priority">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group row align-items-center">
+                                            <label class="col-3">Priority</label>
+                                            <select asp-for="AddRequirement.Priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-3" id="priority">
+                                                <option value=""></option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
-                                <!--end of modal body-->
-                                <div class="modal-footer">
-                                    <button role="button" class="btn btn-primary" type="submit" asp-action="AddRequirement">
-                                        Add Requirement
-                                    </button>
-                                </div>
+                            </div>
+                            <!--end of modal body-->
+                            <div class="modal-footer">
+                                <button role="button" class="btn btn-primary" type="submit" asp-action="AddRequirement">
+                                    Add Requirement
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <br />
-                    <button role="button" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#new-requirement-modal">
-                        New Requirement
+                </div>
+                <br />
+                <button role="button" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#new-requirement-modal">
+                    New Requirement
+                </button>
+            </div>
+        </div>
+        <hr />
+        <!--end of modal body-->
+        <button role="button" class="btn btn-primary" type="submit">
+            Create Project
+        </button>
+    </div>
+
+
+
+    @* Edit Requirements Modal *@
+    <div id="edit-requirement-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Requirement</h5>
+                    <button type="button" class="close btn btn-round" data-dismiss="modal" aria-label="Close">
+                        <i class="material-icons">close</i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <div class="tab-content">
+                            <h6>Requirement Details</h6>
+                            <div class="form-group row">
+                                <label class="col-3">Title</label>
+                                <input asp-for="NewRequirement.Name" class="form-control col" placeholder="Requirement title" />
+                            </div>
+                            <div class="form-group row align-items-center">
+                                <label class="col-3">Description</label>
+                                <input asp-for="NewRequirement.Description" class="form-control col" rows="3" placeholder="Requirement description" />
+                            </div>
+                            <div class="form-group row align-items-center">
+                                <label class="col-3">Category</label>
+                                <select asp-for="NewRequirement.Category" asp-items="Html.GetEnumSelectList<RequirementCategory>()" class="form-control col-3" id="priority">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="form-group row align-items-center">
+                                <label class="col-3">Priority</label>
+                                <select asp-for="NewRequirement.Priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-3" id="priority">
+                                    <option value=""></option>
+                                </select>
+                                <input asp-for="RequirementIndex" type="hidden" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button role="button" class="btn btn-primary" type="submit" asp-action="SaveRequirement">
+                        Update Requirement
                     </button>
                 </div>
             </div>
-            <hr />
-            <!--end of modal body-->
-            <button role="button" class="btn btn-primary" type="submit">
-                Create Project
-            </button>
-        </div>
-
-
-
-        @* Edit Requirements Modal *@
-        <div id="edit-requirement-modal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Requirement</h5>
-                        <button type="button" class="close btn btn-round" data-dismiss="modal" aria-label="Close">
-                            <i class="material-icons">close</i>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div>
-                            <div class="tab-content">
-                                <h6>Requirement Details</h6>
-                                <div class="form-group row">
-                                    <label class="col-3">Title</label>
-                                    <input asp-for="NewRequirement.Name" class="form-control col" placeholder="Requirement title" />
-                                </div>
-                                <div class="form-group row align-items-center">
-                                    <label class="col-3">Description</label>
-                                    <input asp-for="NewRequirement.Description" class="form-control col" rows="3" placeholder="Requirement description" />
-                                </div>
-                                <div class="form-group row align-items-center">
-                                    <label class="col-3">Category</label>
-                                    <select asp-for="NewRequirement.Category" asp-items="Html.GetEnumSelectList<RequirementCategory>()" class="form-control col-3" id="priority">
-                                        <option value=""></option>
-                                    </select>
-                                </div>
-                                <div class="form-group row align-items-center">
-                                    <label class="col-3">Priority</label>
-                                    <select asp-for="NewRequirement.Priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-3" id="priority">
-                                        <option value=""></option>
-                                    </select>
-                                    <input asp-for="RequirementIndex" type="hidden" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button role="button" class="btn btn-primary" type="submit" asp-action="SaveRequirement">
-                            Update Requirement
-                        </button>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-    </div>
-
 </form>
 
 @section Scripts {

@@ -6,6 +6,10 @@
     <GenerateRuntimeConfigurationFiles>True</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
+  <Target Name="Parcel" BeforeTargets="Build">
+    <Exec Command="npm run build" />
+  </Target>
+
   <ItemGroup>
     <Compile Remove="Migrations\20200317210026_Project_Model.cs" />
     <Compile Remove="Migrations\20200317210026_Project_Model.Designer.cs" />
@@ -226,8 +230,6 @@
     <None Include="wwwroot\assets\js\theme.js" />
     <None Include="wwwroot\assets\js\theme.js.map" />
     <None Include="wwwroot\dist\assets\css\theme.css.map" />
-    <None Include="wwwroot\js\lib.js" />
-    <None Include="wwwroot\js\site.js" />
   </ItemGroup>
 
 
@@ -246,8 +248,8 @@
 
 
   <ItemGroup>
-    <Folder Include="Assets\" />
     <Folder Include="Interfaces\" />
+    <Folder Include="wwwroot\build\" />
   </ItemGroup>
 
 </Project>

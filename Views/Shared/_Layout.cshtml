@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Hosting
+@inject IHostingEnvironment HostingEnvironment
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -19,196 +22,19 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
               crossorigin="anonymous"
               integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
-    </environment>    
+    </environment>
 </head>
 
 <body>
-
-    @*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SEPMTool</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>*@
-
-    @*<div class="layout layout-nav-side">*@
-    @*<div class="navbar navbar-expand-lg bg-dark navbar-dark sticky-top">
-
-        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-            <img alt="SEPM Tool" src="~/assets/img/logo.svg" />
-        </a>
-        <div class="d-flex align-items-center">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="d-block d-lg-none ml-2">
-                <div class="dropdown">
-                        <a href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img alt="Image" src="~/assets/img/avatar-male-4.jpg" class="avatar" />
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a href="nav-side-user.html" class="dropdown-item">Profile</a>
-                            <a href="utility-account-settings.html" class="dropdown-item">Account Settings</a>
-                            <a href="#" class="dropdown-item">Log Out</a>
-                        </div>
-                    </div>
-            </div>*
-        </div>
-        <div class="collapse navbar-collapse flex-column" id="navbar-collapse">
-            <ul class="navbar-nav d-lg-block">
-
-                <li class="nav-item">
-
-                    <a class="nav-link" href="index.html">Overview</a>
-
-                </li>
-
-                <li class="nav-item">
-
-                    <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2">Pages</a>
-                    <div id="submenu-2" class="collapse">
-                        <ul class="nav nav-small flex-column">
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="pages-app.html">App Pages</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="pages-utility.html">Utility Pages</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="pages-layouts.html">Layouts</a>
-                            </li>
-
-                        </ul>
-                    </div>
-
-                </li>
-
-                <li class="nav-item">
-
-                    <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-3" aria-controls="submenu-3">Components</a>
-                    <div id="submenu-3" class="collapse">
-                        <ul class="nav nav-small flex-column">
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="components-bootstrap.html">Bootstrap</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="components-pipeline.html">Pipeline</a>
-                            </li>
-
-                        </ul>
-                    </div>
-
-                </li>
-
-                <li class="nav-item">
-
-                    <a class="nav-link" href="documentation/index.html">Documentation</a>
-
-                </li>
-
-                <li class="nav-item">
-
-                    <a class="nav-link" href="documentation/changelog.html">Changelog</a>
-
-                </li>
-
-            </ul>
-            <hr>
-            <div class="d-none d-lg-block w-100">
-                <span class="text-small text-muted">Quick Links</span>
-                <ul class="nav nav-small flex-column mt-2">
-                    <li class="nav-item">
-                        <a href="nav-side-team.html" class="nav-link">Team Overview</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="nav-side-project.html" class="nav-link">Project</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="nav-side-task.html" class="nav-link">Single Task</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Project" asp-action="Index">
-                            Kanban Board
-                        </a>
-                    </li>
-                </ul>
-                <hr>
-            </div>
-            <div>
-                <form>
-                    <div class="input-group input-group-dark input-group-round">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="material-icons">search</i>
-                            </span>
-                        </div>
-                        <input type="search" class="form-control form-control-dark" placeholder="Search" aria-label="Search app">
-                    </div>
-                </form>
-                <div class="dropdown mt-2">
-                    <button class="btn btn-primary btn-block dropdown-toggle" type="button" id="newContentButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Add New
-                    </button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Team</a>
-                        <a class="dropdown-item" href="#">Project</a>
-                        <a class="dropdown-item" href="#">Task</a>
-                    </div>
-                </div>
-            </div>
-        </div>*@
     <div class="layout layout-nav-side">
         <partial name="_LoginPartial" />
-        @*<div class="d-none d-lg-block">
-                <div class="dropup">
-                    <a href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img alt="Image" src="~/assets/img/avatar-male-4.jpg" class="avatar" />
-                    </a>
-                    <div class="dropdown-menu">
-                        <a href="nav-side-user.html" class="dropdown-item">Profile</a>
-                        <a href="utility-account-settings.html" class="dropdown-item">Account Settings</a>
-                        <a href="#" class="dropdown-item">Log Out</a>
-                    </div>
-                </div>
-            </div>*@
         <div class="main-container">
-            <alerts></alerts>
-            @RenderBody()
+            <div id="mainContent">
+                <partial name="_BreadcrumbBarPartial" />
+                <alerts></alerts>
+                @RenderBody()
+            </div>
         </div>
-
-        @*<div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-11 col-xl-9">
-                        <div class="text-center d-flex align-items-center justify-content-center pt-5">
-                            <div class="container">
-                                <partial name="_CookieConsentPartial" />
-                                <main role="main" class="pb-3">
-
-                                </main>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>*@
-
     </div>
 
     <!-- Required vendor scripts (Do not remove) -->
@@ -224,8 +50,12 @@
     <!-- Prism - displays formatted code boxes -->
     <script type="text/javascript" src="~/assets/js/prism.js"></script>
     <!-- Shopify Draggable - drag, drop and sort items on page -->
-    <script type="text/javascript" src="~/assets/js/draggable.bundle.legacy.js"></script>
-    <script type="text/javascript" src="~/assets/js/swap-animation.js"></script>
+    @*<script type="text/javascript" src="~/assets/js/draggable.bundle.legacy.js"></script>*@
+        <script type="text/javascript" src="~/assets/js/swap-animation.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@@shopify/draggable@1.0.0-beta.6/lib/draggable.bundle.legacy.js"></script>
+
+
     <!-- Dropzone - drag and drop files onto the page for uploading -->
     <script type="text/javascript" src="~/assets/js/dropzone.min.js"></script>
     <!-- List.js - filter list elements -->
@@ -234,7 +64,7 @@
     <!-- Required theme scripts (Do not remove) -->
     <script type="text/javascript" src="~/dist/assets/js/theme.js"></script>
 
-    <script src="~/js/dist/site.js" asp-append-version="true"></script>
+    @*<script src="~/js/dist/site.js" asp-append-version="true"></script>*@
 
     @*<environment include="Development">
             <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -258,7 +88,20 @@
         </environment>*@
     @*<script src="~/js/site.js" asp-append-version="true"></script>*@
 
+    <script src="~/build/site.js" asp-append-version="true"></script>
+
     @RenderSection("Scripts", required: false)
+
+    <script>
+    var app = new Vue({
+        el: "#mainContent",
+        mixins: vueMixins
+    });
+    @if (HostingEnvironment.IsDevelopment())
+    {
+        @:Vue.config.devtools = true;
+    }
+    </script>
 
 </body>
 </html>
