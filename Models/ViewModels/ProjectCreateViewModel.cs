@@ -40,6 +40,7 @@ namespace SEPMTool.Models.ViewModels
         public string RequirementName { get; set; }
         public string RequirementDescription { get; set; }
         public Priority RequirementPriority { get; set; }
+        public ProjectRequirement ProjectRequirement { get; set; }
         public RequirementCategory RequirementCategory { get; set; }
         public int RequirementIndex { get; set; }
         public bool ShowRequirements { get; set; }

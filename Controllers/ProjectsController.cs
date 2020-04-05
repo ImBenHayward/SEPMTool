@@ -27,20 +27,26 @@ namespace SEPMTool.Controllers
             _context = context;
         }
 
-        public IActionResult Index2()
+        public List<ProjectUsersViewModel> GetAllUsers()
         {
-            var model = new ProjectIndexViewModel();
+            var users = userManager.Users;
+            List<ProjectUsersViewModel> projectUsersViewModel = new List<ProjectUsersViewModel>();
 
-            model.Projects = _context.Projects
-                .Include(u => u.Users)
-                .Include(r => r.ProjectRequirements)
-                .Include(r => r.Tasks)
-                .ToList();
+            foreach (var user in users)
+            {
+                var userModel = new ProjectUsersViewModel
+                {
+                    UserId = user.Id,
+                    Username = user.FirstName + " " + user.LastName
+                };
 
-            return View(model);
+                projectUsersViewModel.Add(userModel);
+            }
+
+            return projectUsersViewModel;
         }
 
-        public IActionResult Index(int pageNumber=1, int pageSize = 12)
+        public IActionResult Index(int pageNumber=1, int pageSize = 10)
         {
             int excludeRecords = (pageSize * pageNumber) - pageSize;
 
@@ -52,15 +58,6 @@ namespace SEPMTool.Controllers
                 .Include(r => r.Tasks)
                 .Skip(excludeRecords)
                 .Take(pageSize);
-
-
-            //model.Projects = _context.Projects
-            //    .Include(u => u.Users)
-            //    .Include(r => r.ProjectRequirements)
-            //    .Include(r => r.Tasks)
-            //    .Skip(excludeRecords)
-            //    .Take(pageSize)
-            //    .ToList();
 
             PagedResult<Projects> result = new PagedResult<Projects>
             {
@@ -75,7 +72,6 @@ namespace SEPMTool.Controllers
 
         public IActionResult Details(int id)
         {
-            //var project = _context.Projects.Find(id);
             if (_context.Projects.Any(p => p.Id == id))
             {
                 var project = _context.Projects
@@ -97,26 +93,6 @@ namespace SEPMTool.Controllers
 
         }
 
-
-        public List<ProjectUsersViewModel> GetAllUsers()
-        {
-            var users = userManager.Users;
-            List<ProjectUsersViewModel> projectUsersViewModel = new List<ProjectUsersViewModel>();
-
-            foreach (var user in users)
-            {
-                var userModel = new ProjectUsersViewModel
-                {
-                    UserId = user.Id,
-                    Username = user.FirstName + " " + user.LastName
-                };
-
-                projectUsersViewModel.Add(userModel);
-            }
-
-            return projectUsersViewModel;
-        }
-
         public IActionResult NewProject()
         {
             ProjectCreateViewModel projectCreateViewModel = new ProjectCreateViewModel
@@ -130,69 +106,6 @@ namespace SEPMTool.Controllers
         public IActionResult Kanban()
         {
             return View();
-        }
-
-        public IActionResult EditRequirement(ProjectCreateViewModel project, int i)
-        {
-            var newRequirement = new ProjectRequirement
-            {
-                Name = project.ProjectRequirements[i].Name,
-                Description = project.ProjectRequirements[i].Description,
-                Category = project.ProjectRequirements[i].Category,
-                Priority = project.ProjectRequirements[i].Priority
-            };
-
-            project.NewRequirement = newRequirement;
-            project.RequirementIndex = i;
-            project.AllUsers = GetAllUsers();
-            project.ShowRequirements = true;
-            project.ShowModal = true;
-
-            ModelState.Clear();
-
-            return View("NewProject", project);
-        }
-
-        public IActionResult SaveRequirement(ProjectCreateViewModel project)
-        {
-            var projectRequirement = new ProjectRequirement
-            {
-                Name = project.NewRequirement.Name,
-                Description = project.NewRequirement.Description,
-                Category = project.NewRequirement.Category,
-                Priority = project.NewRequirement.Priority
-            };
-
-            ModelState.Clear();
-
-            project.AllUsers = GetAllUsers();
-            project.ProjectRequirements[project.RequirementIndex] = projectRequirement;
-            project.NewRequirement = new ProjectRequirement();
-            project.ShowRequirements = true;
-
-            return View("NewProject", project);
-        }
-
-        public IActionResult AddRequirement(ProjectCreateViewModel project)
-        {
-            var projectRequirement = new ProjectRequirement
-            {
-                Name = project.AddRequirement.Name,
-                Description = project.AddRequirement.Description,
-                Category = project.AddRequirement.Category,
-                Priority = project.AddRequirement.Priority
-            };
-
-            this.AddAlertSuccess($"{project.AddRequirement.Name} was created successfully");
-
-            project.AddRequirement = new ProjectRequirement();
-            project.AllUsers = GetAllUsers();
-            project.ProjectRequirements.Add(projectRequirement);
-            project.ShowRequirements = true;
-
-            ModelState.Clear();
-
-            return View("NewProject", project);
         }
 
         [HttpPost]
@@ -218,11 +131,11 @@ namespace SEPMTool.Controllers
 
             _context.Projects.Add(proj);
 
-            //if (!ModelState.IsValid)
-            //{
-            //    this.AddAlertDanger($"{project.Name} was not created, model not valid, please try again.");
-            //    return View("NewProject", project);
-            //}
+            if(!ModelState.IsValid)
+            {            
+                this.AddAlertDanger($"{project.Name} was not created, model not valid, please try again.");
+                return View("NewProject", project);
+            }
 
             if (await _context.SaveChangesAsync() > 0)
             {
