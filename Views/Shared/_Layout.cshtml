@@ -14,15 +14,15 @@
     <link href="~/dist/assets/css/theme.css" rel="stylesheet" type="text/css" media="all" />
 
     @*<environment include="Development">
-        <link rel="stylesheet" href="~/dist/asses/css/theme.css" />
-    </environment>
-    <environment exclude="Development">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
-              crossorigin="anonymous"
-              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
-    </environment>*@
+            <link rel="stylesheet" href="~/dist/asses/css/theme.css" />
+        </environment>
+        <environment exclude="Development">
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+                  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+                  asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
+                  crossorigin="anonymous"
+                  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
+        </environment>*@
 </head>
 
 <body>
@@ -50,12 +50,8 @@
     <!-- Prism - displays formatted code boxes -->
     <script type="text/javascript" src="~/assets/js/prism.js"></script>
     <!-- Shopify Draggable - drag, drop and sort items on page -->
-    @*<script type="text/javascript" src="~/assets/js/draggable.bundle.legacy.js"></script>*@
-        <script type="text/javascript" src="~/assets/js/swap-animation.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@@shopify/draggable@1.0.0-beta.6/lib/draggable.bundle.legacy.js"></script>
-
-
+    <script type="text/javascript" src="~/assets/js/draggable.bundle.legacy.js"></script>
+    <script type="text/javascript" src="~/assets/js/swap-animation.js"></script>
     <!-- Dropzone - drag and drop files onto the page for uploading -->
     <script type="text/javascript" src="~/assets/js/dropzone.min.js"></script>
     <!-- List.js - filter list elements -->
@@ -63,6 +59,8 @@
 
     <!-- Required theme scripts (Do not remove) -->
     <script type="text/javascript" src="~/dist/assets/js/theme.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     @*<script src="~/js/dist/site.js" asp-append-version="true"></script>*@
 

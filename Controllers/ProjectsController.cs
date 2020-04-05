@@ -131,11 +131,11 @@ namespace SEPMTool.Controllers
 
             _context.Projects.Add(proj);
 
-            if(!ModelState.IsValid)
-            {            
-                this.AddAlertDanger($"{project.Name} was not created, model not valid, please try again.");
-                return View("NewProject", project);
-            }
+            //if(!ModelState.IsValid)
+            //{            
+            //    this.AddAlertDanger($"{project.Name} was not created, model not valid, please try again.");
+            //    return View("NewProject", project);
+            //}
 
             if (await _context.SaveChangesAsync() > 0)
             {

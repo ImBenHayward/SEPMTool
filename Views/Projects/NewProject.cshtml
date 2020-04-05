@@ -11,72 +11,135 @@
             <p class="lead">Project tasks can be added and assigned after the project is created.</p>
         </div>
 
-        <div>
-            <ul class="nav nav-tabs nav-fill nav-form" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="project-add-details-tab" data-toggle="tab" href="#project-add-details" role="tab" aria-controls="project-add-details" aria-selected="true">Details</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="project-add-requirements-tab" data-toggle="tab" href="#project-add-requirements" role="tab" aria-controls="project-add-requirements" aria-selected="false">Requirements</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="project-add-members-tab" data-toggle="tab" href="#project-add-members" role="tab" aria-controls="project-add-members" aria-selected="false">Members</a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="tab-content">
-            <div class="tab-pane fade show active" id="project-add-details" role="tabpanel">
-                <div class="col auto"></div>
-                <h6>General Details</h6>
-                <div class="form-group row align-items-center">
-                    <label asp-for="Name" class="col-2"></label>
-                    <input asp-for="Name" class="form-control col-4" placeholder="Project name" />
-                    <span asp-validation-for="Name" class="text-danger form-validation"> </span>
-                </div>
-                <div class="form-group row align-items-center">
-                    <label asp-for="Description" class="col-2">Description</label>
-                    <textarea asp-for="Description" class="form-control col-4" rows="3" placeholder="Project description"></textarea>
-                    <span asp-validation-for="Description" class="text-danger form-validation"></span>
-                </div>
-                <hr>
-                <h6>Timeline</h6>
-                <div class="form-group row align-items-center">
-                    <label asp-for="StartDate" class="col-2">Start Date</label>
-                    <input asp-for="StartDate" class="form-control col-2" placeholder="Select a date" data-flatpickr data-default-date="2021-04-21" data-alt-input="true" />
-                    <span asp-validation-for="StartDate" class="text-dange form-validationr"></span>
-                </div>
-                <div class="form-group row align-items-center">
-                    <label asp-for="Deadline" class="col-2">Due Date</label>
-                    <input asp-for="Deadline" class="form-control col-2" placeholder="Select a date" data-flatpickr data-default-date="2021-09-15" data-alt-input="true" />
-                    <span asp-validation-for="Deadline" class="text-danger form-validation"></span>
-                </div>
-                <hr>
-                <h6>Project Priority</h6>
-                <div class="form-group row align-items-center">
-                    <label asp-for="Priority" class="col-2"></label>
-                    <select asp-for="Priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-2">
-                        <option value=""></option>
-                    </select>
-                    <span asp-validation-for="Priority" class="text-danger form-validation"></span>
-                </div>
-                <hr>
-                <h6>Award Eligibility</h6>
-                <span>@Html.CheckBoxFor(m => m.AwardEligibility) Eligible for an Award</span>
+        <div class="card">
+            <div class="progress" style="height: 5px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width:0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <div class="tab-pane fade" id="project-add-members" role="tabpanel">
-                <div class="users-manage" data-filter-list="form-group-users">
-                    <div class="input-group input-group-round">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="material-icons">filter_list</i>
-                            </span>
-                        </div>
-                        <input type="search" class="form-control filter-list-input" placeholder="Filter members" aria-label="Filter Members">
+            <div v-show="step == 1">
+                <div class="card-header">General Details</div>
+                <div class="card-body">
+                    @*<div class="tab-pane fade show active" id="project-add-details" role="tabpanel">*@
+                    <div class="col auto"></div>
+                    <div class="form-group row align-items-center">
+                        <label asp-for="Name" class="col-2"></label>
+                        <input asp-for="Name" class="form-control col-4" placeholder="Project name" />
+                        <span asp-validation-for="Name" class="text-danger form-validation"> </span>
                     </div>
-                    <div class="form-group-users">
+                    <div class="form-group row align-items-center">
+                        <label asp-for="Description" class="col-2">Description</label>
+                        <textarea asp-for="Description" class="form-control col-4" rows="3" placeholder="Project description"></textarea>
+                        <span asp-validation-for="Description" class="text-danger form-validation"></span>
+                    </div>
+                    <hr>
+                    <h6>Timeline</h6>
+                    <div class="form-group row align-items-center">
+                        <label asp-for="StartDate" class="col-2">Start Date</label>
+                        <input asp-for="StartDate" class="form-control col-2" placeholder="Select a date" data-flatpickr data-default-date="2021-04-21" data-alt-input="true" />
+                        <span asp-validation-for="StartDate" class="text-dange form-validationr"></span>
+                    </div>
+                    <div class="form-group row align-items-center">
+                        <label asp-for="Deadline" class="col-2">Due Date</label>
+                        <input asp-for="Deadline" class="form-control col-2" placeholder="Select a date" data-flatpickr data-default-date="2021-09-15" data-alt-input="true" />
+                        <span asp-validation-for="Deadline" class="text-danger form-validation"></span>
+                    </div>
+                    <hr>
+                    <h6>Project Priority</h6>
+                    <div class="form-group row align-items-center">
+                        <label asp-for="Priority" class="col-2"></label>
+                        <select asp-for="Priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-2">
+                            <option value=""></option>
+                        </select>
+                        <span asp-validation-for="Priority" class="text-danger form-validation"></span>
+                    </div>
+                    <hr>
+                    <h6>Award Eligibility</h6>
+                    <span>@Html.CheckBoxFor(m => m.AwardEligibility) Eligible for an Award</span>
+                </div>
+            </div>
 
-                        @for (int i = 0; i < Model.AllUsers.Count; i++)
+            <div v-show="step == 2">
+                <div class="card-header">Project Requirements</div>
+                <div class="card-body">
+                    @*<div class="tab-pane fade" id="project-add-requirements" role="tabpanel">*@
+                    <div class="card-list-body" v-for="(requirement, index) in requirementsList">
+
+                        <div class="card card-task">
+                            <div class="progress">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <a href="#">
+                                        <h6 data-filter-by="text">
+                                            <input type="hidden" :value='requirement.name' :name="'ProjectRequirements[' + index + '].name'" />
+                                            {{ requirement.name }}
+                                        </h6>
+                                    </a>
+                                    <span class="text-small">
+                                        <input type="hidden" :value="requirement.description" :name="'ProjectRequirements[' + index + '].description'" />
+                                        {{ requirement.description }}
+                                    </span>
+                                    <br />
+                                    <span class="text-small">
+                                        <input type="hidden" :value="requirement.category" :name="'ProjectRequirements[' + index + '].category'" />
+                                        Category: {{ requirement.category }}
+                                    </span>
+                                    <br />
+                                    <span class="text-small">
+                                        <input type="hidden" :value="requirement.priority" :name="'ProjectRequirements[' + index + '].priority'" />
+                                        Priority: {{ requirement.priority }}
+                                    </span>
+                                </div>
+                                <div class="card-meta">
+                                    <ul class="avatars">
+                                        <li>
+                                            <a href="#" data-toggle="tooltip" title="Kenny">
+                                                <img alt="Kenny Tran" class="avatar" src="~/assets/img/avatar-male-6.jpg" />
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="d-flex align-items-center">
+                                        <i class="material-icons">playlist_add_check</i>
+                                        <span>3/4</span>
+                                    </div>
+                                    <div class="dropdown card-options">
+                                        <button class="btn-options" type="button" id="task-dropdown-button-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="material-icons">more_vert</i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" @@click="requirementClicked(requirement, index)">Edit</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item text-danger" @@click="deleteRequirement(index)">Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*</div>*@
+                    <br />
+                    <button role="button" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#new-requirement-modal">
+                        New Requirement
+                    </button>
+                </div>
+            </div>
+
+            <div v-show="step == 3">
+                <div class="card-header">Project Members</div>
+                <div class="card-body">
+                    @*<div class="tab-pane fade" id="project-add-members" role="tabpanel">*@
+                    <div class="users-manage" data-filter-list="form-group-users">
+                        <div class="input-group input-group-round">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="material-icons">filter_list</i>
+                                </span>
+                            </div>
+                            <input type="search" class="form-control filter-list-input" placeholder="Filter members" aria-label="Filter Members">
+                        </div>
+                        <div class="form-group-users">
+
+                            @for (int i = 0; i < Model.AllUsers.Count; i++)
                         {
                             <div class="custom-control custom-checkbox">
                                 <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input" />
@@ -89,126 +152,63 @@
                                 <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
                             </div>
                         }
-                    </div>
-                </div>
-            </div>
-
-            <div class="tab-pane fade" id="project-add-requirements" role="tabpanel">
-                <h6>Project Requirements:</h6>
-                <div class="card-list-body" v-for="(requirement, index) in requirementsList">
-
-                    <div class="card card-task">
-                        <div class="progress">
-                            <div class="progress-bar bg-danger" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-title">
-                                <a href="#">
-                                    <h6 data-filter-by="text">
-                                        <input type="hidden" :value='requirement.name' :name="'ProjectRequirements[' + index + '].name'" />
-                                        {{ requirement.name }}
-                                    </h6>
-                                </a>
-                                <span class="text-small">
-                                    <input type="hidden" :value="requirement.description" :name="'ProjectRequirements[' + index + '].description'" />
-                                    {{ requirement.description }}
-                                </span>
-                                <br />
-                                <span class="text-small">
-                                    <input type="hidden" :value="requirement.category" :name="'ProjectRequirements[' + index + '].category'" />
-                                    Category: {{ requirement.category }}
-                                </span>
-                                <br />
-                                <span class="text-small">
-                                    <input type="hidden" :value="requirement.priority" :name="'ProjectRequirements[' + index + '].priority'" />
-                                    Priority: {{ requirement.priority }}
-                                </span>
-                            </div>
-                            <div class="card-meta">
-                                <ul class="avatars">
-                                    <li>
-                                        <a href="#" data-toggle="tooltip" title="Kenny">
-                                            <img alt="Kenny Tran" class="avatar" src="~/assets/img/avatar-male-6.jpg" />
-                                        </a>
-                                    </li>
-                                </ul>
-                                <div class="d-flex align-items-center">
-                                    <i class="material-icons">playlist_add_check</i>
-                                    <span>3/4</span>
-                                </div>
-                                <div class="dropdown card-options">
-                                    <button class="btn-options" type="button" id="task-dropdown-button-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="material-icons">more_vert</i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" @@click="requirementClicked(requirement, index)">Edit</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-danger" @@click="deleteRequirement(index)">Delete</a>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-
-                @* New Requirements Modal *@
-                <div class="modal fade" id="new-requirement-modal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Add a New Requirement</h5>
-                                <button type="button" class="close btn btn-round" data-dismiss="modal" aria-label="Close">
-                                    <i class="material-icons">close</i>
-                                </button>
-                            </div>
-                            <!--end of modal head-->
-                            <div class="modal-body">
-                                <div>
-                                    <div class="tab-content">
-                                        <h6>Requirement Details</h6>
-                                        <div class="form-group row">
-                                            <label class="col-3">Title</label>
-                                            <input v-model="requirement.name" class="form-control col" placeholder="Requirement title" />
-                                        </div>
-                                        <div class="form-group row align-items-center">
-                                            <label class="col-3">Description</label>
-                                            <textarea v-model="requirement.description" class="form-control col" rows="3" placeholder="Requirement description"></textarea>
-                                        </div>
-                                        <div class="form-group row align-items-center">
-                                            <label class="col-3">Category</label>
-                                            <select v-model="requirement.category" asp-items="Html.GetEnumSelectList<RequirementCategory>()" class="form-control col-3" id="priority">
-                                                <option value=""></option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group row align-items-center">
-                                            <label class="col-3">Priority</label>
-                                            <select v-model="requirement.priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-3" id="priority">
-                                                <option value=""></option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--end of modal body-->
-                            <div class="modal-footer">
-                                <button type="button" role="button" class="btn btn-primary" data-dismiss="modal" @@click="addRequirement">
-                                    Add Requirement
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <br />
-                <button role="button" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#new-requirement-modal">
-                    New Requirement
-                </button>
             </div>
         </div>
-        <hr />
-        <!--end of modal body-->
-        <button role="button" class="btn btn-primary" type="submit">
-            Create Project
-        </button>
+
+        <button class="btn btn-primary" type="button" v-show="step !== 1" @@click="prevStep">Previous Step</button>
+        <button class="btn btn-primary" type="button" v-show="step != totalsteps" @@click="nextStep">Next Step</button>
+        <span v-show="step == 3"><button class="btn btn-primary" type="submit" @@onclick="nextStep">Create Project</button></span>
+
+        @* New Requirements Modal *@
+        <div class="modal fade" id="new-requirement-modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add a New Requirement</h5>
+                        <button type="button" class="close btn btn-round" data-dismiss="modal" aria-label="Close">
+                            <i class="material-icons">close</i>
+                        </button>
+                    </div>
+                    <!--end of modal head-->
+                    <div class="modal-body">
+                        <div>
+                            <div class="tab-content">
+                                <h6>Requirement Details</h6>
+                                <div class="form-group row">
+                                    <label class="col-3">Title</label>
+                                    <input v-model="requirement.name" class="form-control col" placeholder="Requirement title" />
+                                </div>
+                                <div class="form-group row align-items-center">
+                                    <label class="col-3">Description</label>
+                                    <textarea v-model="requirement.description" class="form-control col" rows="3" placeholder="Requirement description"></textarea>
+                                </div>
+                                <div class="form-group row align-items-center">
+                                    <label class="col-3">Category</label>
+                                    <select v-model="requirement.category" asp-items="Html.GetEnumSelectList<RequirementCategory>()" class="form-control col-3" id="priority">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                                <div class="form-group row align-items-center">
+                                    <label class="col-3">Priority</label>
+                                    <select v-model="requirement.priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-3" id="priority">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end of modal body-->
+                    <div class="modal-footer">
+                        <button type="button" role="button" class="btn btn-primary" data-dismiss="modal" @@click="addRequirement">
+                            Add Requirement
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     @* Edit Requirements Modal *@
@@ -266,16 +266,20 @@
 
     @if (Model.ShowModal == true)
     {
-        <script type="text/javascript">
-            $(window).on('load', function () {
-                $('#edit-requirement-modal').modal('show');
-            });
-        </script>
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            $('#edit-requirement-modal').modal('show');
+        });
+    </script>
     }
 
     <script>
         vueMixins.push({
             data: {
+
+                step: 1,
+                totalsteps: 3,
+
                 requirement:
                 {
                     index: '',
@@ -287,6 +291,20 @@
                 requirementsList: []
             },
             methods: {
+                nextStep: function () {
+                    //this.step++;
+                    this.setProgressBar(this.step++);
+
+                    //var $progress = $('.progress');
+                    //var $progressBar = $('.progress-bar');                    
+
+                    //setTimeout(function () {
+                    //    $progressBar.css('width', '33%');                        
+                    //}, 100); // WAIT 1 second
+                },
+                prevStep: function () {
+                    this.setProgressBar(this.step--);
+                },
                 addRequirement: function () {
                     const clone = Object.assign({}, this.requirement);
                     this.requirementsList.push(clone);
@@ -307,7 +325,14 @@
                     this.requirement.category = requirement.category;
                     this.requirement.priority = requirement.priority;
                     $('#edit-requirement-modal').modal('show');
-                }
+                },                
+                setProgressBar: function () {
+                    var step = this.step - 1;
+                    var $progressBar = $('.progress-bar');
+                    var percent = parseFloat(100 / this.totalsteps) * step;
+                    percent = percent.toFixed();
+                    $progressBar.css('width', percent + "%");
+                },                
             }
         });
     </script>
