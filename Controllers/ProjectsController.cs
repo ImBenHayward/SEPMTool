@@ -46,7 +46,26 @@ namespace SEPMTool.Controllers
             return projectUsersViewModel;
         }
 
-        public IActionResult Index(int pageNumber=1, int pageSize = 10)
+        public List<TaskUsersViewModel> GetAllUsersInProject(int id)
+        {
+            var users = _context.ProjectUser.Where(p => p.ProjectId == id);
+            List<TaskUsersViewModel> taskUsersViewModel = new List<TaskUsersViewModel>();
+
+            foreach (var user in users)
+            {
+                var userModel = new TaskUsersViewModel
+                {
+                    UserId = user.UserId,
+                    Username = user.Username
+                };
+
+                taskUsersViewModel.Add(userModel);
+            }
+
+            return taskUsersViewModel;
+        }
+
+        public IActionResult Index(int pageNumber = 1, int pageSize = 10)
         {
             int excludeRecords = (pageSize * pageNumber) - pageSize;
 
@@ -77,12 +96,15 @@ namespace SEPMTool.Controllers
                 var project = _context.Projects
                     .Include(u => u.Users)
                     .Include(r => r.ProjectRequirements)
-                    .Include(r => r.Tasks)
+                    .Include(t => t.Tasks)
+                    .ThenInclude(Task => Task.Users)
                     .First(p => p.Id == id);
 
                 var model = new ProjectDetailsViewModel()
                 {
-                    Project = project
+                    Project = project,
+                    Users = GetAllUsersInProject(id)
+
                 };
 
                 return View(model);
@@ -111,7 +133,6 @@ namespace SEPMTool.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ProjectCreateViewModel project)
         {
-
             List<ProjectUser> selectedUsers = project.AllUsers.Where(u => u.IsSelected).Select(u => new ProjectUser { UserId = u.UserId, Username = u.Username, ProjectRole = ProjectRole.Developer }).ToList();
 
             Projects proj = new Projects
@@ -148,6 +169,45 @@ namespace SEPMTool.Controllers
                 this.AddAlertDanger($"{project.Name} was not created, please try again later.");
                 return View("NewProject", project);
             }
+        }
+
+        [HttpPost]
+        public IActionResult CreateTask(ProjectDetailsViewModel projectTask)
+        {
+            List<TaskUser> selectedUsers = projectTask.Users.Where(u => u.IsSelected).Select(u => new TaskUser { UserId = u.UserId, Username = u.Username }).ToList();
+
+            ProjectTask projTask = new ProjectTask
+            {
+                Name = projectTask.TaskName,
+                Description = projectTask.TaskDescription,
+                Users = selectedUsers,
+                ProjectId = projectTask.ProjectId
+            };
+
+            _context.Tasks.Add(projTask);
+            _context.SaveChanges();
+
+            return RedirectToAction("Details", new { id = projectTask.ProjectId });
+        }
+
+        public async Task<IActionResult> DeleteTask(int taskId, int projectId)
+        {
+            var task = new ProjectTask { ProjectTaskId = taskId };
+            _context.Tasks.Attach(task);
+            _context.Tasks.Remove(task);
+
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                this.AddAlertSuccess($"Task {taskId} was deleted successfully");
+                return RedirectToAction("Details", new { id = projectId });
+            }
+
+            else
+            {
+                this.AddAlertDanger($"Task {taskId} was not deleted, please try again later.");
+                return RedirectToAction("Details", new { id = projectId });
+            }
+
         }
 
     }

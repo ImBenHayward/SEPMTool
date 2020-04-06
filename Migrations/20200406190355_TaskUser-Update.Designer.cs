@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SEPMTool.Data;
 
 namespace SEPMTool.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200406190355_TaskUser-Update")]
+    partial class TaskUserUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -292,25 +294,6 @@ namespace SEPMTool.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("SEPMTool.Models.SubTask", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description");
-
-                    b.Property<bool>("IsCompleted");
-
-                    b.Property<int?>("ProjectTaskId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectTaskId");
-
-                    b.ToTable("SubTasks");
-                });
-
             modelBuilder.Entity("SEPMTool.Models.TaskUser", b =>
                 {
                     b.Property<int>("TaskId");
@@ -396,13 +379,6 @@ namespace SEPMTool.Migrations
                         .WithMany("Projects")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("SEPMTool.Models.SubTask", b =>
-                {
-                    b.HasOne("SEPMTool.Models.ProjectTask", "ProjectTask")
-                        .WithMany("SubTasks")
-                        .HasForeignKey("ProjectTaskId");
                 });
 
             modelBuilder.Entity("SEPMTool.Models.TaskUser", b =>

@@ -5271,7 +5271,7 @@ a.badge-dark:focus, a.badge-dark.focus {
     overflow: hidden;
     font-size: 0.75rem;
     background-color: #dee2e6;
-    border-radius: 20rem;
+    border-radius: 50rem;
 }
 
 .progress-bar {
@@ -13514,6 +13514,17 @@ pre[class*="language-"] {
     .media {
         display: block;
     }
+}
+
+[v-cloak] > * {
+    display: none;
+}
+
+[v-cloak]::before {
+    content: " ";
+    display: block;
+    width: 16px;
+    height: 16px;
 }
 
 /*# sourceMappingURL=theme.css.map */

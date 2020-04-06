@@ -12,11 +12,11 @@
         </div>
 
         <div class="card">
-            <div class="progress" style="height: 5px;">
-                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width:0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress" style="height:5px">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width:0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             <div v-show="step == 1">
-                <div class="card-header">General Details</div>
+                <div class="card-header">Step 1: General Details</div>
                 <div class="card-body">
                     @*<div class="tab-pane fade show active" id="project-add-details" role="tabpanel">*@
                     <div class="col auto"></div>
@@ -51,14 +51,11 @@
                         </select>
                         <span asp-validation-for="Priority" class="text-danger form-validation"></span>
                     </div>
-                    <hr>
-                    <h6>Award Eligibility</h6>
-                    <span>@Html.CheckBoxFor(m => m.AwardEligibility) Eligible for an Award</span>
                 </div>
             </div>
 
             <div v-show="step == 2">
-                <div class="card-header">Project Requirements</div>
+                <div class="card-header">Step 2: Project Requirements</div>
                 <div class="card-body">
                     @*<div class="tab-pane fade" id="project-add-requirements" role="tabpanel">*@
                     <div class="card-list-body" v-for="(requirement, index) in requirementsList">
@@ -125,7 +122,7 @@
             </div>
 
             <div v-show="step == 3">
-                <div class="card-header">Project Members</div>
+                <div class="card-header">Step 3: Project Members</div>
                 <div class="card-body">
                     @*<div class="tab-pane fade" id="project-add-members" role="tabpanel">*@
                     <div class="users-manage" data-filter-list="form-group-users">
@@ -140,18 +137,19 @@
                         <div class="form-group-users">
 
                             @for (int i = 0; i < Model.AllUsers.Count; i++)
-                        {
-                            <div class="custom-control custom-checkbox">
-                                <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input" />
-                                <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
-                                    <span class="d-flex align-items-center">
-                                        <img alt="Kenny Tran" src="~/assets/img/avatar-male-6.jpg" class="avatar mr-2" />
-                                        <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
-                                    </span>
-                                </label>
-                                <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
-                            </div>
-                        }
+                            {
+                                <div class="custom-control custom-checkbox">
+                                    <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input" />
+                                    <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
+                                        <span class="d-flex align-items-center">
+                                            <img alt="Kenny Tran" src="~/assets/img/defaultUserIcon.png" class="avatar mr-2" />
+                                            <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
+                                        </span>
+                                    </label>
+                                    <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
+                                    <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -266,11 +264,11 @@
 
     @if (Model.ShowModal == true)
     {
-    <script type="text/javascript">
-        $(window).on('load', function () {
-            $('#edit-requirement-modal').modal('show');
-        });
-    </script>
+        <script type="text/javascript">
+            $(window).on('load', function () {
+                $('#edit-requirement-modal').modal('show');
+            });
+        </script>
     }
 
     <script>
@@ -296,10 +294,10 @@
                     this.setProgressBar(this.step++);
 
                     //var $progress = $('.progress');
-                    //var $progressBar = $('.progress-bar');                    
+                    //var $progressBar = $('.progress-bar');
 
                     //setTimeout(function () {
-                    //    $progressBar.css('width', '33%');                        
+                    //    $progressBar.css('width', '33%');
                     //}, 100); // WAIT 1 second
                 },
                 prevStep: function () {
@@ -325,14 +323,22 @@
                     this.requirement.category = requirement.category;
                     this.requirement.priority = requirement.priority;
                     $('#edit-requirement-modal').modal('show');
-                },                
+                },
                 setProgressBar: function () {
                     var step = this.step - 1;
+                    var steps = this.totalsteps - 1;
                     var $progressBar = $('.progress-bar');
-                    var percent = parseFloat(100 / this.totalsteps) * step;
+                    var percent = parseFloat(100 / steps) * step;
+                    console.log(percent);
                     percent = percent.toFixed();
                     $progressBar.css('width', percent + "%");
-                },                
+
+                    if (this.step == 3) {
+                        $progressBar.css('border-radius', '320px');
+                    } else {
+                        $progressBar.css('border-radius', '.5rem 0px');
+                    }
+                },
             }
         });
     </script>
