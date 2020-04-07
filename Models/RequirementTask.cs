@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace SEPMTool.Models
 {
-    public class ProjectTask
+    public class RequirementTask
     {
-        public int ProjectTaskId { get; set; }
-        public int ProjectId { get; set; }
-        public Projects Project { get; set; }
+        public int Id { get; set; }
+        public int ProjectRequirementId { get; set; }
+        public ProjectRequirement ProjectRequirement { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public Priority Priority { get; set; }

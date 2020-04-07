@@ -8,6 +8,6 @@ namespace SEPMTool.Models
         public int Id { get; set; }
         public string Description { get; set; }
         public bool IsCompleted { get; set; }
-        public ProjectTask ProjectTask { get; set; }
+        public RequirementTask ProjectTask { get; set; }
     }
 }

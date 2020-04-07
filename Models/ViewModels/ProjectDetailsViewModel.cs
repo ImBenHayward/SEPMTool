@@ -8,11 +8,13 @@ namespace SEPMTool.Models.ViewModels
 {
     public class ProjectDetailsViewModel
     {
-        public Projects Project { get; set; }
+        public Project Project { get; set; }
         public int ProjectId { get; set; }
+        public int RequirementId { get; set; }
         public string TaskName { get; set; }
         public string TaskDescription { get; set; }
         public List<SubTask> SubTasks { get; set; }
         public List<TaskUsersViewModel> Users { get; set; }
+        public List<ProjectUsersViewModel> AllUsers { get; set; }
     }
 }

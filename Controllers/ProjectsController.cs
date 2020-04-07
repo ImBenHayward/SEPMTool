@@ -74,11 +74,11 @@ namespace SEPMTool.Controllers
             var projects = _context.Projects
                 .Include(u => u.Users)
                 .Include(r => r.ProjectRequirements)
-                .Include(r => r.Tasks)
+                .ThenInclude(ProjectRequirement => ProjectRequirement.Tasks)
                 .Skip(excludeRecords)
                 .Take(pageSize);
 
-            PagedResult<Projects> result = new PagedResult<Projects>
+            PagedResult<Project> result = new PagedResult<Project>
             {
                 Data = projects.AsNoTracking().ToList(),
                 TotalItems = _context.Projects.Count(),
@@ -91,20 +91,22 @@ namespace SEPMTool.Controllers
 
         public IActionResult Details(int id)
         {
+            var allUsers = _context.Users.Where(u => !u.Projects.Any(p => p.ProjectId == id)).Select(x => new ProjectUsersViewModel { UserId = x.Id, Username = x.FirstName + " " + x.LastName }).ToList();
+
             if (_context.Projects.Any(p => p.Id == id))
             {
                 var project = _context.Projects
                     .Include(u => u.Users)
                     .Include(r => r.ProjectRequirements)
-                    .Include(t => t.Tasks)
+                    .ThenInclude(ProjectRequirement => ProjectRequirement.Tasks)
                     .ThenInclude(Task => Task.Users)
                     .First(p => p.Id == id);
 
                 var model = new ProjectDetailsViewModel()
                 {
                     Project = project,
-                    Users = GetAllUsersInProject(id)
-
+                    Users = GetAllUsersInProject(id),
+                    AllUsers = allUsers
                 };
 
                 return View(model);
@@ -135,7 +137,7 @@ namespace SEPMTool.Controllers
         {
             List<ProjectUser> selectedUsers = project.AllUsers.Where(u => u.IsSelected).Select(u => new ProjectUser { UserId = u.UserId, Username = u.Username, ProjectRole = ProjectRole.Developer }).ToList();
 
-            Projects proj = new Projects
+            Project proj = new Project
             {
                 Name = project.Name,
                 Description = project.Description,
@@ -151,12 +153,6 @@ namespace SEPMTool.Controllers
             };
 
             _context.Projects.Add(proj);
-
-            //if(!ModelState.IsValid)
-            //{            
-            //    this.AddAlertDanger($"{project.Name} was not created, model not valid, please try again.");
-            //    return View("NewProject", project);
-            //}
 
             if (await _context.SaveChangesAsync() > 0)
             {
@@ -176,12 +172,14 @@ namespace SEPMTool.Controllers
         {
             List<TaskUser> selectedUsers = projectTask.Users.Where(u => u.IsSelected).Select(u => new TaskUser { UserId = u.UserId, Username = u.Username }).ToList();
 
-            ProjectTask projTask = new ProjectTask
+            RequirementTask projTask = new RequirementTask
             {
                 Name = projectTask.TaskName,
                 Description = projectTask.TaskDescription,
                 Users = selectedUsers,
-                ProjectId = projectTask.ProjectId
+                ProjectRequirementId = projectTask.RequirementId
+                // come back to this, won't be projectId anymore, will be requirementId.
+                //ProjectId = projectTask.ProjectId
             };
 
             _context.Tasks.Add(projTask);
@@ -198,27 +196,55 @@ namespace SEPMTool.Controllers
                 return RedirectToAction("Details", new { id = projectTask.ProjectId });
             }
 
-            return RedirectToAction("Details", new { id = projectTask.ProjectId });
+            //return RedirectToAction("Details", new { id = projectTask.ProjectId });
         }
 
         public async Task<IActionResult> DeleteTask(int taskId, int projectId)
         {
-            var task = new ProjectTask { ProjectTaskId = taskId };
-            _context.Tasks.Attach(task);
+            //var task = new RequirementTask { Id = taskId };
+            var task = _context.Tasks.Find(taskId);
             _context.Tasks.Remove(task);
 
             if (await _context.SaveChangesAsync() > 0)
             {
-                this.AddAlertSuccess($"Task {taskId} was deleted successfully");
+                this.AddAlertSuccess($"{task.Name} was deleted successfully");
                 return RedirectToAction("Details", new { id = projectId });
             }
 
             else
             {
-                this.AddAlertDanger($"Task {taskId} was not deleted, please try again later.");
+                this.AddAlertDanger($"Task {task.Name} was not deleted, please try again later.");
                 return RedirectToAction("Details", new { id = projectId });
             }
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddUsers(ProjectDetailsViewModel projectUpdate)
+        {
+            List<ProjectUser> selectedUsers = projectUpdate.AllUsers.Where(u => u.IsSelected).Select(u => new ProjectUser { UserId = u.UserId, Username = u.Username, ProjectRole = ProjectRole.Developer, ProjectId = projectUpdate.ProjectId }).ToList();
+            List<string> Users = new List<String>();
+
+            foreach (var user in selectedUsers)
+            {
+                _context.ProjectUser.Add(user);
+                Users.Add(user.Username);
+            }
+                     
+
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                string users = string.Join(", ", Users);
+                this.AddAlertSuccess($"{users} added successfully");
+                return RedirectToAction("Details", new { id = projectUpdate.ProjectId });
+            }
+
+            else
+            {
+                string users = string.Join(",", Users);
+                this.AddAlertDanger($"Users were not added successfully.");
+                return RedirectToAction("Details", new { id = projectUpdate.ProjectId });
+            }
         }
 
     }

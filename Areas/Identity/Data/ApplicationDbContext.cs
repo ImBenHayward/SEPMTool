@@ -17,9 +17,9 @@ namespace SEPMTool.Data
 
         }
 
-        public DbSet<Projects> Projects { get; set; }
+        public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectUser> ProjectUser { get; set; }
-        public DbSet<ProjectTask> Tasks { get; set; }
+        public DbSet<RequirementTask> Tasks { get; set; }
         public DbSet<SubTask> SubTasks { get; set; }
         public DbSet<TaskUser> TaskUser { get; set; }
         public DbSet<ProjectRequirement> Requirements { get; set; }
@@ -39,11 +39,11 @@ namespace SEPMTool.Data
                 .WithMany(u => u.Projects)
                 .HasForeignKey(pu => pu.UserId);
 
-            builder.Entity<Projects>()
+            builder.Entity<ProjectRequirement>()
                 .HasMany(p => p.Tasks)
-                .WithOne(t => t.Project);
+                .WithOne(t => t.ProjectRequirement);
 
-            builder.Entity<ProjectTask>()
+            builder.Entity<RequirementTask>()
                 .HasMany(p => p.SubTasks)
                 .WithOne(s => s.ProjectTask);
 
@@ -58,7 +58,7 @@ namespace SEPMTool.Data
                 .WithMany(u => u.Tasks)
                 .HasForeignKey(u => u.UserId);
 
-            builder.Entity<Projects>()
+            builder.Entity<Project>()
                 .HasMany(p => p.ProjectRequirements)
                 .WithOne(r => r.Project);
 

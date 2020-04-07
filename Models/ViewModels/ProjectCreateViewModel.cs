@@ -22,9 +22,6 @@ namespace SEPMTool.Models.ViewModels
         public string Description { get; set; }
         //[Required(ErrorMessage = "Project requirements are required")]
         public List<ProjectRequirement> ProjectRequirements { get; set; }
-        [Required(ErrorMessage = "Project tasks are required")]
-        public ICollection<ProjectTask> Tasks { get; set; }
-        [Required(ErrorMessage = "Project priority is required")]
         public Priority Priority { get; set; }
         public Status Status { get; set; }
         public bool AwardEligibility { get; set; }

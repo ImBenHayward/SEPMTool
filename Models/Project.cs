@@ -5,13 +5,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SEPMTool.Models
 {
-    public class Projects
+    public class Project
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public ICollection<ProjectRequirement> ProjectRequirements { get; set; }
-        public ICollection<ProjectTask> Tasks { get; set; }
         public Priority Priority { get; set; }
         public Status Status { get; set; }
         public bool AwardEligibility { get; set; }
