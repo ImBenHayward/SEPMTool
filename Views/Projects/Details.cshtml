@@ -15,7 +15,7 @@
                             {
                                 <li>
                                     <a href="#" data-toggle="tooltip" data-placement="top" title="@user.Username">
-                                        <img alt="Claire Connors" class="avatar" src="~/assets/img/defaultUserIcon.png" />
+                                        <img alt="Claire Connors" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
                                     </a>
                                 </li>
                             }
@@ -110,7 +110,7 @@
                                                             {
                                                                 <li>
                                                                     <a href="#" data-toggle="tooltip" title="@user.Username">
-                                                                        <img alt="@user.Username" class="avatar" src="~/assets/img/defaultUserIcon.png" />
+                                                                        <img alt="@user.Username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
                                                                     </a>
                                                                 </li>
                                                             }
@@ -489,7 +489,7 @@
                                                 @foreach (var user in Model.Project.Users)
                                                 {
                                                     <li>
-                                                        <img alt="@user.Username" src="~/assets/img/defaultUserIcon.png" class="avatar" data-toggle="tooltip" data-title="@user.Username" />
+                                                        <img alt="@user.Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" data-title="@user.Username" />
                                                     </li>
                                                 }
                                             </ul>
@@ -509,7 +509,7 @@
                                                     <input asp-for="@Model.Users[i].IsSelected" type="checkbox" class="custom-control-input">
                                                     <label asp-for="@Model.Users[i].IsSelected" class="custom-control-label">
                                                         <span class="d-flex align-items-center">
-                                                            <img alt="@Model.Users[i].Username" src="~/assets/img/defaultUserIcon.png" class="avatar mr-2" />
+                                                            <img alt="@Model.Users[i].Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
                                                             <span class="h6 mb-0" data-filter-by="text">@Model.Users[i].Username</span>
                                                         </span>
                                                     </label>

@@ -172,7 +172,7 @@ namespace SEPMTool.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTask(ProjectDetailsViewModel projectTask)
+        public async Task<IActionResult> CreateTask(ProjectDetailsViewModel projectTask)
         {
             List<TaskUser> selectedUsers = projectTask.Users.Where(u => u.IsSelected).Select(u => new TaskUser { UserId = u.UserId, Username = u.Username }).ToList();
 
@@ -185,7 +185,18 @@ namespace SEPMTool.Controllers
             };
 
             _context.Tasks.Add(projTask);
-            _context.SaveChanges();
+
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                this.AddAlertSuccess($"{projectTask.TaskName} was created successfully");
+                return RedirectToAction("Details", new { id = projectTask.ProjectId });
+            }
+
+            else
+            {
+                this.AddAlertDanger($"{projectTask.TaskName} was not created, please try again later.");
+                return RedirectToAction("Details", new { id = projectTask.ProjectId });
+            }
 
             return RedirectToAction("Details", new { id = projectTask.ProjectId });
         }
