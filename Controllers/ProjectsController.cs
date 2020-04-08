@@ -179,8 +179,6 @@ namespace SEPMTool.Controllers
                 Description = projectTask.TaskDescription,
                 Users = selectedUsers,
                 ProjectRequirementId = projectTask.RequirementId
-                // come back to this, won't be projectId anymore, will be requirementId.
-                //ProjectId = projectTask.ProjectId
             };
 
             _context.Tasks.Add(projTask);
@@ -196,8 +194,6 @@ namespace SEPMTool.Controllers
                 this.AddAlertDanger($"{projectTask.TaskName} was not created, please try again later.");
                 return RedirectToAction("Details", new { id = projectTask.ProjectId });
             }
-
-            //return RedirectToAction("Details", new { id = projectTask.ProjectId });
         }
 
         public async Task<IActionResult> DeleteTask(int taskId, int projectId)
