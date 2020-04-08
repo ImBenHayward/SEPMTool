@@ -260,16 +260,6 @@
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    <script src="~/js/custom-validation.js"></script>
-
-    @if (Model.ShowModal == true)
-    {
-        <script type="text/javascript">
-            $(window).on('load', function () {
-                $('#edit-requirement-modal').modal('show');
-            });
-        </script>
-    }
 
     <script>
         vueMixins.push({
@@ -290,15 +280,7 @@
             },
             methods: {
                 nextStep: function () {
-                    //this.step++;
                     this.setProgressBar(this.step++);
-
-                    //var $progress = $('.progress');
-                    //var $progressBar = $('.progress-bar');
-
-                    //setTimeout(function () {
-                    //    $progressBar.css('width', '33%');
-                    //}, 100); // WAIT 1 second
                 },
                 prevStep: function () {
                     this.setProgressBar(this.step--);

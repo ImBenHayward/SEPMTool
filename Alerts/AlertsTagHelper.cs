@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SEPMTool.Alerts
 {
-    //[HtmlTargetElement("alerts")]
+    [HtmlTargetElement("alerts")]
     public class AlertsTagHelper : TagHelper
     {
         private const string AlertKey = "SEPMTool.Alert";

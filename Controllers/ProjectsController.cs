@@ -89,6 +89,7 @@ namespace SEPMTool.Controllers
             return View(result);
         }
 
+        [HttpGet]
         public IActionResult Details(int id)
         {
             var allUsers = _context.Users.Where(u => !u.Projects.Any(p => p.ProjectId == id)).Select(x => new ProjectUsersViewModel { UserId = x.Id, Username = x.FirstName + " " + x.LastName }).ToList();
