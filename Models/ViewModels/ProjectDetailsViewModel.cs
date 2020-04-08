@@ -14,6 +14,8 @@ namespace SEPMTool.Models.ViewModels
         public string TaskName { get; set; }
         public string TaskDescription { get; set; }
         public List<SubTask> SubTasks { get; set; }
+        public string Description { get; set; }
+        public bool IsCompleted { get; set; }
         public List<TaskUsersViewModel> Users { get; set; }
         public List<ProjectUsersViewModel> AllUsers { get; set; }
     }

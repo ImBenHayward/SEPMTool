@@ -288,6 +288,13 @@
                 addRequirement: function () {
                     const clone = Object.assign({}, this.requirement);
                     this.requirementsList.push(clone);
+                    this.requirement = {
+                        index: '',
+                        name: '',
+                        description: '',
+                        category: '',
+                        priority: ''
+                    };
                 },
                 editRequirement: function (index) {
                     //this.requirementsList[index] = this.requirement;

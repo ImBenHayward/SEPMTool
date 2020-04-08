@@ -178,7 +178,8 @@ namespace SEPMTool.Controllers
                 Name = projectTask.TaskName,
                 Description = projectTask.TaskDescription,
                 Users = selectedUsers,
-                ProjectRequirementId = projectTask.RequirementId
+                ProjectRequirementId = projectTask.RequirementId,
+                SubTasks = projectTask.SubTasks
             };
 
             _context.Tasks.Add(projTask);
