@@ -81,13 +81,13 @@
             <div v-show="step == 2">
                 <div class="card-header">Step 2: Project Requirements</div>
                 <div class="card-body">
-                    @*<div class="tab-pane fade" id="project-add-requirements" role="tabpanel">*@
+                    <div class="alert alert-danger text-center alert-dismissible" id="reqValidationAlert" style="display:none">
+                        <button type="button" class="close" onclick="$('#reqValidationAlert').hide()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <div id="reqValidationAlertDetails">Please add a project requirement before continuing.</div>
+                    </div>
                     <div class="card-list-body" v-for="(requirement, index) in requirementsList">
 
                         <div class="card card-task">
-                            <div class="progress">
-                                <div class="progress-bar bg-danger" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
                             <div class="card-body">
                                 <div class="card-title">
                                     <a href="#">
@@ -115,7 +115,7 @@
                                     <ul class="avatars">
                                         <li>
                                             <a href="#" data-toggle="tooltip" title="Kenny">
-                                                <img alt="Kenny Tran" class="avatar" src="~/assets/img/avatar-male-6.jpg" />
+                                                <img alt="Kenny Tran" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
                                             </a>
                                         </li>
                                     </ul>
@@ -200,32 +200,52 @@
                         <div>
                             <div class="tab-content">
                                 <h6>Requirement Details</h6>
-                                <div class="form-group row">
+                                <div class="form-group row align-items-center">
                                     <label class="col-3">Title</label>
-                                    <input v-model="requirement.name" class="form-control col" placeholder="Requirement title" />
+                                    <input v-model="requirement.name" class="form-control col" placeholder="Requirement title" id="reqname" />
+                                    <div id="form-validation">
+                                        <i class="fas fa-check-circle"></i>
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <small>Error Message</small>
+                                    </div>
                                 </div>
                                 <div class="form-group row align-items-center">
                                     <label class="col-3">Description</label>
-                                    <textarea v-model="requirement.description" class="form-control col" rows="3" placeholder="Requirement description"></textarea>
+                                    <textarea v-model="requirement.description" class="form-control col" rows="3" placeholder="Requirement description" id="reqdescription"></textarea>
+                                    <div id="form-validation">
+                                        <i class="fas fa-check-circle"></i>
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <small>Error Message</small>
+                                    </div>
                                 </div>
                                 <div class="form-group row align-items-center">
                                     <label class="col-3">Category</label>
-                                    <select v-model="requirement.category" asp-items="Html.GetEnumSelectList<RequirementCategory>()" class="form-control col-3" id="priority">
+                                    <select v-model="requirement.category" asp-items="Html.GetEnumSelectList<RequirementCategory>()" class="form-control col-3" id="reqcategory">
                                         <option value=""></option>
                                     </select>
+                                    <div id="form-validation">
+                                        <i class="fas fa-check-circle"></i>
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <small>Error Message</small>
+                                    </div>
                                 </div>
                                 <div class="form-group row align-items-center">
                                     <label class="col-3">Priority</label>
-                                    <select v-model="requirement.priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-3" id="priority">
+                                    <select v-model="requirement.priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-3" id="reqpriority">
                                         <option value=""></option>
                                     </select>
+                                    <div id="form-validation">
+                                        <i class="fas fa-check-circle"></i>
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <small>Error Message</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!--end of modal body-->
                     <div class="modal-footer">
-                        <button type="button" role="button" class="btn btn-primary" data-dismiss="modal" @@click="addRequirement">
+                        <button type="button" role="button" class="btn btn-primary" @@click="addRequirement">
                             Add Requirement
                         </button>
                     </div>
@@ -315,8 +335,14 @@
             },
             methods: {
                 nextStep: function () {
-                    if (this.step == 1 || 2) {
-                        if (this.checkInputs()) {
+                    if (this.step == 1) {
+                        if (this.checkInputsP1()) {
+                            this.setProgressBar(this.step++);
+                            return true;
+                        }
+                    }
+                    if (this.step == 2) {
+                        if (this.checkInputsP2()) {
                             this.setProgressBar(this.step++);
                         }
                     }
@@ -324,7 +350,21 @@
                 prevStep: function () {
                     this.setProgressBar(this.step--);
                 },
-                checkInputs: function () {
+                addRequirement: function () {
+                    if (this.checkInputsRequirementsModal()) {
+                        $('#new-requirement-modal').modal('hide');
+                        const clone = Object.assign({}, this.requirement);
+                        this.requirementsList.push(clone);
+                        this.requirement = {
+                            index: '',
+                            name: '',
+                            description: '',
+                            category: '',
+                            priority: ''
+                        };
+                    }
+                },
+                checkInputsP1: function () {
                     const name = document.getElementById('name');
                     const description = document.getElementById('description');
                     const startDate = document.getElementById('startDate');
@@ -351,13 +391,13 @@
                     }
 
                     if (this.projectModel.deadline < currentDate) {
-                        this.setErrorFor(deadline, "Enter a project deadline.");         
+                        this.setErrorFor(deadline, "Enter a project deadline.");
                     } else {
                         this.setSuccessFor(deadline);
                     }
 
                     if (!this.projectModel.priority) {
-                        this.setErrorFor(priority, "Enter a project priority.");           
+                        this.setErrorFor(priority, "Enter a project priority.");
                     } else {
                         this.setSuccessFor(priority);
                     }
@@ -370,6 +410,65 @@
                         return true;
                     }
                 },
+                checkInputsP2: function () {
+                    if (this.requirementsList.length > 0) {
+                        return true;
+                    } else {
+                        $('#reqValidationAlert').fadeTo(2000, 500).slideUp(500, function () {
+                            $("#reqValidationAlert").slideUp(500);
+                        });
+                    }
+                },
+                checkEmptyRequirements: function () {
+                    if (this.requirementsList.length > 0) {
+                        return true;
+                    } else {
+                        $('#reqValidationAlert').fadeTo(2000, 500).slideUp(500, function () {
+                            $("#reqValidationAlert").slideUp(500);
+                        });
+                    }
+                },
+                checkInputsRequirementsModal: function () {
+                    const name = document.getElementById('reqname');
+                    const description = document.getElementById('reqdescription');
+                    const category = document.getElementById('reqcategory');
+                    const priority = document.getElementById('reqpriority');
+
+                    if (!this.requirement.name) {
+                        this.setErrorFor(name, "Required!");
+                    } else {
+                        this.setSuccessFor(name);
+                    }
+
+                    if (!this.requirement.description) {
+                        this.setErrorFor(description, "Required!");
+                    } else {
+                        this.setSuccessFor(description);
+                    }
+
+                    if (!this.requirement.category) {
+                        this.setErrorFor(category, "Required!");
+                    } else {
+                        this.setSuccessFor(category);
+                    }
+
+                    if (!this.requirement.priority) {
+                        this.setErrorFor(priority, "Required!");
+                    } else {
+                        this.setSuccessFor(priority);
+                    }
+
+                    if (name.parentElement.classList.contains("success")
+                        && description.parentElement.classList.contains("success")
+                        && category.parentElement.classList.contains("success")
+                        && priority.parentElement.classList.contains("success")) {
+                        name.parentElement.classList.remove("success");
+                        description.parentElement.classList.remove("success");
+                        category.parentElement.classList.remove("success");
+                        priority.parentElement.classList.remove("success");
+                        return true;
+                    }
+                },
                 setErrorFor: function (input, message) {
                     const formGroup = input.parentElement;
                     const small = formGroup.querySelector('small');
@@ -379,17 +478,6 @@
                 setSuccessFor: function (input) {
                     const formGroup = input.parentElement;
                     formGroup.className = 'form-group row align-items-center success';
-                },
-                addRequirement: function () {
-                    const clone = Object.assign({}, this.requirement);
-                    this.requirementsList.push(clone);
-                    this.requirement = {
-                        index: '',
-                        name: '',
-                        description: '',
-                        category: '',
-                        priority: ''
-                    };
                 },
                 editRequirement: function (index) {
                     //this.requirementsList[index] = this.requirement;
