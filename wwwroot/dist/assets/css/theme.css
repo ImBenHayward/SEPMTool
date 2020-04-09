@@ -13527,4 +13527,60 @@ pre[class*="language-"] {
     height: 16px;
 }
 
+.form-group i {
+    position: absolute;
+    margin-left: 5px;
+    margin-top: 4px;
+    visibility: hidden;
+}
+
+.form-group form-validation {
+    margin-left: 5px;
+    margin-right: 5px;
+    justify-content: flex-start;
+}
+
+.form-group small {
+    visibility: hidden;
+    padding-left: 23px;
+}
+
+.form-group.error small {
+    color: #e74c3c;
+    visibility: visible;
+}
+
+.form-group.success input {
+    border-color: #2ecc71;
+}
+
+.form-group.error input {
+    border-color: #e74c3c;
+}
+
+.form-group.error textarea {
+    border-color: #e74c3c;
+}
+
+.form-group.success textarea {
+    border-color: #2ecc71;
+}
+
+.form-group.success select {
+    border-color: #2ecc71;
+}
+
+.form-group.error select {
+    border-color: #e74c3c;
+}
+
+.form-group.success i.fa-check-circle {
+    color: #2ecc71;
+    visibility: visible;
+}
+
+.form-group.error i.fa-exclamation-circle {
+    color: #e74c3c;
+    visibility: visible;
+}
 /*# sourceMappingURL=theme.css.map */

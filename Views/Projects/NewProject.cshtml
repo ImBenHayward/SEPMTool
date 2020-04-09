@@ -18,38 +18,62 @@
             <div v-show="step == 1">
                 <div class="card-header">Step 1: General Details</div>
                 <div class="card-body">
-                    @*<div class="tab-pane fade show active" id="project-add-details" role="tabpanel">*@
                     <div class="col auto"></div>
                     <div class="form-group row align-items-center">
-                        <label asp-for="Name" class="col-2"></label>
-                        <input asp-for="Name" class="form-control col-4" placeholder="Project name" />
-                        <span asp-validation-for="Name" class="text-danger form-validation"> </span>
+                        <label for="name" class="col-2">Name</label>
+                        <input v-model="projectModel.name" class="form-control col-4" placeholder="Project name" id="name" />
+                        <div id="form-validation">
+                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-exclamation-circle"></i>
+                            <small>Error Message</small>
+                            <input type="hidden" :value="projectModel.name" :name="'Name'" />
+                        </div>
                     </div>
                     <div class="form-group row align-items-center">
-                        <label asp-for="Description" class="col-2">Description</label>
-                        <textarea asp-for="Description" class="form-control col-4" rows="3" placeholder="Project description"></textarea>
-                        <span asp-validation-for="Description" class="text-danger form-validation"></span>
+                        <label class="col-2">Description</label>
+                        <textarea v-model="projectModel.description" class="form-control col-4" rows="3" placeholder="Project description" id="description"></textarea>
+                        <div id="form-validation">
+                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-exclamation-circle"></i>
+                            <small>Error Message</small>
+                        </div>
+                        <input type="hidden" :value="projectModel.description" :name="'Description'" />
                     </div>
                     <hr>
                     <h6>Timeline</h6>
                     <div class="form-group row align-items-center">
-                        <label asp-for="StartDate" class="col-2">Start Date</label>
-                        <input asp-for="StartDate" class="form-control col-2" placeholder="Select a date" data-flatpickr data-default-date="2021-04-21" data-alt-input="true" />
-                        <span asp-validation-for="StartDate" class="text-dange form-validationr"></span>
+                        <label class="col-2">Start Date</label>
+                        <input v-model="projectModel.startDate" class="form-control col-2" placeholder="Select a date" data-flatpickr data-alt-input="true" id="startDate" />
+                        <div id="form-validation">
+                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-exclamation-circle"></i>
+                            <small>Error Message</small>
+                        </div>
+                        <input type="hidden" :value="projectModel.startDate" :name="'StartDate'" />
                     </div>
                     <div class="form-group row align-items-center">
-                        <label asp-for="Deadline" class="col-2">Due Date</label>
-                        <input asp-for="Deadline" class="form-control col-2" placeholder="Select a date" data-flatpickr data-default-date="2021-09-15" data-alt-input="true" />
-                        <span asp-validation-for="Deadline" class="text-danger form-validation"></span>
+                        <label class="col-2">Deadline</label>
+                        <input v-model="projectModel.deadline" class="form-control col-2" placeholder="Select a date" data-flatpickr data-alt-input="true" id="deadline" />
+                        <div id="form-validation">
+                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-exclamation-circle"></i>
+                            <small>Error Message</small>
+                        </div>
+                        <input type="hidden" :value="projectModel.deadline" :name="'Deadline'" />
                     </div>
                     <hr>
                     <h6>Project Priority</h6>
                     <div class="form-group row align-items-center">
-                        <label asp-for="Priority" class="col-2"></label>
-                        <select asp-for="Priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-2">
-                            <option value=""></option>
+                        <label class="col-2">Priority</label>
+                        <select v-model="projectModel.priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-2" id="priority">
+                            <option disabled value=""></option>
                         </select>
-                        <span asp-validation-for="Priority" class="text-danger form-validation"></span>
+                        <div id="form-validation">
+                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-exclamation-circle"></i>
+                            <small>Error Message</small>
+                        </div>
+                        <input type="hidden" :value="projectModel.priority" :name="'Priority'" />
                     </div>
                 </div>
             </div>
@@ -269,6 +293,16 @@
                 step: 1,
                 totalsteps: 3,
 
+                projectModel: {
+                    name: null,
+                    description: null,
+                    startDate: null,
+                    deadline: null,
+                    priority: null,
+                },
+                validation: {
+                    nameValidation: '',
+                },
                 requirement:
                 {
                     index: '',
@@ -281,10 +315,70 @@
             },
             methods: {
                 nextStep: function () {
-                    this.setProgressBar(this.step++);
+                    if (this.step == 1 || 2) {
+                        if (this.checkInputs()) {
+                            this.setProgressBar(this.step++);
+                        }
+                    }
                 },
                 prevStep: function () {
                     this.setProgressBar(this.step--);
+                },
+                checkInputs: function () {
+                    const name = document.getElementById('name');
+                    const description = document.getElementById('description');
+                    const startDate = document.getElementById('startDate');
+                    const deadline = document.getElementById('deadline');
+                    const priority = document.getElementById('priority');
+                    var currentDate = new Date();
+
+                    if (!this.projectModel.name) {
+                        this.setErrorFor(name, "Enter a project name.");
+                    } else {
+                        this.setSuccessFor(name);
+                    }
+
+                    if (!this.projectModel.description) {
+                        this.setErrorFor(description, "Enter a project description.");
+                    } else {
+                        this.setSuccessFor(description);
+                    }
+
+                    if (this.projectModel.startDate < currentDate) {
+                        this.setErrorFor(startDate, "Enter a project start date.");
+                    } else {
+                        this.setSuccessFor(startDate);
+                    }
+
+                    if (this.projectModel.deadline < currentDate) {
+                        this.setErrorFor(deadline, "Enter a project deadline.");         
+                    } else {
+                        this.setSuccessFor(deadline);
+                    }
+
+                    if (!this.projectModel.priority) {
+                        this.setErrorFor(priority, "Enter a project priority.");           
+                    } else {
+                        this.setSuccessFor(priority);
+                    }
+
+                    if (name.parentElement.classList.contains("success")
+                        && description.parentElement.classList.contains("success")
+                        && startDate.parentElement.classList.contains("success")
+                        && deadline.parentElement.classList.contains("success")
+                        && priority.parentElement.classList.contains("success")) {
+                        return true;
+                    }
+                },
+                setErrorFor: function (input, message) {
+                    const formGroup = input.parentElement;
+                    const small = formGroup.querySelector('small');
+                    small.innerText = message;
+                    formGroup.className = 'form-group row align-items-center error';
+                },
+                setSuccessFor: function (input) {
+                    const formGroup = input.parentElement;
+                    formGroup.className = 'form-group row align-items-center success';
                 },
                 addRequirement: function () {
                     const clone = Object.assign({}, this.requirement);
