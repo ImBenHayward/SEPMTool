@@ -154,11 +154,12 @@
                     </div>
                 </div>
             </div>
+            <div class="card-footer">
+                <button class="btn btn-primary" type="button" v-show="step !== 1" @@click="prevStep">Previous Step</button>
+                <button class="btn btn-primary float-lg-right" type="button" v-show="step != totalsteps" @@click="nextStep">Next Step</button>
+                <span v-show="step == 3"><button class="btn btn-primary float-right" type="submit" @@onclick="nextStep">Create Project</button></span>
+            </div>
         </div>
-
-        <button class="btn btn-primary" type="button" v-show="step !== 1" @@click="prevStep">Previous Step</button>
-        <button class="btn btn-primary" type="button" v-show="step != totalsteps" @@click="nextStep">Next Step</button>
-        <span v-show="step == 3"><button class="btn btn-primary" type="submit" @@onclick="nextStep">Create Project</button></span>
 
         @* New Requirements Modal *@
         <div class="modal fade" id="new-requirement-modal" tabindex="-1" aria-hidden="true">
