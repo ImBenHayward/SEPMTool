@@ -45,7 +45,8 @@ namespace SEPMTool.Data
 
             builder.Entity<RequirementTask>()
                 .HasMany(p => p.SubTasks)
-                .WithOne(s => s.ProjectTask);
+                .WithOne(s => s.ProjectTask)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<TaskUser>()
                 .HasKey(tu => new { tu.TaskId, tu.UserId });

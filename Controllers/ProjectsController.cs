@@ -171,7 +171,12 @@ namespace SEPMTool.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTask(ProjectDetailsViewModel projectTask)
         {
-            List<TaskUser> selectedUsers = projectTask.Users.Where(u => u.IsSelected).Select(u => new TaskUser { UserId = u.UserId, Username = u.Username }).ToList();
+            List<TaskUser> selectedUsers = new List<TaskUser>();
+
+            if (projectTask.Users != null)
+            {
+                selectedUsers = projectTask.Users.Where(u => u.IsSelected).Select(u => new TaskUser { UserId = u.UserId, Username = u.Username }).ToList();
+            }
 
             RequirementTask projTask = new RequirementTask
             {
@@ -199,7 +204,7 @@ namespace SEPMTool.Controllers
 
         public async Task<IActionResult> DeleteTask(int taskId, int projectId)
         {
-            //var task = new RequirementTask { Id = taskId };
+            //var task = new RequirementTask { Id = taskId };                        
             var task = _context.Tasks.Find(taskId);
             _context.Tasks.Remove(task);
 

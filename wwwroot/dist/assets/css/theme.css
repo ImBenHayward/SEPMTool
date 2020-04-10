@@ -4586,6 +4586,13 @@ input[type="button"].btn-block {
     border-bottom: 1px solid #dee2e6;
 }
 
+.card-header-requirements {
+    padding: 0.7rem 1.0rem;
+    margin-bottom: 0;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid #dee2e6;
+}
+
     .card-header:first-child {
         border-radius: calc(0.5rem - 1px) calc(0.5rem - 1px) 0 0;
     }
@@ -5362,6 +5369,16 @@ a.badge-dark:focus, a.badge-dark.focus {
         color: #6c757d;
         background-color: #e9ecef;
     }
+
+.list-group-item-requirements {
+    position: relative;
+    display: block;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+}
 
 .list-group-item {
     position: relative;
@@ -10691,6 +10708,13 @@ h3 + .btn-round, h5 + .btn-round {
     margin: 0;
 }
 
+.h6-requirement {
+    font-weight: 500;
+    line-height: 1.2;
+    color: #212529;
+    padding-right: 5px;
+}
+
 .card-body p:last-child {
     margin-bottom: 0;
 }
@@ -10702,7 +10726,7 @@ h3 + .btn-round, h5 + .btn-round {
 /** Card Options **/
 .card-body .card-options {
     position: absolute;
-    top: 1.5rem;
+    top: 0.75rem;
     right: 0.75rem;
 }
 
@@ -10729,6 +10753,10 @@ h3 + .btn-round, h5 + .btn-round {
 /** Custom Cards **/
 .card {
     margin-bottom: 0.75rem;
+}
+
+.requirements-card {
+    margin-top: 20px;
 }
 
     .card .card-title {
@@ -13582,5 +13610,37 @@ pre[class*="language-"] {
 .form-group.error i.fa-exclamation-circle {
     color: #e74c3c;
     visibility: visible;
+}
+
+.slide-enter-active {
+    -moz-transition-duration: 0.3s;
+    -webkit-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -moz-transition-timing-function: ease-in;
+    -webkit-transition-timing-function: ease-in;
+    -o-transition-timing-function: ease-in;
+    transition-timing-function: ease-in;
+}
+
+.slide-leave-active {
+    -moz-transition-duration: 0.3s;
+    -webkit-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -moz-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    -webkit-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    -o-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+}
+
+.slide-enter-to, .slide-leave {
+    max-height: 100px;
+    overflow: hidden;
+}
+
+.slide-enter, .slide-leave-to {
+    overflow: hidden;
+    max-height: 0;
 }
 /*# sourceMappingURL=theme.css.map */
