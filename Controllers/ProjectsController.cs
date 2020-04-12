@@ -12,6 +12,8 @@ using SEPMTool.Data;
 using SEPMTool.Models;
 using SEPMTool.Models.ViewModels;
 using cloudscribe.Pagination.Models;
+using AutoMapper;
+using static SEPMTool.Models.ViewModels.ProjectDetailsViewModel;
 
 namespace SEPMTool.Controllers
 {
@@ -20,11 +22,13 @@ namespace SEPMTool.Controllers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ProjectsController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        public ProjectsController(UserManager<ApplicationUser> userManager, ApplicationDbContext context, IMapper mapper)
         {
             this.userManager = userManager;
             _context = context;
+            _mapper = mapper;
         }
 
         public List<ProjectUsersViewModel> GetAllUsers()
@@ -95,17 +99,32 @@ namespace SEPMTool.Controllers
             var allUsers = _context.Users.Where(u => !u.Projects.Any(p => p.ProjectId == id)).Select(x => new ProjectUsersViewModel { UserId = x.Id, Username = x.FirstName + " " + x.LastName }).ToList();
 
             if (_context.Projects.Any(p => p.Id == id))
-            {
-                var project = _context.Projects
+            {                      
+
+                var query = _context.Projects
                     .Include(u => u.Users)
                     .Include(r => r.ProjectRequirements)
                     .ThenInclude(ProjectRequirement => ProjectRequirement.Tasks)
                     .ThenInclude(Task => Task.Users)
                     .First(p => p.Id == id);
 
-                var model = new ProjectDetailsViewModel()
+                var project = _mapper.Map<ProjectViewModel>(query);
+
+                var projectViewModel = new ProjectViewModel
                 {
-                    Project = project,
+                    Id = project.Id,
+                    Name = project.Name,
+                    Description = project.Description,
+                    Priority = project.Priority,
+                    StartDate = project.StartDate,
+                    Deadline = project.Deadline,
+                    ProjectRequirements = project.ProjectRequirements,
+                    Users = project.Users
+                };
+
+                var model = new ProjectDetailsViewModel()
+                {  
+                    Project = projectViewModel,
                     Users = GetAllUsersInProject(id),
                     AllUsers = allUsers
                 };
@@ -169,8 +188,10 @@ namespace SEPMTool.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTask(ProjectDetailsViewModel projectTask)
+        public async Task<IActionResult> CreateTask([FromBody] ProjectDetailsViewModel projectTask)
         {
+            _ = ModelState;
+
             List<TaskUser> selectedUsers = new List<TaskUser>();
 
             if (projectTask.Users != null)
@@ -187,19 +208,24 @@ namespace SEPMTool.Controllers
                 SubTasks = projectTask.SubTasks
             };
 
+            List<SubTaskViewModel> subTasks = _mapper.Map<ICollection<SubTask>, List<SubTaskViewModel>>(projTask.SubTasks);
+            List<TaskUserViewModel> users = _mapper.Map<ICollection<TaskUser>, List<TaskUserViewModel>>(projTask.Users);
+
+
             _context.Tasks.Add(projTask);
 
-            if (await _context.SaveChangesAsync() > 0)
-            {
-                this.AddAlertSuccess($"{projectTask.TaskName} was created successfully");
-                return RedirectToAction("Details", new { id = projectTask.ProjectId });
-            }
+            await _context.SaveChangesAsync();
 
-            else
+            return Ok(new CreateTaskResponse
             {
-                this.AddAlertDanger($"{projectTask.TaskName} was not created, please try again later.");
-                return RedirectToAction("Details", new { id = projectTask.ProjectId });
-            }
+                Id = projTask.Id,
+                Name = projTask.Name,
+                Description = projTask.Description,
+                ProjectRequirementId = projTask.ProjectRequirementId,
+                SubTasks = subTasks,
+                Users = users
+            });
+
         }
 
         public async Task<IActionResult> DeleteTask(int taskId, int projectId)
@@ -233,7 +259,7 @@ namespace SEPMTool.Controllers
                 _context.ProjectUser.Add(user);
                 Users.Add(user.Username);
             }
-                     
+
 
             if (await _context.SaveChangesAsync() > 0)
             {

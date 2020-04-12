@@ -8,7 +8,7 @@ namespace SEPMTool.Models.ViewModels
 {
     public class ProjectDetailsViewModel
     {
-        public Project Project { get; set; }
+        public ProjectViewModel Project { get; set; }
         public int ProjectId { get; set; }
         public int RequirementId { get; set; }
         public string TaskName { get; set; }
@@ -18,5 +18,20 @@ namespace SEPMTool.Models.ViewModels
         public bool IsCompleted { get; set; }
         public List<TaskUsersViewModel> Users { get; set; }
         public List<ProjectUsersViewModel> AllUsers { get; set; }
+
+        public class CreateTaskResponse
+        {
+            public int Id { get; set; }
+            public int ProjectRequirementId { get; set; }
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public Priority Priority { get; set; }
+            public IEnumerable<SubTaskViewModel> SubTasks { get; set; }
+            public decimal Progress { get; set; }
+            public IEnumerable<TaskUserViewModel> Users { get; set; }
+            public DateTime StartDate { get; set; }
+            public DateTime Deadline { get; set; }
+            public TimeSpan EstimatedDuration { get; set; }
+        }
     }
 }

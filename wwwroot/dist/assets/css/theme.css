@@ -13650,10 +13650,16 @@ pre[class*="language-"] {
     transition: all 0.5s linear;
 }
 
-    .rotate.down {
-        -moz-transform: rotate(-180deg);
-        -webkit-transform: rotate(-180deg);
-        transform: rotate(-180deg);
-    }
+.rotate.down {
+    -moz-transform: rotate(-180deg);
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.card-subtasks {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-bottom: 1.5rem;
+}
 
 /*# sourceMappingURL=theme.css.map */

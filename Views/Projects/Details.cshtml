@@ -4,22 +4,15 @@
     <div class="row justify-content-center">
         <div class="col-lg-11 col-xl-10">
             <div class="page-header">
-                <h1>@Model.Project.Name</h1>
-                <p class="lead">@Model.Project.Description</p>
+                <h1>{{this.projectModel.project.name}}</h1>
+                <p class="lead">{{this.projectModel.project.description}}</p>
                 <div class="d-flex align-items-center">
                     <ul class="avatars">
-                        @* List of project users avatars *@
-                        @if (Model.Project.Users.Count > 0)
-                        {
-                            @foreach (var user in @Model.Project.Users)
-                            {
-                                <li>
-                                    <a href="#" data-toggle="tooltip" data-placement="top" title="@user.Username">
-                                        <img alt="Claire Connors" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
-                                    </a>
-                                </li>
-                            }
-                        }
+                        <li v-for="user in this.projectModel.project.users">
+                            <a href="#" data-toggle="tooltip" data-placement="top" :title="user.username">
+                                <img alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
+                            </a>
+                        </li>
                     </ul>
                     <button class="btn btn-round" data-toggle="modal" data-target="#user-manage-modal">
                         <i class="material-icons">add</i>
@@ -34,7 +27,7 @@
                             <i class="material-icons">playlist_add_check</i>
                             <span>3/12</span>
                         </div>
-                        <span>Due: @Model.Project.Deadline</span>
+                        <span>Due: {{this.projectModel.project.deadline}}</span>
                     </div>
                 </div>
             </div>
@@ -51,84 +44,6 @@
             </ul>
 
             <div class="tab-content">
-                @* Start of Tasks *@
-                @*<div class="tab-pane fade" id="tasks" role="tabpanel" data-filter-list="card-list-body">
-                    <div class="row content-list-head">
-                        <div class="col-auto">
-                            <h3>Tasks</h3>
-                        </div>
-                        <form class="col-md-auto">
-                            <div class="input-group input-group-round">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="material-icons">filter_list</i>
-                                    </span>
-                                </div>
-                                <input type="search" class="form-control filter-list-input" placeholder="Filter tasks" aria-label="Filter Tasks">
-                            </div>
-                        </form>
-                    </div>
-                    <div class="content-list-body">
-                        @foreach (var req in Model.Project.ProjectRequirements)
-                        {
-                            <div class="card-list">
-                                <div class="card-list-head">
-                                    <h6>Tasks For: @req.Name</h6>
-                                    <button class="btn btn-round" v-on:click="OpenModal(@req.Id)">
-                                        <i class="material-icons">add</i>
-                                    </button>
-                                </div>
-                                <div class="card-list-body">
-                                    @foreach (var task in req.Tasks)
-                                    {
-                                        <div class="card card-task">
-                                            <div class="progress" style="height:5px">
-                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="card-title" style="max-width: 60%">
-                                                    <a href="#">
-                                                        <h6 data-filter-by="text">@task.Name</h6>
-                                                    </a>
-                                                    <span class="text-small">@task.Description</span>
-                                                </div>
-                                                <div class="card-meta">
-                                                    <ul class="avatars">
-                                                        @if (task.Users != null)
-                                                        {
-                                                            @foreach (var user in task.Users)
-                                                            {
-                                                                <li>
-                                                                    <a href="#" data-toggle="tooltip" title="@user.Username">
-                                                                        <img alt="@user.Username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
-                                                                    </a>
-                                                                </li>
-                                                            }
-                                                        }
-                                                    </ul>
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="material-icons">playlist_add_check</i>
-                                                        <span>3/4</span>
-                                                    </div>
-                                                    <div class="dropdown card-options">
-                                                        <button class="btn-options" type="button" id="task-dropdown-button-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            <i class="material-icons">more_vert</i>
-                                                        </button>
-                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                            <a class="dropdown-item" href="#">Mark as done</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a class="dropdown-item text-danger" asp-controller="Projects" asp-action="DeleteTask" asp-route-taskId="@task.Id" asp-route-projectId="@Model.Project.Id">Delete</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        }
-                    </div>*@
-
 
                 @* Start of requirements *@
                 <div class="tab-pane fade show active" id="requirements" role="tabpanel" data-filter-list="dropzone-previews">
@@ -150,118 +65,106 @@
                             </form>
                         </div>
                         <!--end of content list head-->
-
-                        @foreach (var req in Model.Project.ProjectRequirements)
-                        {
-                            <div class="content-list-body row">
-                                <div class="col">
-                                    <ul class="list-group list-group-activity dropzone-previews flex-column-reverse">
-                                        <li class="list-group-item-requirements">
-                                            <div class="media align-items-center">
-                                                @*<ul class="avatars">
-                                                        <li>
-                                                            <div class="avatar bg-primary">
-                                                                <i class="material-icons">insert_drive_file</i>
-                                                            </div>
-                                                        </li>
-                                                    </ul>*@
-                                                <div class="media-body d-flex justify-content-between align-items-center">
-                                                    <div>
-                                                        <h6><a href="#" data-filter-by="text">@req.Name</a></h6>
-                                                        <span class="text-small" data-filter-by="text">@req.Description</span>
-                                                        <br />
-                                                        <span class="badge badge-secondary" data-toggle="tooltip" data-placement="bottom" title="Category">@req.Category</span>
-                                                        <span class="badge badge-warning" data-toggle="tooltip" data-placement="bottom" title="Priority">@req.Priority</span>
+                        <div class="content-list-body row" v-for="(req, index) in this.projectModel.project.projectRequirements">
+                            <div class="col">
+                                <ul class="list-group list-group-activity dropzone-previews flex-column-reverse">
+                                    <li class="list-group-item-requirements">
+                                        <div class="media align-items-center">
+                                            <div class="media-body d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6><a href="#" data-filter-by="text">{{req.name}}</a></h6>
+                                                    <span class="text-small" data-filter-by="text">{{req.description}}</span>
+                                                    <br />
+                                                    <span class="badge badge-secondary" data-toggle="tooltip" data-placement="bottom" title="Category">{{req.category}}</span>
+                                                    <span class="badge badge-warning" data-toggle="tooltip" data-placement="bottom" title="Priority">{{req.priority}}</span>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <button class="btn-options" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="material-icons">more_vert</i>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a class="dropdown-item" href="#">Download</a>
+                                                        <a class="dropdown-item" href="#">Share</a>
+                                                        <div class="dropdown-divider"></div>
+                                                        <a class="dropdown-item text-danger" href="#">Delete</a>
                                                     </div>
-                                                    <div class="dropdown">
-                                                        <button class="btn-options" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            <i class="material-icons">more_vert</i>
-                                                        </button>
-                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                            <a class="dropdown-item" href="#">Download</a>
-                                                            <a class="dropdown-item" href="#">Share</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a class="dropdown-item text-danger" href="#">Delete</a>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <hr />
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>
+                                                <span class="h6-requirement align-self-center">Requirement Tasks </span>
+                                                <a id="showRequirements" class="button_style" @@click="ShowTasks(req.id)" onmouseover="" style="cursor: pointer;"><i id="`chevron-${req.id}`" class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
+                                            </span>
+
+                                            <button class="btn btn-primary" v-on:click="OpenModal(req.id, index)">
+                                                Add Task
+                                            </button>
+                                        </div>
+                                        <transition name="slide">
+                                            <div class="card-list-body child">
+                                                <div :id="`accordion-${req.id}`" style="display:none">
+                                                    <div class="card card-task requirements-card" v-for="task in req.tasks">
+                                                        <div class="progress" style="height:5px">
+                                                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        </div>
+                                                        <a data-toggle="collapse" :data-target="`#collapse-${task.id}`" aria-expanded="true" aria-controls="collapseOne" onmouseover="" style="cursor: pointer;">
+                                                            <div class="card-header-requirements">
+                                                                {{task.name}}
+                                                            </div>
+                                                        </a>
+                                                        <div :id="`collapse-${task.id}`" class="collapse" aria-labelledby="headingOne" :data-parent="`#accordion-${req.id}`">
+                                                            <div class="card-body">
+                                                                <div class="card-title" style="max-width: 60%">
+                                                                    <span class="text-small">{{task.description}}</span>
+                                                                    <br />
+                                                                    <span class="badge badge-success" data-toggle="tooltip" data-placement="bottom" title="Requirement link">{{req.name}}</span>
+                                                                </div>
+                                                                <div class="card-meta">
+                                                                    <ul class="avatars">
+                                                                        <li v-for="user in task.users">
+                                                                            <a href="#" data-toggle="tooltip" :title="user.username">
+                                                                                <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <i class="material-icons">playlist_add_check</i>
+                                                                        <span>3/4</span>
+                                                                    </div>
+                                                                    <div class="dropdown card-options">
+                                                                        <button class="btn-options" type="button" id="task-dropdown-button-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                            <i class="material-icons">more_vert</i>
+                                                                        </button>
+                                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                                            <a class="dropdown-item" href="#">Mark as done</a>
+                                                                            <div class="dropdown-divider"></div>
+                                                                            @* doesnt work (delete) *@
+                                                                            <a class="dropdown-item text-danger" asp-controller="Projects" asp-action="DeleteTask" :asp-route-taskId="task.id" :asp-route-projectId="this.projectModel">Delete</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr />
+                                                            <div class="card-subtasks">
+                                                                <span>
+                                                                    <span class="h6-requirement align-self-center">Sub-Tasks </span>
+                                                                    <a id="showRequirements" class="button_style" @@click="ShowTasks" onmouseover="" style="cursor: pointer;"><i :id="`chevron-${req.id}`" class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
+
                                                 </div>
-
                                             </div>
-                                            <hr />
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <span>
-                                                    <span class="h6-requirement align-self-center">Requirement Tasks </span>
-                                                    <a id="showRequirements" class="button_style" @@click="ShowTasks(@req.Id)" onmouseover="" style="cursor: pointer;"><i id="chevron-@req.Id" class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
-                                                </span>
+                                        </transition>
 
-                                                <button class="btn btn-primary" v-on:click="OpenModal(@req.Id)">
-                                                    Add Task
-                                                </button>
-                                            </div>
-                                            <transition name="slide">
-                                                <div class="card-list-body child">
-                                                    <div id="accordion-@req.Id" style="display:none">
-                                                        @foreach (var task in req.Tasks)
-                                                        {
-                                                            <div class="card card-task requirements-card">
-                                                                <div class="progress" style="height:5px">
-                                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                                </div>
-                                                                <a data-toggle="collapse" data-target="#collapse-@task.Id" aria-expanded="true" aria-controls="collapseOne" onmouseover="" style="cursor: pointer;">
-                                                                    <div class="card-header-requirements">
-                                                                        @task.Name
-                                                                    </div>
-                                                                </a>
-                                                                <div id="collapse-@task.Id" class="collapse" aria-labelledby="headingOne" data-parent="#accordion-@req.Id">
-                                                                    <div class="card-body">
-                                                                        <div class="card-title" style="max-width: 60%">
-                                                                            <span class="text-small">@task.Description</span>
-                                                                            <br />
-                                                                            <span class="badge badge-success" data-toggle="tooltip" data-placement="bottom" title="Requirement link">@req.Name</span>
-                                                                        </div>
-                                                                        <div class="card-meta">
-                                                                            <ul class="avatars">
-                                                                                @if (task.Users != null)
-                                                                                {
-                                                                                    @foreach (var user in task.Users)
-                                                                                    {
-                                                                                        <li>
-                                                                                            <a href="#" data-toggle="tooltip" title="@user.Username">
-                                                                                                <img alt="@user.Username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
-                                                                                            </a>
-                                                                                        </li>
-                                                                                    }
-                                                                                }
-                                                                            </ul>
-                                                                            <div class="d-flex align-items-center">
-                                                                                <i class="material-icons">playlist_add_check</i>
-                                                                                <span>3/4</span>
-                                                                            </div>
-                                                                            <div class="dropdown card-options">
-                                                                                <button class="btn-options" type="button" id="task-dropdown-button-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                                    <i class="material-icons">more_vert</i>
-                                                                                </button>
-                                                                                <div class="dropdown-menu dropdown-menu-right">
-                                                                                    <a class="dropdown-item" href="#">Mark as done</a>
-                                                                                    <div class="dropdown-divider"></div>
-                                                                                    <a class="dropdown-item text-danger" asp-controller="Projects" asp-action="DeleteTask" asp-route-taskId="@task.Id" asp-route-projectId="@Model.Project.Id">Delete</a>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </transition>
-
-                                        </li>
-                                    </ul>
-                                </div>
+                                    </li>
+                                </ul>
                             </div>
-                        }
-
+                        </div>
                     </div>
                     <!--end of content list-->
                 </div>
@@ -403,7 +306,7 @@
     </form>
 
     @* New Task *@
-    <form asp-action="CreateTask" class="modal fade" id="task-add-modal" tabindex="-1" aria-hidden="true">
+    <form class="modal fade" id="task-add-modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -425,54 +328,40 @@
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="task-add-details" role="tabpanel">
                             <h6>General Details {{this.requirementId}}</h6>
-                            <input asp-for="ProjectId" value="@Model.Project.Id" class="form-control col" type="hidden" placeholder="Task name" />
+                            @*<input asp-for="ProjectId" value="@Model.Project.Id" class="form-control col" type="hidden" placeholder="Task name" />*@
                             <div class="form-group row align-items-center">
                                 <label class="col-3">Name</label>
-                                <input asp-for="TaskName" class="form-control col" type="text" placeholder="Task name" />
+                                <input v-model="taskModel.name" class="form-control col" type="text" placeholder="Task name" />
                             </div>
                             <div class="form-group row align-items-center">
                                 <label class="col-3">Description</label>
-                                <textarea asp-for="TaskDescription" class="form-control col" rows="3" placeholder="Task description"></textarea>
+                                <textarea v-model="taskModel.description" class="form-control col" rows="3" placeholder="Task description"></textarea>
                             </div>
-                            <input type="hidden" :value='requirementId' :name="'RequirementId'" />
                             <hr>
-
-
-
 
                             <h6>Sub-tasks</h6>
                             <div class="input-group mb-3">
-                                <input v-model="checklistItem.title" type="text" class="form-control" placeholder="Enter a sub-task..." aria-describedby="button-addon2">
+                                <input v-model="subTask.description" type="text" class="form-control" placeholder="Enter a sub-task..." aria-describedby="button-addon2">
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-primary" type="button" id="button-addon2" v-on:click="AddSubTask">Add</button>
                                 </div>
                             </div>
                             <ul class="list-group">
 
-                                <li v-for="(item, index) in checklist" class="list-group-item">
+                                <li v-for="(subTask, index) in taskModel.subTasks" class="list-group-item">
                                     <span class="text-primary">{{index+1}}</span>
-                                    {{item.title}}
+                                    {{subTask.description}}
                                 </li>
                             </ul>
                         </div>
-
-                        <div style="display: none;" v-for="(item, index) in checklist">
-                            <input type="hidden" :value='item.title' :name="'SubTasks[' + index + '].Description'" />
-                            <input type="hidden" :value='item.completed' :name="'SubTasks[' + index + '].IsCompleted'" />
-                        </div>
-
-
 
                         <div class="tab-pane fade" id="task-add-members" role="tabpanel">
                             <div class="users-manage" data-filter-list="form-group-users">
                                 <div class="mb-3">
                                     <ul class="avatars text-center">
-                                        @foreach (var user in Model.Project.Users)
-                                        {
-                                            <li>
-                                                <img alt="@user.Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" data-title="@user.Username" />
-                                            </li>
-                                        }
+                                        <li v-for="user in this.projectModel.project.users">
+                                            <img :alt="user.username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" :data-title="user.username" />
+                                        </li>
                                     </ul>
                                 </div>
                                 <div class="input-group input-group-round">
@@ -484,20 +373,16 @@
                                     <input type="search" class="form-control filter-list-input" placeholder="Filter members" aria-label="Filter Members">
                                 </div>
                                 <div class="form-group-users">
-                                    @for (int i = 0; i < Model.Users.Count; i++)
-                                    {
-                                        <div class="custom-control custom-checkbox">
-                                            <input asp-for="@Model.Users[i].IsSelected" type="checkbox" class="custom-control-input">
-                                            <label asp-for="@Model.Users[i].IsSelected" class="custom-control-label">
-                                                <span class="d-flex align-items-center">
-                                                    <img alt="@Model.Users[i].Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
-                                                    <span class="h6 mb-0" data-filter-by="text">@Model.Users[i].Username</span>
-                                                </span>
-                                            </label>
-                                            <input asp-for="@Model.Users[i].UserId" type="hidden" />
-                                            <input asp-for="@Model.Users[i].Username" type="hidden" />
-                                        </div>
-                                    }
+
+                                    <div class="custom-control custom-checkbox" v-for="(user, key, index) in this.projectModel.users" :key="index">
+                                        <input type="checkbox" class="custom-control-input" :id="key" user="user.username" v-model="projectModel.users[key].isSelected">
+                                        <label :for="key" class="custom-control-label">
+                                            <span class="d-flex align-items-center">
+                                                <img :alt="user.username" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
+                                                <span class="h6 mb-0" data-filter-by="text">{{user.username}}</span>
+                                            </span>
+                                        </label>
+                                    </div>
 
                                 </div>
                             </div>
@@ -506,7 +391,7 @@
                 </div>
                 <!--end of modal body-->
                 <div class="modal-footer">
-                    <button role="button" class="btn btn-primary" type="submit">
+                    <button role="button" class="btn btn-primary" type="button" @@click="CreateTask">
                         Create Task
                     </button>
                 </div>
@@ -526,37 +411,84 @@
     <script>
         vueMixins.push({
             data: {
-                isShow: false,
-                requirementId: '',
-                checklistItem: {
-                    title: '',
-                    completed: false
+                projectModel: @Json.Serialize(Model),
+
+                taskModel: {
+                    name: '',
+                    description: '',
+                    projectRequirementId: this.requirementId,
+                    projectRequirementIndex: '',
+                    subTasks: [],
+                    users: []
                 },
-                checklist: [],
+
+                subTask: {
+                    description: '',
+                    isCompleted: false,
+                    projectTaskId: '',
+                },
+                user: {
+                    userId: '',
+                    username: '',
+                    isSelected: false,
+                }
             },
             methods: {
-                OpenModal: function (requirementId) {
-                    this.requirementId = requirementId;
+                OpenModal: function (requirementId, index) {
+                    this.taskModel.projectRequirementId = requirementId;
+                    this.taskModel.projectRequirementIndex = index;
+                    console.log(index);
                     $('#task-add-modal').modal('show');
+                    
                 },
                 ShowTasks: function (requirementId) {
 
                     const chevron = "#chevron-" + requirementId;
                     const accordion = "#accordion-" + requirementId;
 
-                    console.log(chevron);
-                    console.log(accordion);
+                    console.log(this.projectModel);
+
                     $(chevron).toggleClass("down");
                     $(accordion).toggle("slow");
                 },
                 AddSubTask: function () {
-                    const clone = Object.assign({}, this.checklistItem)
-                    this.checklist.push(clone);
-                    this.checklistItem = {
+                    const clone = Object.assign({}, this.subTask)
+                    this.taskModel.subTasks.push(clone);
+                    this.subTask = {
                         title: '',
                         completed: false,
                     };
+                },
+                CreateTask() {
+                    console.log(this.projectModel);
+                    this.loading = true;
+                    axios({
+                        method: 'post',
+                        url: '/Projects/CreateTask',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: {
+                        projectId: this.projectModel.project.id,
+                        requirementId: this.taskModel.projectRequirementId,
 
+
+                        taskName: this.taskModel.name,
+                        taskDescription: this.taskModel.description,
+                        subTasks: this.taskModel.subTasks,
+                        users: this.projectModel.users
+                        }
+                    })
+                        .then(res => {
+                            console.log(res.data);
+                            this.projectModel.project.projectRequirements[0].tasks.push(res.data);
+                        })
+                        .catch(err => {
+                            console.log(err.message);
+                        })
+                        .then(() => {
+                            this.loading = false;
+                        });
                 }
             }
         });
