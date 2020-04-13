@@ -96,7 +96,7 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <span>
                                                 <span class="h6-requirement align-self-center">Requirement Tasks </span>
-                                                <a id="showRequirements" class="button_style" @@click="ShowTasks(req.id)" onmouseover="" style="cursor: pointer;"><i id="`chevron-${req.id}`" class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
+                                                <a id="showRequirements" class="button_style" @@click="ShowTasks(req.id)" onmouseover="" style="cursor: pointer;"><i :id="`chevron-${req.id}`" class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
                                             </span>
 
                                             <button class="btn btn-primary" v-on:click="OpenModal(req.id, index)">
@@ -106,7 +106,7 @@
                                         <transition name="slide">
                                             <div class="card-list-body child">
                                                 <div :id="`accordion-${req.id}`" style="display:none">
-                                                    <div class="card card-task requirements-card" v-for="task in req.tasks">
+                                                    <div class="card card-task requirements-card" v-for="(task, taskIndex) in req.tasks">
                                                         <div class="progress" style="height:5px">
                                                             <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                                         </div>
@@ -141,8 +141,8 @@
                                                                         <div class="dropdown-menu dropdown-menu-right">
                                                                             <a class="dropdown-item" href="#">Mark as done</a>
                                                                             <div class="dropdown-divider"></div>
-                                                                            @* doesnt work (delete) *@
-                                                                            <a class="dropdown-item text-danger" asp-controller="Projects" asp-action="DeleteTask" :asp-route-taskId="task.id" :asp-route-projectId="this.projectModel">Delete</a>
+
+                                                                            <button class="dropdown-item text-danger" type="button" v-on:click="DeleteTask(task.id, taskIndex, index)">Delete</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -151,7 +151,7 @@
                                                             <div class="card-subtasks">
                                                                 <span>
                                                                     <span class="h6-requirement align-self-center">Sub-Tasks </span>
-                                                                    <a id="showRequirements" class="button_style" @@click="ShowTasks" onmouseover="" style="cursor: pointer;"><i :id="`chevron-${req.id}`" class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
+                                                                    <a id="showRequirements" class="button_style" @@click="ShowTasks" onmouseover="" style="cursor: pointer;"><i class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -437,16 +437,16 @@
                 OpenModal: function (requirementId, index) {
                     this.taskModel.projectRequirementId = requirementId;
                     this.taskModel.projectRequirementIndex = index;
-                    console.log(index);
+                    console.log(requirementId);
                     $('#task-add-modal').modal('show');
-                    
+
                 },
                 ShowTasks: function (requirementId) {
 
                     const chevron = "#chevron-" + requirementId;
                     const accordion = "#accordion-" + requirementId;
 
-                    console.log(this.projectModel);
+                    console.log(chevron);
 
                     $(chevron).toggleClass("down");
                     $(accordion).toggle("slow");
@@ -462,6 +462,7 @@
                 CreateTask() {
                     console.log(this.projectModel);
                     this.loading = true;
+                    $('#task-add-modal').modal('hide');
                     axios({
                         method: 'post',
                         url: '/Projects/CreateTask',
@@ -481,7 +482,28 @@
                     })
                         .then(res => {
                             console.log(res.data);
-                            this.projectModel.project.projectRequirements[0].tasks.push(res.data);
+                            this.projectModel.project.projectRequirements[this.taskModel.projectRequirementIndex].tasks.push(res.data);
+                        })
+                        .catch(err => {
+                            console.log(err.message);
+                        })
+                        .then(() => {
+                            this.loading = false;
+                        });
+                },
+                DeleteTask(id, taskIndex, reqIndex) {
+                    console.log(taskIndex);
+                    console.log(reqIndex);
+                    console.log(id);
+                    this.loading = true;
+                    axios.delete('/Projects/DeleteTask/' + id, {
+                        params: {
+                            taskId: id
+                        }
+                    })
+                        .then(res => {
+                            console.log(res);
+                            this.projectModel.project.projectRequirements[reqIndex].tasks.splice(taskIndex, 1);
                         })
                         .catch(err => {
                             console.log(err.message);

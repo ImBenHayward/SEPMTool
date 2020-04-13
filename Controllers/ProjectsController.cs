@@ -228,23 +228,15 @@ namespace SEPMTool.Controllers
 
         }
 
-        public async Task<IActionResult> DeleteTask(int taskId, int projectId)
-        {
-            //var task = new RequirementTask { Id = taskId };                        
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTask(int taskId)
+        {                     
             var task = _context.Tasks.Find(taskId);
             _context.Tasks.Remove(task);
 
-            if (await _context.SaveChangesAsync() > 0)
-            {
-                this.AddAlertSuccess($"{task.Name} was deleted successfully");
-                return RedirectToAction("Details", new { id = projectId });
-            }
+            await _context.SaveChangesAsync();
 
-            else
-            {
-                this.AddAlertDanger($"Task {task.Name} was not deleted, please try again later.");
-                return RedirectToAction("Details", new { id = projectId });
-            }
+            return Ok();
 
         }
 
