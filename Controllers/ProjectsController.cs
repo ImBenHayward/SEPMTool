@@ -106,6 +106,9 @@ namespace SEPMTool.Controllers
                     .Include(r => r.ProjectRequirements)
                     .ThenInclude(ProjectRequirement => ProjectRequirement.Tasks)
                     .ThenInclude(Task => Task.Users)
+                    .Include(r => r.ProjectRequirements)
+                    .ThenInclude(ProjectRequirement => ProjectRequirement.Tasks)
+                    .ThenInclude(Task => Task.SubTasks)
                     .First(p => p.Id == id);
 
                 var project = _mapper.Map<ProjectViewModel>(query);
@@ -119,7 +122,7 @@ namespace SEPMTool.Controllers
                     StartDate = project.StartDate,
                     Deadline = project.Deadline,
                     ProjectRequirements = project.ProjectRequirements,
-                    Users = project.Users
+                    Users = project.Users               
                 };
 
                 var model = new ProjectDetailsViewModel()
@@ -199,13 +202,17 @@ namespace SEPMTool.Controllers
                 selectedUsers = projectTask.Users.Where(u => u.IsSelected).Select(u => new TaskUser { UserId = u.UserId, Username = u.Username }).ToList();
             }
 
+            ICollection<SubTask> requirementTasks = _mapper.Map<List<SubTaskViewModel>, ICollection<SubTask>>(projectTask.SubTasks);
+
+            //List<SubTask> requirementTasks = new List<SubTask>
+
             RequirementTask projTask = new RequirementTask
             {
                 Name = projectTask.TaskName,
                 Description = projectTask.TaskDescription,
                 Users = selectedUsers,
                 ProjectRequirementId = projectTask.RequirementId,
-                SubTasks = projectTask.SubTasks
+                SubTasks = requirementTasks
             };
 
             List<SubTaskViewModel> subTasks = _mapper.Map<ICollection<SubTask>, List<SubTaskViewModel>>(projTask.SubTasks);
@@ -222,6 +229,59 @@ namespace SEPMTool.Controllers
                 Name = projTask.Name,
                 Description = projTask.Description,
                 ProjectRequirementId = projTask.ProjectRequirementId,
+                SubTasks = subTasks,
+                Users = users
+            });
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateTask([FromBody] ProjectDetailsViewModel projectTask)
+        {
+            _ = ModelState;
+
+            //RequirementTask task = null;
+
+            //task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == projectTask.TaskId);
+
+            var task = _context.Tasks.Include(t => t.SubTasks).Include(u => u.Users).FirstOrDefault(ta => ta.Id == projectTask.TaskId);
+
+            List<TaskUser> selectedUsers = new List<TaskUser>();
+
+            if (projectTask.Users != null)
+            {
+                selectedUsers = projectTask.Users.Where(u => u.IsSelected).Select(u => new TaskUser { UserId = u.UserId, Username = u.Username }).ToList();
+            }
+
+            List<SubTask> subTasksDb = _mapper.Map<ICollection<SubTaskViewModel>, List<SubTask>>(projectTask.SubTasks);
+
+            //mapety map map
+
+            task.Name = projectTask.TaskName;
+            task.Description = projectTask.TaskDescription;
+            task.SubTasks = subTasksDb;
+            task.Users = selectedUsers;
+
+            //var taskModel = new RequirementTaskViewModel()
+            //{
+            //    Id = task.Id,
+            //    Name = task.Name,
+            //    Description = task.Description,
+            //    ProjectRequirementId = task.ProjectRequirementId
+            //};
+
+            var requirementTask = _mapper.Map<RequirementTaskViewModel>(task);
+            List<SubTaskViewModel> subTasks = _mapper.Map<ICollection<SubTask>, List<SubTaskViewModel>>(task.SubTasks);
+            List<TaskUserViewModel> users = _mapper.Map<ICollection<TaskUser>, List<TaskUserViewModel>>(task.Users);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new CreateTaskResponse
+            {
+                Id = requirementTask.Id,
+                Name = requirementTask.Name,
+                Description = requirementTask.Description,
+                ProjectRequirementId = requirementTask.ProjectRequirementId,
                 SubTasks = subTasks,
                 Users = users
             });

@@ -108,6 +108,7 @@
                                                 <div :id="`accordion-${req.id}`" style="display:none">
                                                     <div class="card card-task requirements-card" v-for="(task, taskIndex) in req.tasks">
                                                         <div class="progress" style="height:5px">
+
                                                             <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                                         </div>
                                                         <a data-toggle="collapse" :data-target="`#collapse-${task.id}`" aria-expanded="true" aria-controls="collapseOne" onmouseover="" style="cursor: pointer;">
@@ -139,9 +140,8 @@
                                                                             <i class="material-icons">more_vert</i>
                                                                         </button>
                                                                         <div class="dropdown-menu dropdown-menu-right">
-                                                                            <a class="dropdown-item" href="#">Mark as done</a>
+                                                                            <button class="dropdown-item text-danger" type="button" v-on:click="EditTask(task, taskIndex, index)">Edit</button>
                                                                             <div class="dropdown-divider"></div>
-
                                                                             <button class="dropdown-item text-danger" type="button" v-on:click="DeleteTask(task.id, taskIndex, index)">Delete</button>
                                                                         </div>
                                                                     </div>
@@ -150,9 +150,15 @@
                                                             <hr />
                                                             <div class="card-subtasks">
                                                                 <span>
-                                                                    <span class="h6-requirement align-self-center">Sub-Tasks </span>
-                                                                    <a id="showRequirements" class="button_style" @@click="ShowTasks" onmouseover="" style="cursor: pointer;"><i class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
+                                                                    <span class="h6-requirement align-self-center">Sub-Tasks</span>
+                                                                    <a id="showRequirements" class="button_style" @@click="ShowSubTasks(task.id)" onmouseover="" style="cursor: pointer;"><i :id="`chevron-${task.id}`" class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
                                                                 </span>
+                                                                <div :id="`accordion-${task.id}`" style="display:none">
+                                                                    <div v-for="(subtask, index) in task.subTasks">
+                                                                        <input type="checkbox" :value="subtask.description" />
+                                                                        {{subtask.description}}
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -310,7 +316,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">New Task</h5>
+                    <h5 class="modal-title">{{this.modalTitle}}</h5>
                     <button type="button" class="close btn btn-round" data-dismiss="modal" aria-label="Close">
                         <i class="material-icons">close</i>
                     </button>
@@ -327,7 +333,7 @@
                 <div class="modal-body">
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="task-add-details" role="tabpanel">
-                            <h6>General Details {{this.requirementId}}</h6>
+                            <h6>General Details</h6>
                             @*<input asp-for="ProjectId" value="@Model.Project.Id" class="form-control col" type="hidden" placeholder="Task name" />*@
                             <div class="form-group row align-items-center">
                                 <label class="col-3">Name</label>
@@ -336,23 +342,24 @@
                             <div class="form-group row align-items-center">
                                 <label class="col-3">Description</label>
                                 <textarea v-model="taskModel.description" class="form-control col" rows="3" placeholder="Task description"></textarea>
-                            </div>
-                            <hr>
-
-                            <h6>Sub-tasks</h6>
-                            <div class="input-group mb-3">
-                                <input v-model="subTask.description" type="text" class="form-control" placeholder="Enter a sub-task..." aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-primary" type="button" id="button-addon2" v-on:click="AddSubTask">Add</button>
+                            </div>                            
+                            <div>
+                                <hr>
+                                <h6>Sub-tasks</h6>
+                                <div class="input-group mb-3">
+                                    <input v-model="subTask.description" type="text" class="form-control" placeholder="Enter a sub-task..." aria-describedby="button-addon2">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary" type="button" id="button-addon2" v-on:click="AddSubTask">Add</button>
+                                    </div>
                                 </div>
-                            </div>
-                            <ul class="list-group">
+                                <ul class="list-group">
 
-                                <li v-for="(subTask, index) in taskModel.subTasks" class="list-group-item">
-                                    <span class="text-primary">{{index+1}}</span>
-                                    {{subTask.description}}
-                                </li>
-                            </ul>
+                                    <li v-for="(subTask, index) in taskModel.subTasks" class="list-group-item">
+                                        <span class="text-primary">{{index+1}}</span>
+                                        {{subTask.description}}
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
 
                         <div class="tab-pane fade" id="task-add-members" role="tabpanel">
@@ -374,7 +381,7 @@
                                 </div>
                                 <div class="form-group-users">
 
-                                    <div class="custom-control custom-checkbox" v-for="(user, key, index) in this.projectModel.users" :key="index">
+                                    <div class="custom-control custom-checkbox" v-for="(user, key, index) in projectModel.users" :key="index">
                                         <input type="checkbox" class="custom-control-input" :id="key" user="user.username" v-model="projectModel.users[key].isSelected">
                                         <label :for="key" class="custom-control-label">
                                             <span class="d-flex align-items-center">
@@ -391,8 +398,11 @@
                 </div>
                 <!--end of modal body-->
                 <div class="modal-footer">
-                    <button role="button" class="btn btn-primary" type="button" @@click="CreateTask">
+                    <button role="button" class="btn btn-primary" type="button" @@click="CreateTask" v-if="this.modalTitle === 'New Task'">
                         Create Task
+                    </button>
+                    <button role="button" class="btn btn-primary" type="button" @@click="UpdateTask" v-if="this.modalTitle === 'Edit Task'">
+                        Update Task
                     </button>
                 </div>
             </div>
@@ -412,8 +422,12 @@
         vueMixins.push({
             data: {
                 projectModel: @Json.Serialize(Model),
-
+                objectIndex: 0,
+                requirementIndex: 0,
+                modalTitle: '',
+                edit: 'false',
                 taskModel: {
+                    id: 0,
                     name: '',
                     description: '',
                     projectRequirementId: this.requirementId,
@@ -425,7 +439,7 @@
                 subTask: {
                     description: '',
                     isCompleted: false,
-                    projectTaskId: '',
+                    //projectTaskId: '',
                 },
                 user: {
                     userId: '',
@@ -435,9 +449,17 @@
             },
             methods: {
                 OpenModal: function (requirementId, index) {
+
+                    this.taskModel.id = 0;
+                    this.taskModel.name = '';
+                    this.taskModel.description = '';
                     this.taskModel.projectRequirementId = requirementId;
                     this.taskModel.projectRequirementIndex = index;
-                    console.log(requirementId);
+                    this.taskModel.subTasks = [];
+                    this.taskModel.users = [];
+
+                    this.modalTitle = 'New Task';
+
                     $('#task-add-modal').modal('show');
 
                 },
@@ -446,8 +468,16 @@
                     const chevron = "#chevron-" + requirementId;
                     const accordion = "#accordion-" + requirementId;
 
-                    console.log(chevron);
+                    console.log(this.projectModel);
+                    $(chevron).toggleClass("down");
+                    $(accordion).toggle("slow");
+                },
+                ShowSubTasks: function (taskId) {
 
+                    const chevron = "#chevron-" + taskId;
+                    const accordion = "#accordion-" + taskId;
+
+                    console.log(this.projectModel);
                     $(chevron).toggleClass("down");
                     $(accordion).toggle("slow");
                 },
@@ -472,8 +502,6 @@
                         data: {
                         projectId: this.projectModel.project.id,
                         requirementId: this.taskModel.projectRequirementId,
-
-
                         taskName: this.taskModel.name,
                         taskDescription: this.taskModel.description,
                         subTasks: this.taskModel.subTasks,
@@ -483,6 +511,54 @@
                         .then(res => {
                             console.log(res.data);
                             this.projectModel.project.projectRequirements[this.taskModel.projectRequirementIndex].tasks.push(res.data);
+                        })
+                        .catch(err => {
+                            console.log(err.message);
+                        })
+                        .then(() => {
+                            this.loading = false;
+                        });
+                },
+                EditTask(task, taskIndex, reqIndex) {
+                    this.objectIndex = taskIndex;
+                    this.requirementIndex = reqIndex;
+                    console.log(reqIndex);
+                    this.taskModel = {
+                        id: task.id,
+                        name: task.name,
+                        description: task.description,
+                        subTasks: task.subTasks,
+                        users: task.users
+                    }
+                    this.modalTitle = 'Edit Task';
+                    $('#task-add-modal').modal('show');
+                },
+                UpdateTask() {
+                    console.log(this.projectModel);
+                    this.loading = true;
+                    $('#task-add-modal').modal('hide');
+                    axios({
+                        method: 'post',
+                        url: '/Projects/UpdateTask',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: {
+                        projectId: this.projectModel.project.id,
+                        requirementId: this.taskModel.projectRequirementId,
+                        taskId: this.taskModel.id,
+                        taskName: this.taskModel.name,
+                        taskDescription: this.taskModel.description,
+                        subTasks: this.taskModel.subTasks,
+                        users: this.projectModel.users
+                        }
+                    })
+                        .then(res => {
+                            console.log(res.data);
+                            console.log("req" + this.reqIndex);
+                            console.log("obj" + this.objectIndex);
+                            //console.log(this.projectModel.project.projectRequirements[0].tasks)
+                            this.projectModel.project.projectRequirements[this.requirementIndex].tasks.splice(this.objectIndex, 1, res.data);
                         })
                         .catch(err => {
                             console.log(err.message);

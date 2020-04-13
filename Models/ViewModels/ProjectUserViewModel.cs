@@ -9,7 +9,7 @@ namespace SEPMTool.Models.ViewModels
     {
         public int ProjectId { get; set; }
         public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public ApplicationUserViewModel User { get; set; }
         public ProjectRole ProjectRole { get; set; }
         public string Username { get; set; }
     }

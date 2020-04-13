@@ -10,6 +10,6 @@ namespace SEPMTool.Models.ViewModels
         public int TaskId { get; set; }
         public string UserId { get; set; }
         public string Username { get; set; }
-        public ApplicationUser User { get; set; }
+        public ApplicationUserViewModel User { get; set; }
     }
 }
