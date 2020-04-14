@@ -13662,4 +13662,8 @@ pre[class*="language-"] {
     padding-bottom: 1.5rem;
 }
 
+.kanban-column {
+    min-height: 300px;
+}
+
 /*# sourceMappingURL=theme.css.map */

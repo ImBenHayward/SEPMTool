@@ -91,10 +91,11 @@
 
     @RenderSection("Scripts", required: false)
 
-    <script>
+    <script>        
+              
     var app = new Vue({
         el: "#mainContent",
-        mixins: vueMixins
+        mixins: vueMixins,
     });
     @if (HostingEnvironment.IsDevelopment())
     {
