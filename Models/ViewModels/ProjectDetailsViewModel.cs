@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TaskStatus = SEPMTool.enums.TaskStatus;
 
 namespace SEPMTool.Models.ViewModels
 {
@@ -27,6 +28,7 @@ namespace SEPMTool.Models.ViewModels
             public string Name { get; set; }
             public string Description { get; set; }
             public Priority Priority { get; set; }
+            public TaskStatus Status { get; set; }
             public IEnumerable<SubTaskViewModel> SubTasks { get; set; }
             public decimal Progress { get; set; }
             public IEnumerable<TaskUserViewModel> Users { get; set; }

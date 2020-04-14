@@ -14,6 +14,7 @@ using SEPMTool.Models.ViewModels;
 using cloudscribe.Pagination.Models;
 using AutoMapper;
 using static SEPMTool.Models.ViewModels.ProjectDetailsViewModel;
+using SEPMTool.enums;
 
 namespace SEPMTool.Controllers
 {
@@ -121,6 +122,7 @@ namespace SEPMTool.Controllers
                     Priority = project.Priority,
                     StartDate = project.StartDate,
                     Deadline = project.Deadline,
+                    Status = project.Status,
                     ProjectRequirements = project.ProjectRequirements,
                     Users = project.Users               
                 };
@@ -229,6 +231,7 @@ namespace SEPMTool.Controllers
                 Name = projTask.Name,
                 Description = projTask.Description,
                 ProjectRequirementId = projTask.ProjectRequirementId,
+                Status = projTask.Status,
                 SubTasks = subTasks,
                 Users = users
             });
@@ -287,6 +290,20 @@ namespace SEPMTool.Controllers
             });
 
         }
+
+        public async Task<IActionResult> KanbanMoveItem([FromBody] KanbanMoveItemViewModel viewModel)        
+        {
+            _ = ModelState;
+
+            var task = _context.Tasks.Find(viewModel.TaskId);
+
+            task.Status = (enums.TaskStatus)viewModel.Status;
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
 
         [HttpDelete]
         public async Task<IActionResult> DeleteTask(int taskId)
