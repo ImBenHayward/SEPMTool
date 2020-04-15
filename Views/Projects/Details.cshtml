@@ -184,7 +184,7 @@
                     <div class="row mt-3">
                         <div class="col-md-3">
                             <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
-                                <h5>Backlog</h5>                                
+                                <h5>Backlog</h5>
                                 <draggable class="list-group kanban-column" :list="arrBacklog" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 0)">
                                     <div class="card card-kanban" v-for="(task, index) in arrBacklog" :key="task.id" :data-id="task.id">
                                         <div class="progress">
@@ -614,50 +614,47 @@
             components: {
                 draggable
             },
-            data: {
-                projectModel: @Json.Serialize(Model),
+            data: function () {
+                return {
+                    projectModel: @Json.Serialize(Model),
 
-                objectIndex: 0,
-                requirementIndex: 0,
+                    objectIndex: 0,
+                    requirementIndex: 0,
 
-                modalTitle: '',
-                edit: 'false',
+                    modalTitle: '',
+                    edit: 'false',
 
-                taskModel: {
-                    id: 0,
-                    name: '',
-                    description: '',
-                    projectRequirementId: this.requirementId,
-                    projectRequirementIndex: '',
-                    subTasks: [],
-                    users: []
-                },
+                    taskModel: {
+                        id: 0,
+                        name: '',
+                        description: '',
+                        projectRequirementId: this.requirementId,
+                        projectRequirementIndex: '',
+                        subTasks: [],
+                        users: []
+                    },
 
-                subTask: {
-                    description: '',
-                    isCompleted: false,
-                    //projectTaskId: '',
-                },
-                user: {
-                    userId: '',
-                    username: '',
-                    isSelected: false,
-                },
-                arrBacklog: [],
-                arrInProgress: [],
-                arrTested: [],
-                arrDone: []
+                    subTask: {
+                        description: '',
+                        isCompleted: false,
+                        //projectTaskId: '',
+                    },
+                    user: {
+                        userId: '',
+                        username: '',
+                        isSelected: false,
+                    },
+                    arrBacklog: [],
+                    arrInProgress: [],
+                    arrTested: [],
+                    arrDone: []
+                }
             },
             methods: {
                 onAdd: function (event, status) {
-                    console.log(event.item);
-                    console.log(status);
 
                     let id = event.item.getAttribute('data-id');
-                    //axios.patch('/Projects/KanbanMoveItem/', {
-                    //    Status: status,
-                    //    TaskId: id
-                    //})
+
                     axios({
                         method: 'patch',
                         url: '/Projects/KanbanMoveItem',
@@ -730,7 +727,8 @@
                         .then(res => {
                             console.log(res.data);
                             this.projectModel.project.projectRequirements[this.taskModel.projectRequirementIndex].tasks.push(res.data);
-                            this.UpdateKanban(res.data.status);
+                            this.UpdateKanban(res.data);
+                            this.ShowTasks(res.data.projectRequirementId);
                         })
                         .catch(err => {
                             console.log(err.message);
@@ -777,8 +775,9 @@
                             console.log(res.data);
                             console.log("req" + this.reqIndex);
                             console.log("obj" + this.objectIndex);
-                            //console.log(this.projectModel.project.projectRequirements[0].tasks)
+
                             this.projectModel.project.projectRequirements[this.requirementIndex].tasks.splice(this.objectIndex, 1, res.data);
+                            this.RenderKanban();
                         })
                         .catch(err => {
                             console.log(err.message);
@@ -800,6 +799,7 @@
                         .then(res => {
                             console.log(res);
                             this.projectModel.project.projectRequirements[reqIndex].tasks.splice(taskIndex, 1);
+                            this.RenderKanban();
                         })
                         .catch(err => {
                             console.log(err.message);
@@ -809,6 +809,12 @@
                         });
                 },
                 RenderKanban: function () {
+
+                    this.arrBacklog = [];
+                    this.arrInProgress = [];
+                    this.arrTested = [];
+                    this.arrDone = [];
+
                     this.projectModel.project.projectRequirements.forEach(requirement => {
                     requirement.tasks.forEach(task => {
                         switch (task.status) {
@@ -830,26 +836,26 @@
                 },
                 UpdateKanban: function (task) {
                 switch (task.status) {
-                            case 0:
-                                this.arrBacklog.push(task);
-                                break;
-                            case 1:
-                                this.arrInProgress.push(task);
-                                break;
-                            case 2:
-                                this.arrTested.push(task);
-                                break;
-                            case 3:
-                                this.arrDone.push(task);
-                                break;
-                        }
+                    case 0:
+                        console.log(task);
+                        this.arrBacklog.push(task);
+                        break;
+                    case 1:
+                        this.arrInProgress.push(task);
+                        break;
+                    case 2:
+                        this.arrTested.push(task);
+                        break;
+                    case 3:
+                        this.arrDone.push(task);
+                        break;
+                }
+                },
             },
-            },          
             beforeMount() {
                 this.RenderKanban();
             },
         });
+
     </script>
-
-
 }

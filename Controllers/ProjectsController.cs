@@ -243,10 +243,6 @@ namespace SEPMTool.Controllers
         {
             _ = ModelState;
 
-            //RequirementTask task = null;
-
-            //task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == projectTask.TaskId);
-
             var task = _context.Tasks.Include(t => t.SubTasks).Include(u => u.Users).FirstOrDefault(ta => ta.Id == projectTask.TaskId);
 
             List<TaskUser> selectedUsers = new List<TaskUser>();
@@ -258,20 +254,10 @@ namespace SEPMTool.Controllers
 
             List<SubTask> subTasksDb = _mapper.Map<ICollection<SubTaskViewModel>, List<SubTask>>(projectTask.SubTasks);
 
-            //mapety map map
-
             task.Name = projectTask.TaskName;
             task.Description = projectTask.TaskDescription;
             task.SubTasks = subTasksDb;
             task.Users = selectedUsers;
-
-            //var taskModel = new RequirementTaskViewModel()
-            //{
-            //    Id = task.Id,
-            //    Name = task.Name,
-            //    Description = task.Description,
-            //    ProjectRequirementId = task.ProjectRequirementId
-            //};
 
             var requirementTask = _mapper.Map<RequirementTaskViewModel>(task);
             List<SubTaskViewModel> subTasks = _mapper.Map<ICollection<SubTask>, List<SubTaskViewModel>>(task.SubTasks);
@@ -285,6 +271,7 @@ namespace SEPMTool.Controllers
                 Name = requirementTask.Name,
                 Description = requirementTask.Description,
                 ProjectRequirementId = requirementTask.ProjectRequirementId,
+                Status = requirementTask.Status,
                 SubTasks = subTasks,
                 Users = users
             });
