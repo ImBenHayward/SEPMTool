@@ -63,7 +63,9 @@ namespace SEPMTool.Data
                 .HasMany(p => p.ProjectRequirements)
                 .WithOne(r => r.Project);
 
-
+            builder.Entity<Project>()
+                .HasMany(p => p.Updates)
+                .WithOne(r => r.Project);
         }
     }
 }

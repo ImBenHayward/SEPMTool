@@ -19,6 +19,8 @@ namespace SEPMTool.Mapping
             CreateMap<SubTaskViewModel, SubTask>();
             CreateMap<ProjectUser, ProjectUserViewModel>();
             CreateMap<TaskUser, TaskUserViewModel>();
+            CreateMap<ProjectUpdate, ProjectUpdateViewModel>();
+            CreateMap<ApplicationUser, ApplicationUserViewModel>();
         }
     }
 }

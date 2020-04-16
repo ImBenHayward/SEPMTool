@@ -19,5 +19,6 @@ namespace SEPMTool.Models.ViewModels
         public DateTime StartDate { get; set; }
         public DateTime Deadline { get; set; }
         public DateTime EstimatedCompletionDate { get; set; }
+        public IEnumerable<ProjectUpdateViewModel> Updates { get; set; }
     }
 }

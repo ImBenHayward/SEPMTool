@@ -35,6 +35,7 @@ namespace SEPMTool.Models.ViewModels
             public DateTime StartDate { get; set; }
             public DateTime Deadline { get; set; }
             public TimeSpan EstimatedDuration { get; set; }
+            public ProjectUpdate Update { get; set; }
         }
     }
 }

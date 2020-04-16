@@ -3,6 +3,12 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-11 col-xl-10">
+
+            @*
+
+                PROJECT INFORMATION
+
+            *@
             <div class="page-header">
                 <h1>{{this.projectModel.project.name}}</h1>
                 <p class="lead">{{this.projectModel.project.description}}</p>
@@ -31,10 +37,14 @@
                     </div>
                 </div>
             </div>
+
+
+            @*
+
+                TAB LIST
+
+            *@
             <ul class="nav nav-tabs nav-fill" role="tablist">
-                @*<li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#tasks" role="tab" aria-controls="tasks" aria-selected="true">Tasks</a>
-                    </li>*@
                 <li class="nav-item">
                     <a class="nav-link active" data-toggle="tab" href="#requirements" role="tab" aria-controls="requirements" aria-selected="true">Requirements</a>
                 </li>
@@ -42,13 +52,18 @@
                     <a class="nav-link" data-toggle="tab" href="#Kanban" role="tab" aria-controls="requirements" aria-selected="true">Kanban</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#awards" role="tab" aria-controls="awards" aria-selected="false">Awards</a>
+                    <a class="nav-link" data-toggle="tab" href="#activity" role="tab" aria-controls="awards" aria-selected="false">Activity</a>
                 </li>
             </ul>
 
             <div class="tab-content">
 
-                @* Start of requirements *@
+
+                @*
+
+                    REQUIREMENTS SECTION
+
+                *@
                 <div class="tab-pane fade show active" id="requirements" role="tabpanel" data-filter-list="dropzone-previews">
                     <div class="content-list">
                         <div class="row content-list-head">
@@ -178,9 +193,13 @@
                     <!--end of content list-->
                 </div>
 
-                <div class="tab-pane fade" id="Kanban" role="tabpanel" data-filter-list="dropzone-previews">
-                    @*<kanban-board v-bind:projectTest="projectTest"></kanban-board>*@
 
+                @*
+
+                    KANBAN SECTION
+
+                *@
+                <div class="tab-pane fade" id="Kanban" role="tabpanel" data-filter-list="dropzone-previews">
                     <div class="row mt-3">
                         <div class="col-md-3">
                             <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
@@ -370,83 +389,52 @@
                 </div>
 
 
-                <div class="tab-pane fade" id="awards" role="tabpanel" data-filter-list="list-group-activity">
+                @*
+
+                    ACTIVITY SECTION
+
+                *@
+                <div class="tab-pane fade" id="activity" role="tabpanel" data-filter-list="list-group-activity">
                     <div class="content-list">
                         <div class="row content-list-head">
                             <div class="col-auto">
-                                <h3>Awards</h3>
+                                <h3>Activity</h3>
                             </div>
-                            <form class="col-md-auto">
-                                <div class="input-group input-group-round">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="material-icons">filter_list</i>
-                                        </span>
-                                    </div>
-                                    <input type="search" class="form-control filter-list-input" placeholder="Filter activity" aria-label="Filter activity">
-                                </div>
-                            </form>
                         </div>
-                        <!--end of content list head-->
                         <div class="content-list-body">
                             <ol class="list-group list-group-activity">
-
-                                <li class="list-group-item">
+                                <li class="list-group-item" v-for="(update, index) in this.projectModel.project.updates.slice().reverse()">
                                     <div class="media align-items-center">
-                                        <ul class="avatars">
-                                            <li>
-                                                <div class="avatar bg-primary">
-                                                    <i class="material-icons">emoji_events</i>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <img alt="Claire" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-filter-by="alt" />
-                                            </li>
-                                        </ul>
+                                        <div class="avatars">
+                                            <div class="avatar bg-primary">
+                                                <i class="material-icons" v-if="update.type === 0">emoji_events</i>
+                                            </div>
+                                        </div>
                                         <div class="media-body">
                                             <div>
-                                                <span class="h6" data-filter-by="text">Claire</span>
-                                                <span data-filter-by="text">was awarded</span><a href="#" data-filter-by="text">Developer of the month!</a>
+                                                <span class="h6" data-filter-by="text">{{update.title}}</span>
+                                                <div>
+                                                    <span data-filter-by="text">{{update.description}}</span>
+                                                </div>                                                
                                             </div>
-                                            <span class="text-small" data-filter-by="text">Just now</span>
+                                            <span class="text-small" data-filter-by="text">{{ update.date | moment("Do MMMM, h:mmA") }}</span>
                                         </div>
                                     </div>
-                                </li>
-
-                                <li class="list-group-item">
-                                    <div class="media align-items-center">
-                                        <ul class="avatars">
-                                            <li>
-                                                <div class="avatar bg-primary">
-                                                    <i class="material-icons">emoji_events</i>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="avatar bg-primary">
-                                                    <i class="material-icons">group</i>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <div class="media-body">
-                                            <div>
-                                                <span class="h6" data-filter-by="text">Congratultations!</span>
-                                                <span data-filter-by="text">Your team won an award for <a href="#" data-filter-by="text">Completing task XYZ in time!</a></span>
-
-                                            </div>
-                                            <span class="text-small" data-filter-by="text">5 hours ago</span>
-                                        </div>
-                                    </div>
-                                </li>
+                                </li>                               
                             </ol>
                         </div>
                     </div>
-                    <!--end of content list-->
                 </div>
             </div>
         </div>
     </div>
 
-    @* Add Users Modal *@
+
+    @*
+
+        ADD USERS MODAL
+
+    *@
     <form asp-action="AddUsers" class="modal fade" id="user-manage-modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -463,9 +451,9 @@
                             <ul class="avatars text-center">
                                 @foreach (var user in Model.Project.Users)
                                 {
-                                    <li>
-                                        <img alt="@user.Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" data-title="@user.Username" />
-                                    </li>
+                                <li>
+                                    <img alt="@user.Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" data-title="@user.Username" />
+                                </li>
                                 }
                             </ul>
                         </div>
@@ -480,18 +468,18 @@
                         <div class="form-group-users">
                             @for (int i = 0; i < Model.AllUsers.Count; i++)
                             {
-                                <div class="custom-control custom-checkbox">
-                                    <input asp-for="ProjectId" value="@Model.Project.Id" class="form-control col" type="hidden" placeholder="Task name" />
-                                    <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input">
-                                    <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
-                                        <span class="d-flex align-items-center">
-                                            <img alt="@Model.AllUsers[i].Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
-                                            <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
-                                        </span>
-                                    </label>
-                                    <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
-                                    <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
-                                </div>
+                            <div class="custom-control custom-checkbox">
+                                <input asp-for="ProjectId" value="@Model.Project.Id" class="form-control col" type="hidden" placeholder="Task name" />
+                                <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input">
+                                <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
+                                    <span class="d-flex align-items-center">
+                                        <img alt="@Model.AllUsers[i].Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
+                                        <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
+                                    </span>
+                                </label>
+                                <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
+                                <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
+                            </div>
                             }
                         </div>
                     </div>
@@ -506,7 +494,12 @@
         </div>
     </form>
 
-    @* New Task *@
+
+    @*
+
+        NEW TASK MODAL
+
+    *@
     <form class="modal fade" id="task-add-modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -651,6 +644,9 @@
                 }
             },
             methods: {
+                moment: function () {
+                    return moment();
+                },
                 onAdd: function (event, status) {
 
                     let id = event.item.getAttribute('data-id');
@@ -791,9 +787,10 @@
                     console.log(reqIndex);
                     console.log(id);
                     this.loading = true;
-                    axios.delete('/Projects/DeleteTask/' + id, {
+                    axios.delete('/Projects/DeleteTask/', {
                         params: {
-                            taskId: id
+                            taskId: id,
+                            projectId: this.projectModel.project.id
                         }
                     })
                         .then(res => {

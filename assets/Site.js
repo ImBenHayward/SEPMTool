@@ -3,6 +3,9 @@ window.Vue = Vue;
 var vueMixins = [];
 window.vueMixins = vueMixins;
 
+import moment from 'vue-moment'
+Vue.use(moment);
+
 import vueCustomElement from 'vue-custom-element';
 Vue.use(vueCustomElement);
 

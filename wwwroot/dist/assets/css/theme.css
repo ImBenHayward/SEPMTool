@@ -5395,7 +5395,7 @@ a.badge-dark:focus, a.badge-dark.focus {
     }
 
     .list-group-item:last-child {
-        margin-bottom: 0;
+        margin-bottom: 30px;
         border-bottom-right-radius: 0.5rem;
         border-bottom-left-radius: 0.5rem;
     }

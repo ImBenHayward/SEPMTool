@@ -104,6 +104,7 @@ namespace SEPMTool.Controllers
 
                 var query = _context.Projects
                     .Include(u => u.Users)
+                    .Include(p => p.Updates)
                     .Include(r => r.ProjectRequirements)
                     .ThenInclude(ProjectRequirement => ProjectRequirement.Tasks)
                     .ThenInclude(Task => Task.Users)
@@ -124,7 +125,8 @@ namespace SEPMTool.Controllers
                     Deadline = project.Deadline,
                     Status = project.Status,
                     ProjectRequirements = project.ProjectRequirements,
-                    Users = project.Users               
+                    Users = project.Users,
+                    Updates = project.Updates
                 };
 
                 var model = new ProjectDetailsViewModel()
@@ -161,6 +163,7 @@ namespace SEPMTool.Controllers
         public async Task<IActionResult> Create(ProjectCreateViewModel project)
         {
             List<ProjectUser> selectedUsers = project.AllUsers.Where(u => u.IsSelected).Select(u => new ProjectUser { UserId = u.UserId, Username = u.Username, ProjectRole = ProjectRole.Developer }).ToList();
+            List<Models.ProjectUpdate> projectUpdates = new List<Models.ProjectUpdate>();
 
             Project proj = new Project
             {
@@ -174,8 +177,20 @@ namespace SEPMTool.Controllers
                 Users = selectedUsers,
                 StartDate = project.StartDate,
                 Deadline = project.Deadline,
-                EstimatedCompletionDate = DateTime.Now
+                EstimatedCompletionDate = DateTime.Now,
+                Updates = projectUpdates
             };
+
+            ProjectUpdate projectUpdate = new ProjectUpdate
+            {
+                Title = "Project Created",
+                Description = proj.Name + " was created",
+                Project = proj,
+                Date = DateTime.UtcNow,
+                Type = UpdateType.Add
+            };
+
+            projectUpdates.Add(projectUpdate);
 
             _context.Projects.Add(proj);
 
@@ -204,9 +219,7 @@ namespace SEPMTool.Controllers
                 selectedUsers = projectTask.Users.Where(u => u.IsSelected).Select(u => new TaskUser { UserId = u.UserId, Username = u.Username }).ToList();
             }
 
-            ICollection<SubTask> requirementTasks = _mapper.Map<List<SubTaskViewModel>, ICollection<SubTask>>(projectTask.SubTasks);
-
-            //List<SubTask> requirementTasks = new List<SubTask>
+            ICollection<SubTask> requirementTasks = _mapper.Map<List<SubTaskViewModel>, ICollection<SubTask>>(projectTask.SubTasks);            
 
             RequirementTask projTask = new RequirementTask
             {
@@ -217,9 +230,20 @@ namespace SEPMTool.Controllers
                 SubTasks = requirementTasks
             };
 
+            ProjectUpdate projectUpdate = new ProjectUpdate
+            {
+                Title = "New Task Added",
+                Description = projTask.Name + " was added.",
+                Date = DateTime.UtcNow,
+                Type = UpdateType.Add
+            };
+
             List<SubTaskViewModel> subTasks = _mapper.Map<ICollection<SubTask>, List<SubTaskViewModel>>(projTask.SubTasks);
             List<TaskUserViewModel> users = _mapper.Map<ICollection<TaskUser>, List<TaskUserViewModel>>(projTask.Users);
 
+            var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectTask.ProjectId);
+
+            project.Updates.Add(projectUpdate);
 
             _context.Tasks.Add(projTask);
 
@@ -233,7 +257,8 @@ namespace SEPMTool.Controllers
                 ProjectRequirementId = projTask.ProjectRequirementId,
                 Status = projTask.Status,
                 SubTasks = subTasks,
-                Users = users
+                Users = users,
+                //Update = projectUpdate
             });
 
         }
@@ -244,6 +269,7 @@ namespace SEPMTool.Controllers
             _ = ModelState;
 
             var task = _context.Tasks.Include(t => t.SubTasks).Include(u => u.Users).FirstOrDefault(ta => ta.Id == projectTask.TaskId);
+            var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectTask.ProjectId);
 
             List<TaskUser> selectedUsers = new List<TaskUser>();
 
@@ -259,9 +285,19 @@ namespace SEPMTool.Controllers
             task.SubTasks = subTasksDb;
             task.Users = selectedUsers;
 
+            ProjectUpdate projectUpdate = new ProjectUpdate
+            {
+                Title = "Task Edited",
+                Description = projectTask.TaskName + " was edited.",
+                Date = DateTime.UtcNow,
+                Type = UpdateType.Edit
+            };
+
             var requirementTask = _mapper.Map<RequirementTaskViewModel>(task);
             List<SubTaskViewModel> subTasks = _mapper.Map<ICollection<SubTask>, List<SubTaskViewModel>>(task.SubTasks);
             List<TaskUserViewModel> users = _mapper.Map<ICollection<TaskUser>, List<TaskUserViewModel>>(task.Users);
+
+            project.Updates.Add(projectUpdate);
 
             await _context.SaveChangesAsync();
 
@@ -293,15 +329,25 @@ namespace SEPMTool.Controllers
 
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteTask(int taskId)
-        {                     
-            var task = _context.Tasks.Find(taskId);
-            _context.Tasks.Remove(task);
+        public async Task<IActionResult> DeleteTask(int taskId, int projectId)
+        {
+            var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectId);
+            var task = _context.Tasks.Find(taskId);            
+
+            ProjectUpdate projectUpdate = new ProjectUpdate
+            {
+                Title = "Task Deleted",
+                Description = task.Name + " was Deleted.",
+                Date = DateTime.UtcNow,
+                Type = UpdateType.Remove
+            };
+
+            project.Updates.Add(projectUpdate);
+            _context.Tasks.Remove(task);            
 
             await _context.SaveChangesAsync();
 
             return Ok();
-
         }
 
         [HttpPost]

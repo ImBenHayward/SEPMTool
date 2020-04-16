@@ -19,5 +19,6 @@ namespace SEPMTool.Models
         public DateTime StartDate { get; set; }
         public DateTime Deadline { get; set; }
         public DateTime EstimatedCompletionDate { get; set; }
+        public ICollection<ProjectUpdate> Updates { get; set; }
     }
 }
