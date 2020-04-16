@@ -13686,4 +13686,8 @@ pre[class*="language-"] {
     min-height: 300px;
 }
 
+.progress-complete {
+    border-radius: .5rem .5rem 0 0 !important;
+}
+
 /*# sourceMappingURL=theme.css.map */

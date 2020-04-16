@@ -26,7 +26,7 @@
                 </div>
                 <div>
                     <div class="progress">
-                        <div class="progress-bar bg-success" style="width:25%;"></div>
+                        <div class="progress-bar bg-success" :style="{ width: this.projectModel.project.progress + '%' }"></div>
                     </div>
                     <div class="d-flex justify-content-between text-small">
                         <div class="d-flex align-items-center">
@@ -126,8 +126,7 @@
                                                 <div :id="`accordion-${req.id}`" style="display:none">
                                                     <div class="card card-task requirements-card" v-for="(task, taskIndex) in req.tasks">
                                                         <div class="progress" style="height:5px">
-
-                                                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                            <div :class="{'progress-bar':true, 'bg-success':true, 'progress-complete':(task.progress === 100)}" :style="{width: task.progress + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                                         </div>
                                                         <a data-toggle="collapse" :data-target="`#collapse-${task.id}`" aria-expanded="true" aria-controls="collapseOne" onmouseover="" style="cursor: pointer;">
                                                             <div class="card-header-requirements">
@@ -172,9 +171,20 @@
                                                                     <a id="showRequirements" class="button_style" @@click="ShowSubTasks(task.id)" onmouseover="" style="cursor: pointer;"><i :id="`chevron-${task.id}`" class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
                                                                 </span>
                                                                 <div :id="`accordion-${task.id}`" style="display:none">
-                                                                    <div v-for="(subtask, index) in task.subTasks">
-                                                                        <input type="checkbox" :value="subtask.description" />
-                                                                        {{subtask.description}}
+                                                                    <div v-for="(subtask, subTaskIndex) in task.subTasks">
+
+                                                                        <div v-if="subtask.isCompleted === false">
+                                                                            <input type="checkbox" @@click="subtaskToggle(subtask.id, subTaskIndex, taskIndex, index, subtask.isCompleted)" />
+                                                                            {{subtask.description}}
+                                                                        </div>
+
+                                                                        <div v-if="subtask.isCompleted === true">
+                                                                            <input type="checkbox" checked @@click="subtaskToggle(subtask.id, subTaskIndex, taskIndex, index, subtask.isCompleted)" />
+                                                                            <strike>
+                                                                                {{subtask.description}}
+                                                                            </strike>
+                                                                        </div>
+
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -199,201 +209,201 @@
                     KANBAN SECTION
 
                 *@
-            <div class="tab-pane fade" id="Kanban" role="tabpanel" data-filter-list="dropzone-previews">
+                <div class="tab-pane fade" id="Kanban" role="tabpanel" data-filter-list="dropzone-previews">
 
-                <div class="row content-list-head">
-                    <div class="col-auto">
-                        <h3>Kanban Board</h3>
+                    <div class="row content-list-head">
+                        <div class="col-auto">
+                            <h3>Kanban Board</h3>
+                        </div>
                     </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-3">
+                            <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
+                                <h5>Backlog</h5>
+                                <draggable class="list-group kanban-column" :list="arrBacklog" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 0)">
+                                    <div class="card card-kanban" v-for="(task, index) in arrBacklog" :key="task.id" :data-id="task.id">
+                                        <div class="progress">
+                                            <div :class="{'progress-bar':true, 'bg-success':true, 'progress-complete':(task.progress === 100)}" role="progressbar" :style="{width: task.progress + '%'}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="dropdown card-options">
+                                                <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="material-icons">more_vert</i>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="#">Edit</a>
+                                                    <a class="dropdown-item text-danger" href="#">Archive Card</a>
+                                                </div>
+                                            </div>
+                                            <div class="card-title">
+                                                <a href="#" data-toggle="modal" data-target="#task-modal">
+                                                    {{ task.name }}
+                                                </a>
+                                            </div>
+
+                                            <ul class="avatars">
+                                                <li v-for="user in task.users">
+                                                    <a href="#" data-toggle="tooltip" :title="user.username">
+                                                        <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
+                                                    </a>
+                                                </li>
+                                            </ul>
+
+                                            <div class="card-meta d-flex justify-content-between">
+                                                <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="material-icons">playlist_add_check</i>
+                                                    <span>{{ task.subTasks.length }}</span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </draggable>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
+                                <h5>In Progress</h5>
+                                <draggable class="list-group kanban-column" :list="arrInProgress" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 1)">
+                                    <div class="card card-kanban" v-for="task in arrInProgress" :key="task.id" :data-id="task.id" style="border-color: #CCE5FF; border-width: 2px">
+                                        <div class="progress">
+                                            <div :class="{'progress-bar':true, 'bg-success':true, 'progress-complete':(task.progress === 100)}" role="progressbar" :style="{width: task.progress + '%'}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="dropdown card-options">
+                                                <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="material-icons">more_vert</i>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="#">Edit</a>
+                                                    <a class="dropdown-item text-danger" href="#">Archive Card</a>
+                                                </div>
+                                            </div>
+                                            <div class="card-title">
+                                                <a href="#" data-toggle="modal" data-target="#task-modal">
+                                                    {{ task.name }}
+                                                </a>
+                                            </div>
+
+                                            <ul class="avatars">
+                                                <li v-for="user in task.users">
+                                                    <a href="#" data-toggle="tooltip" :title="user.username">
+                                                        <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
+                                                    </a>
+                                                </li>
+                                            </ul>
+
+                                            <div class="card-meta d-flex justify-content-between">
+                                                <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="material-icons">playlist_add_check</i>
+                                                    <span>{{ task.subTasks.length }}</span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </draggable>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="p-2 alert alert alert-secondary" onmouseover="" style="cursor: pointer;">
+                                <h5>Testing</h5>
+                                <draggable class="list-group kanban-column" :list="arrTested" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 2)">
+                                    <div class="card card-kanban" v-for="task in arrTested" :key="task.id" :data-id="task.id" style="border-color: #FFF3CD; border-width: 2px">
+                                        <div class="progress">
+                                            <div :class="{'progress-bar':true, 'bg-success':true, 'progress-complete':(task.progress === 100)}" role="progressbar" :style="{width: task.progress + '%'}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="dropdown card-options">
+                                                <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="material-icons">more_vert</i>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="#">Edit</a>
+                                                    <a class="dropdown-item text-danger" href="#">Archive Card</a>
+                                                </div>
+                                            </div>
+                                            <div class="card-title">
+                                                <a href="#" data-toggle="modal" data-target="#task-modal">
+                                                    {{ task.name }}
+                                                </a>
+                                            </div>
+
+                                            <ul class="avatars">
+                                                <li v-for="user in task.users">
+                                                    <a href="#" data-toggle="tooltip" :title="user.username">
+                                                        <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
+                                                    </a>
+                                                </li>
+                                            </ul>
+
+                                            <div class="card-meta d-flex justify-content-between">
+                                                <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="material-icons">playlist_add_check</i>
+                                                    <span>{{ task.subTasks.length }}</span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </draggable>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
+                                <h5>Done</h5>
+                                <draggable class="list-group kanban-column" :list="arrDone" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 3)">
+                                    <div class="card card-kanban" v-for="task in arrDone" :key="task.id" :data-id="task.id" style="border-color: #D4EDDA; border-width: 2px;">
+                                        <div class="progress">
+                                            <div :class="{'progress-bar':true, 'bg-success':true, 'progress-complete':(task.progress === 100)}" role="progressbar" :style="{width: task.progress + '%'}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="dropdown card-options">
+                                                <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="material-icons">more_vert</i>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="#">Edit</a>
+                                                    <a class="dropdown-item text-danger" href="#">Archive Card</a>
+                                                </div>
+                                            </div>
+                                            <div class="card-title">
+                                                <a href="#" data-toggle="modal" data-target="#task-modal">
+                                                    {{ task.name }}
+                                                </a>
+                                            </div>
+
+                                            <ul class="avatars">
+                                                <li v-for="user in task.users">
+                                                    <a href="#" data-toggle="tooltip" :title="user.username">
+                                                        <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
+                                                    </a>
+                                                </li>
+                                            </ul>
+
+                                            <div class="card-meta d-flex justify-content-between">
+                                                <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="material-icons">playlist_add_check</i>
+                                                    <span>{{ task.subTasks.length }}</span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </draggable>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-
-                <div class="row mt-3">
-                    <div class="col-md-3">
-                        <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
-                            <h5>Backlog</h5>
-                            <draggable class="list-group kanban-column" :list="arrBacklog" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 0)">
-                                <div class="card card-kanban" v-for="(task, index) in arrBacklog" :key="task.id" :data-id="task.id">
-                                    <div class="progress">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="dropdown card-options">
-                                            <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="material-icons">more_vert</i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="#">Edit</a>
-                                                <a class="dropdown-item text-danger" href="#">Archive Card</a>
-                                            </div>
-                                        </div>
-                                        <div class="card-title">
-                                            <a href="#" data-toggle="modal" data-target="#task-modal">
-                                                {{ task.name }}
-                                            </a>
-                                        </div>
-
-                                        <ul class="avatars">
-                                            <li v-for="user in task.users">
-                                                <a href="#" data-toggle="tooltip" :title="user.username">
-                                                    <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
-                                                </a>
-                                            </li>
-                                        </ul>
-
-                                        <div class="card-meta d-flex justify-content-between">
-                                            <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
-                                            <div class="d-flex align-items-center">
-                                                <i class="material-icons">playlist_add_check</i>
-                                                <span>{{ task.subTasks.length }}</span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </draggable>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
-                            <h5>In Progress</h5>
-                            <draggable class="list-group kanban-column" :list="arrInProgress" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 1)">
-                                <div class="card card-kanban" v-for="task in arrInProgress" :key="task.id" :data-id="task.id" style="border-color: #CCE5FF; border-width: 2px">
-                                    <div class="progress">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="dropdown card-options">
-                                            <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="material-icons">more_vert</i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="#">Edit</a>
-                                                <a class="dropdown-item text-danger" href="#">Archive Card</a>
-                                            </div>
-                                        </div>
-                                        <div class="card-title">
-                                            <a href="#" data-toggle="modal" data-target="#task-modal">
-                                                {{ task.name }}
-                                            </a>
-                                        </div>
-
-                                        <ul class="avatars">
-                                            <li v-for="user in task.users">
-                                                <a href="#" data-toggle="tooltip" :title="user.username">
-                                                    <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
-                                                </a>
-                                            </li>
-                                        </ul>
-
-                                        <div class="card-meta d-flex justify-content-between">
-                                            <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
-                                            <div class="d-flex align-items-center">
-                                                <i class="material-icons">playlist_add_check</i>
-                                                <span>{{ task.subTasks.length }}</span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </draggable>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="p-2 alert alert alert-secondary" onmouseover="" style="cursor: pointer;">
-                            <h5>Testing</h5>
-                            <draggable class="list-group kanban-column" :list="arrTested" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 2)">
-                                <div class="card card-kanban" v-for="task in arrTested" :key="task.id" :data-id="task.id" style="border-color: #FFF3CD; border-width: 2px">
-                                    <div class="progress">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="dropdown card-options">
-                                            <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="material-icons">more_vert</i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="#">Edit</a>
-                                                <a class="dropdown-item text-danger" href="#">Archive Card</a>
-                                            </div>
-                                        </div>
-                                        <div class="card-title">
-                                            <a href="#" data-toggle="modal" data-target="#task-modal">
-                                                {{ task.name }}
-                                            </a>
-                                        </div>
-
-                                        <ul class="avatars">
-                                            <li v-for="user in task.users">
-                                                <a href="#" data-toggle="tooltip" :title="user.username">
-                                                    <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
-                                                </a>
-                                            </li>
-                                        </ul>
-
-                                        <div class="card-meta d-flex justify-content-between">
-                                            <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
-                                            <div class="d-flex align-items-center">
-                                                <i class="material-icons">playlist_add_check</i>
-                                                <span>{{ task.subTasks.length }}</span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </draggable>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
-                            <h5>Done</h5>
-                            <draggable class="list-group kanban-column" :list="arrDone" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 3)">
-                                <div class="card card-kanban" v-for="task in arrDone" :key="task.id" :data-id="task.id" style="border-color: #D4EDDA; border-width: 2px;">
-                                    <div class="progress">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="dropdown card-options">
-                                            <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="material-icons">more_vert</i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="#">Edit</a>
-                                                <a class="dropdown-item text-danger" href="#">Archive Card</a>
-                                            </div>
-                                        </div>
-                                        <div class="card-title">
-                                            <a href="#" data-toggle="modal" data-target="#task-modal">
-                                                {{ task.name }}
-                                            </a>
-                                        </div>
-
-                                        <ul class="avatars">
-                                            <li v-for="user in task.users">
-                                                <a href="#" data-toggle="tooltip" :title="user.username">
-                                                    <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
-                                                </a>
-                                            </li>
-                                        </ul>
-
-                                        <div class="card-meta d-flex justify-content-between">
-                                            <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
-                                            <div class="d-flex align-items-center">
-                                                <i class="material-icons">playlist_add_check</i>
-                                                <span>{{ task.subTasks.length }}</span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </draggable>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
 
 
                 @*
@@ -431,12 +441,12 @@
                                                 <span class="h6" data-filter-by="text">{{update.title}}</span>
                                                 <div>
                                                     <span data-filter-by="text">{{update.description}}</span>
-                                                </div>                                                
+                                                </div>
                                             </div>
                                             <span class="text-small" data-filter-by="text">{{ update.date | moment("Do MMMM, h:mmA") }}</span>
                                         </div>
                                     </div>
-                                </li>                               
+                                </li>
                             </ol>
                         </div>
                     </div>
@@ -467,9 +477,9 @@
                             <ul class="avatars text-center">
                                 @foreach (var user in Model.Project.Users)
                                 {
-                                <li>
-                                    <img alt="@user.Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" data-title="@user.Username" />
-                                </li>
+                                    <li>
+                                        <img alt="@user.Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" data-title="@user.Username" />
+                                    </li>
                                 }
                             </ul>
                         </div>
@@ -484,18 +494,18 @@
                         <div class="form-group-users">
                             @for (int i = 0; i < Model.AllUsers.Count; i++)
                             {
-                            <div class="custom-control custom-checkbox">
-                                <input asp-for="ProjectId" value="@Model.Project.Id" class="form-control col" type="hidden" placeholder="Task name" />
-                                <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input">
-                                <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
-                                    <span class="d-flex align-items-center">
-                                        <img alt="@Model.AllUsers[i].Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
-                                        <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
-                                    </span>
-                                </label>
-                                <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
-                                <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
-                            </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input asp-for="ProjectId" value="@Model.Project.Id" class="form-control col" type="hidden" placeholder="Task name" />
+                                    <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input">
+                                    <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
+                                        <span class="d-flex align-items-center">
+                                            <img alt="@Model.AllUsers[i].Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
+                                            <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
+                                        </span>
+                                    </label>
+                                    <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
+                                    <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
+                                </div>
                             }
                         </div>
                     </div>
@@ -639,6 +649,7 @@
                         description: '',
                         projectRequirementId: this.requirementId,
                         projectRequirementIndex: '',
+                        progress: 0,
                         subTasks: [],
                         users: []
                     },
@@ -659,7 +670,87 @@
                     arrDone: []
                 }
             },
+            computed: {
+                progressBarRounding: function () {
+                    if (task.progress === 100) {
+                        return 'border-radius: 320px'
+                    } else {
+                        return 'border-radius: .5rem 0px'
+                    }
+                }
+            },
             methods: {
+                CalculateProgress: function () {
+
+                    console.log(this.projectModel);
+
+                    var taskCount = 0;
+                    var taskPercentage = 0;                    
+                                       
+                    this.projectModel.project.projectRequirements.forEach(requirement => {
+
+                        taskCount += requirement.tasks.length;
+
+                        requirement.tasks.forEach(task => {
+
+                            var subTaskCount = task.subTasks.length;
+                            var subTasksComplete = 0;
+                            var taskPercent = 0;
+
+                            task.subTasks.forEach(subtask => {
+                                if (subtask.isCompleted == true) {
+                                    subTasksComplete++;
+                                }
+                            });
+
+                            if (subTaskCount > 0) {
+                                taskPercent = parseFloat(subTasksComplete * 100 / subTaskCount);
+                            }
+
+                            console.log("subtasks" + subTaskCount);
+                            console.log("complete" + subTasksComplete);
+                            console.log("percent" + taskPercent);
+
+                            task.progress = taskPercent;
+                            taskPercentage += taskPercent;
+
+                        });
+                    });
+
+                    taskPercentage = taskPercentage.toFixed();
+                    var projectPercentage = parseFloat(taskPercentage / taskCount);                                    
+                    
+                    console.log("Task count" + taskCount);
+                    console.log("Task percentage" + taskPercentage);
+                    console.log("Project percentage" + projectPercentage);
+
+                    axios({
+                        method: 'patch',
+                        url: '/Projects/UpdateProjectProgress',
+                        params: {
+                            projectId: this.projectModel.project.id,
+                            progress: projectPercentage
+                        }
+                    })
+                    .then(res => {
+                        this.projectModel.project.progress = projectPercentage;
+                    });
+                },
+                subtaskToggle: function (subTaskId, subTaskIndex, taskIndex, reqIndex, isCompleted) {
+
+                    axios({
+                        method: 'patch',
+                        url: '/Projects/UpdateSubTask',
+                        params: {
+                            taskId: subTaskId
+                        }
+                    })
+                        .then(res => {
+                            console.log(res.data);
+                            this.projectModel.project.projectRequirements[reqIndex].tasks[taskIndex].subTasks[subTaskIndex].isCompleted = !isCompleted;
+                            this.CalculateProgress();
+                        });
+                },
                 moment: function () {
                     return moment();
                 },
@@ -867,6 +958,7 @@
             },
             beforeMount() {
                 this.RenderKanban();
+                this.CalculateProgress();
             },
         });
 

@@ -37,5 +37,11 @@ namespace SEPMTool.Models.ViewModels
             public TimeSpan EstimatedDuration { get; set; }
             public ProjectUpdate Update { get; set; }
         }
+
+        public class UpdateSubTaskResponse
+        {
+            public int Id { get; set; }
+            public bool IsCompleted { get; set; }
+        }
     }
 }

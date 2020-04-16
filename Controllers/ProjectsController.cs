@@ -314,6 +314,35 @@ namespace SEPMTool.Controllers
 
         }
 
+        public async Task<IActionResult> UpdateSubTask(int taskId)
+        {
+            _ = ModelState;
+
+            var subTask = _context.SubTasks.Find(taskId);
+
+            subTask.IsCompleted = !subTask.IsCompleted;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new UpdateSubTaskResponse
+            {
+                Id = taskId
+            });
+        }
+
+        public async Task<IActionResult> UpdateProjectProgress(int projectId, decimal progress)
+        {
+            _ = ModelState;
+
+            var project = _context.Projects.Find(projectId);
+
+            project.Progress = progress;
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
         public async Task<IActionResult> KanbanMoveItem([FromBody] KanbanMoveItemViewModel viewModel)        
         {
             _ = ModelState;
