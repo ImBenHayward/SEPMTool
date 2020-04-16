@@ -19,11 +19,9 @@
         <div class="row justify-content-center">
             <div class="col-xl-5 col-lg-6 col-md-7">
                 <div class="text-center">
-                    <h1 class="h2">Create account</h1>
+                    <h1 class="h2">Create an Account</h1>
                     <p class="lead">Start Managing Your Software Projects Today</p>
-                    <button class="btn btn-lg btn-block btn-primary">
-                        <img alt="Google" src="~/assets/img/logo-google.svg" class="rounded align-top mr-2" />Continue with Google
-                    </button>
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                     <hr>
                     <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
                         <div class="form-group">

@@ -10461,7 +10461,27 @@ a.text-dark:hover, a.text-dark:focus {
     }
 
         .avatar.bg-primary i {
-            font-size: 1rem;
+            font-size: 1.4rem;
+        }
+
+    .avatar.bg-success {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .avatar.bg-success i {
+            font-size: 1.4rem;
+        }
+
+    .avatar.bg-danger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .avatar.bg-danger i {
+            font-size: 1.4rem;
         }
 
     .avatar.avatar-lg {

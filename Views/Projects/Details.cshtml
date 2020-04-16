@@ -199,194 +199,201 @@
                     KANBAN SECTION
 
                 *@
-                <div class="tab-pane fade" id="Kanban" role="tabpanel" data-filter-list="dropzone-previews">
-                    <div class="row mt-3">
-                        <div class="col-md-3">
-                            <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
-                                <h5>Backlog</h5>
-                                <draggable class="list-group kanban-column" :list="arrBacklog" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 0)">
-                                    <div class="card card-kanban" v-for="(task, index) in arrBacklog" :key="task.id" :data-id="task.id">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="dropdown card-options">
-                                                <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="material-icons">more_vert</i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item text-danger" href="#">Archive Card</a>
-                                                </div>
-                                            </div>
-                                            <div class="card-title">
-                                                <a href="#" data-toggle="modal" data-target="#task-modal">
-                                                    {{ task.name }}
-                                                </a>
-                                            </div>
+            <div class="tab-pane fade" id="Kanban" role="tabpanel" data-filter-list="dropzone-previews">
 
-                                            <ul class="avatars">
-                                                <li v-for="user in task.users">
-                                                    <a href="#" data-toggle="tooltip" :title="user.username">
-                                                        <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
-                                                    </a>
-                                                </li>
-                                            </ul>
+                <div class="row content-list-head">
+                    <div class="col-auto">
+                        <h3>Kanban Board</h3>
+                    </div>
+                </div>
 
-                                            <div class="card-meta d-flex justify-content-between">
-                                                <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
-                                                <div class="d-flex align-items-center">
-                                                    <i class="material-icons">playlist_add_check</i>
-                                                    <span>{{ task.subTasks.length }}</span>
-                                                </div>
-                                            </div>
-
-                                        </div>
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
+                            <h5>Backlog</h5>
+                            <draggable class="list-group kanban-column" :list="arrBacklog" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 0)">
+                                <div class="card card-kanban" v-for="(task, index) in arrBacklog" :key="task.id" :data-id="task.id">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
-                                </draggable>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
-                                <h5>In Progress</h5>
-                                <draggable class="list-group kanban-column" :list="arrInProgress" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 1)">
-                                    <div class="card card-kanban" v-for="task in arrInProgress" :key="task.id" :data-id="task.id" style="border-color: #CCE5FF; border-width: 2px">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="dropdown card-options">
-                                                <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="material-icons">more_vert</i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item text-danger" href="#">Archive Card</a>
-                                                </div>
+                                    <div class="card-body">
+                                        <div class="dropdown card-options">
+                                            <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="material-icons">more_vert</i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="#">Edit</a>
+                                                <a class="dropdown-item text-danger" href="#">Archive Card</a>
                                             </div>
-                                            <div class="card-title">
-                                                <a href="#" data-toggle="modal" data-target="#task-modal">
-                                                    {{ task.name }}
+                                        </div>
+                                        <div class="card-title">
+                                            <a href="#" data-toggle="modal" data-target="#task-modal">
+                                                {{ task.name }}
+                                            </a>
+                                        </div>
+
+                                        <ul class="avatars">
+                                            <li v-for="user in task.users">
+                                                <a href="#" data-toggle="tooltip" :title="user.username">
+                                                    <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
                                                 </a>
+                                            </li>
+                                        </ul>
+
+                                        <div class="card-meta d-flex justify-content-between">
+                                            <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
+                                            <div class="d-flex align-items-center">
+                                                <i class="material-icons">playlist_add_check</i>
+                                                <span>{{ task.subTasks.length }}</span>
                                             </div>
-
-                                            <ul class="avatars">
-                                                <li v-for="user in task.users">
-                                                    <a href="#" data-toggle="tooltip" :title="user.username">
-                                                        <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
-                                                    </a>
-                                                </li>
-                                            </ul>
-
-                                            <div class="card-meta d-flex justify-content-between">
-                                                <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
-                                                <div class="d-flex align-items-center">
-                                                    <i class="material-icons">playlist_add_check</i>
-                                                    <span>{{ task.subTasks.length }}</span>
-                                                </div>
-                                            </div>
-
                                         </div>
+
                                     </div>
-                                </draggable>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <div class="p-2 alert alert alert-secondary" onmouseover="" style="cursor: pointer;">
-                                <h5>Testing</h5>
-                                <draggable class="list-group kanban-column" :list="arrTested" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 2)">
-                                    <div class="card card-kanban" v-for="task in arrTested" :key="task.id" :data-id="task.id" style="border-color: #FFF3CD; border-width: 2px">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="dropdown card-options">
-                                                <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="material-icons">more_vert</i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item text-danger" href="#">Archive Card</a>
-                                                </div>
-                                            </div>
-                                            <div class="card-title">
-                                                <a href="#" data-toggle="modal" data-target="#task-modal">
-                                                    {{ task.name }}
-                                                </a>
-                                            </div>
-
-                                            <ul class="avatars">
-                                                <li v-for="user in task.users">
-                                                    <a href="#" data-toggle="tooltip" :title="user.username">
-                                                        <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
-                                                    </a>
-                                                </li>
-                                            </ul>
-
-                                            <div class="card-meta d-flex justify-content-between">
-                                                <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
-                                                <div class="d-flex align-items-center">
-                                                    <i class="material-icons">playlist_add_check</i>
-                                                    <span>{{ task.subTasks.length }}</span>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </draggable>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
-                                <h5>Done</h5>
-                                <draggable class="list-group kanban-column" :list="arrDone" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 3)">
-                                    <div class="card card-kanban" v-for="task in arrDone" :key="task.id" :data-id="task.id" style="border-color: #D4EDDA; border-width: 2px;">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="dropdown card-options">
-                                                <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="material-icons">more_vert</i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item text-danger" href="#">Archive Card</a>
-                                                </div>
-                                            </div>
-                                            <div class="card-title">
-                                                <a href="#" data-toggle="modal" data-target="#task-modal">
-                                                    {{ task.name }}
-                                                </a>
-                                            </div>
-
-                                            <ul class="avatars">
-                                                <li v-for="user in task.users">
-                                                    <a href="#" data-toggle="tooltip" :title="user.username">
-                                                        <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
-                                                    </a>
-                                                </li>
-                                            </ul>
-
-                                            <div class="card-meta d-flex justify-content-between">
-                                                <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
-                                                <div class="d-flex align-items-center">
-                                                    <i class="material-icons">playlist_add_check</i>
-                                                    <span>{{ task.subTasks.length }}</span>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </draggable>
-                            </div>
+                                </div>
+                            </draggable>
                         </div>
                     </div>
 
+                    <div class="col-md-3">
+                        <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
+                            <h5>In Progress</h5>
+                            <draggable class="list-group kanban-column" :list="arrInProgress" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 1)">
+                                <div class="card card-kanban" v-for="task in arrInProgress" :key="task.id" :data-id="task.id" style="border-color: #CCE5FF; border-width: 2px">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="dropdown card-options">
+                                            <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="material-icons">more_vert</i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="#">Edit</a>
+                                                <a class="dropdown-item text-danger" href="#">Archive Card</a>
+                                            </div>
+                                        </div>
+                                        <div class="card-title">
+                                            <a href="#" data-toggle="modal" data-target="#task-modal">
+                                                {{ task.name }}
+                                            </a>
+                                        </div>
+
+                                        <ul class="avatars">
+                                            <li v-for="user in task.users">
+                                                <a href="#" data-toggle="tooltip" :title="user.username">
+                                                    <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
+                                                </a>
+                                            </li>
+                                        </ul>
+
+                                        <div class="card-meta d-flex justify-content-between">
+                                            <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
+                                            <div class="d-flex align-items-center">
+                                                <i class="material-icons">playlist_add_check</i>
+                                                <span>{{ task.subTasks.length }}</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </draggable>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="p-2 alert alert alert-secondary" onmouseover="" style="cursor: pointer;">
+                            <h5>Testing</h5>
+                            <draggable class="list-group kanban-column" :list="arrTested" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 2)">
+                                <div class="card card-kanban" v-for="task in arrTested" :key="task.id" :data-id="task.id" style="border-color: #FFF3CD; border-width: 2px">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="dropdown card-options">
+                                            <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="material-icons">more_vert</i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="#">Edit</a>
+                                                <a class="dropdown-item text-danger" href="#">Archive Card</a>
+                                            </div>
+                                        </div>
+                                        <div class="card-title">
+                                            <a href="#" data-toggle="modal" data-target="#task-modal">
+                                                {{ task.name }}
+                                            </a>
+                                        </div>
+
+                                        <ul class="avatars">
+                                            <li v-for="user in task.users">
+                                                <a href="#" data-toggle="tooltip" :title="user.username">
+                                                    <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
+                                                </a>
+                                            </li>
+                                        </ul>
+
+                                        <div class="card-meta d-flex justify-content-between">
+                                            <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
+                                            <div class="d-flex align-items-center">
+                                                <i class="material-icons">playlist_add_check</i>
+                                                <span>{{ task.subTasks.length }}</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </draggable>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
+                            <h5>Done</h5>
+                            <draggable class="list-group kanban-column" :list="arrDone" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 3)">
+                                <div class="card card-kanban" v-for="task in arrDone" :key="task.id" :data-id="task.id" style="border-color: #D4EDDA; border-width: 2px;">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="dropdown card-options">
+                                            <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="material-icons">more_vert</i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="#">Edit</a>
+                                                <a class="dropdown-item text-danger" href="#">Archive Card</a>
+                                            </div>
+                                        </div>
+                                        <div class="card-title">
+                                            <a href="#" data-toggle="modal" data-target="#task-modal">
+                                                {{ task.name }}
+                                            </a>
+                                        </div>
+
+                                        <ul class="avatars">
+                                            <li v-for="user in task.users">
+                                                <a href="#" data-toggle="tooltip" :title="user.username">
+                                                    <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
+                                                </a>
+                                            </li>
+                                        </ul>
+
+                                        <div class="card-meta d-flex justify-content-between">
+                                            <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
+                                            <div class="d-flex align-items-center">
+                                                <i class="material-icons">playlist_add_check</i>
+                                                <span>{{ task.subTasks.length }}</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </draggable>
+                        </div>
+                    </div>
                 </div>
+
+            </div>
 
 
                 @*
@@ -406,9 +413,18 @@
                                 <li class="list-group-item" v-for="(update, index) in this.projectModel.project.updates.slice().reverse()">
                                     <div class="media align-items-center">
                                         <div class="avatars">
-                                            <div class="avatar bg-primary">
-                                                <i class="material-icons" v-if="update.type === 0">emoji_events</i>
+                                            <div class="avatar bg-success" v-if="update.type === 0">
+                                                <i class="material-icons">create_new_folder</i>
                                             </div>
+
+                                            <div class="avatar bg-primary" v-if="update.type === 1">
+                                                <i class="material-icons" v-if="update.type === 1">edit</i>
+                                            </div>
+
+                                            <div class="avatar bg-danger" v-if="update.type === 2">
+                                                <i class="material-icons" v-if="update.type === 2">delete_forever</i>
+                                            </div>
+
                                         </div>
                                         <div class="media-body">
                                             <div>
