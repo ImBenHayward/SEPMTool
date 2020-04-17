@@ -13690,4 +13690,10 @@ pre[class*="language-"] {
     border-radius: .5rem .5rem 0 0 !important;
 }
 
+.disabled-div {
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+
 /*# sourceMappingURL=theme.css.map */

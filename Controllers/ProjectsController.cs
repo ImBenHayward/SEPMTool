@@ -313,6 +313,17 @@ namespace SEPMTool.Controllers
             });
 
         }
+               
+        public async Task<IActionResult> ToggleTaskComplete(int taskId)
+        {
+            var task = _context.Tasks.Find(taskId);
+
+            task.IsCompleted = !task.IsCompleted;
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
 
         public async Task<IActionResult> UpdateSubTask(int taskId)
         {

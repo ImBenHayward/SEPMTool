@@ -113,7 +113,7 @@
                                         <hr />
                                         <div class="d-flex justify-content-between align-items-center">
                                             <span>
-                                                <span class="h6-requirement align-self-center">Requirement Tasks </span>
+                                                <span class="h6-requirement align-self-center"><i class="fas fa-tasks"></i>  Requirement Tasks </span>
                                                 <a id="showRequirements" class="button_style" @@click="ShowTasks(req.id)" onmouseover="" style="cursor: pointer;"><i :id="`chevron-${req.id}`" class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
                                             </span>
 
@@ -126,14 +126,29 @@
                                                 <div :id="`accordion-${req.id}`" style="display:none">
                                                     <div class="card card-task requirements-card" v-for="(task, taskIndex) in req.tasks">
                                                         <div class="progress" style="height:5px">
-                                                            <div :class="{'progress-bar':true, 'bg-success':true, 'progress-complete':(task.progress === 100)}" :style="{width: task.progress + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                            <div :class="{'progress-bar':true, 'bg-success':true, 'progress-complete':(task.progress === 100 || task.isComplete)}" :style="{width: task.progress + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                                         </div>
                                                         <a data-toggle="collapse" :data-target="`#collapse-${task.id}`" aria-expanded="true" aria-controls="collapseOne" onmouseover="" style="cursor: pointer;">
-                                                            <div class="card-header-requirements">
-                                                                {{task.name}}
+                                                            <div class="card-header-requirements d-flex justify-content-between align-items-center">
+                                                                <span>{{task.name}}</span>
+                                                                <div class="dropdown">
+                                                                    <span class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                        <i class="fas fa-pencil-alt"></i>
+                                                                    </span>
+                                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                                                        <button class="dropdown-item text-danger" type="button" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)" v-if="task.isCompleted == true">Mark as Incomplete</button>
+                                                                        <div v-else>
+                                                                            <button class="dropdown-item text-success" type="button" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)">Mark as Complete</button>
+                                                                            <div class="dropdown-divider"></div>
+                                                                            <button class="dropdown-item text-primary" type="button" v-on:click="EditTask(task, taskIndex, index)">Edit</button>
+                                                                            <div class="dropdown-divider"></div>
+                                                                            <button class="dropdown-item text-danger" type="button" v-on:click="DeleteTask(task.id, taskIndex, index)">Delete</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </a>
-                                                        <div :id="`collapse-${task.id}`" class="collapse" aria-labelledby="headingOne" :data-parent="`#accordion-${req.id}`">
+                                                        <div :id="`collapse-${task.id}`" :class="{'collapse':true, 'disabled-div':(task.isCompleted)}" aria-labelledby="headingOne" :data-parent="`#accordion-${req.id}`">
                                                             <div class="card-body">
                                                                 <div class="card-title" style="max-width: 60%">
                                                                     <span class="text-small">{{task.description}}</span>
@@ -157,9 +172,14 @@
                                                                             <i class="material-icons">more_vert</i>
                                                                         </button>
                                                                         <div class="dropdown-menu dropdown-menu-right">
-                                                                            <button class="dropdown-item text-danger" type="button" v-on:click="EditTask(task, taskIndex, index)">Edit</button>
-                                                                            <div class="dropdown-divider"></div>
-                                                                            <button class="dropdown-item text-danger" type="button" v-on:click="DeleteTask(task.id, taskIndex, index)">Delete</button>
+                                                                            <button class="dropdown-item text-danger" type="button" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)" v-if="task.isCompleted == true">Mark as Incomplete</button>
+                                                                            <div v-else>
+                                                                                <button class="dropdown-item text-success" type="button" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)">Mark as Complete</button>
+                                                                                <div class="dropdown-divider"></div>
+                                                                                <button class="dropdown-item text-primary" type="button" v-on:click="EditTask(task, taskIndex, index)">Edit</button>
+                                                                                <div class="dropdown-divider"></div>
+                                                                                <button class="dropdown-item text-danger" type="button" v-on:click="DeleteTask(task.id, taskIndex, index)">Delete</button>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -477,9 +497,9 @@
                             <ul class="avatars text-center">
                                 @foreach (var user in Model.Project.Users)
                                 {
-                                    <li>
-                                        <img alt="@user.Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" data-title="@user.Username" />
-                                    </li>
+                                <li>
+                                    <img alt="@user.Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" data-title="@user.Username" />
+                                </li>
                                 }
                             </ul>
                         </div>
@@ -494,18 +514,18 @@
                         <div class="form-group-users">
                             @for (int i = 0; i < Model.AllUsers.Count; i++)
                             {
-                                <div class="custom-control custom-checkbox">
-                                    <input asp-for="ProjectId" value="@Model.Project.Id" class="form-control col" type="hidden" placeholder="Task name" />
-                                    <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input">
-                                    <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
-                                        <span class="d-flex align-items-center">
-                                            <img alt="@Model.AllUsers[i].Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
-                                            <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
-                                        </span>
-                                    </label>
-                                    <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
-                                    <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
-                                </div>
+                            <div class="custom-control custom-checkbox">
+                                <input asp-for="ProjectId" value="@Model.Project.Id" class="form-control col" type="hidden" placeholder="Task name" />
+                                <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input">
+                                <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
+                                    <span class="d-flex align-items-center">
+                                        <img alt="@Model.AllUsers[i].Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
+                                        <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
+                                    </span>
+                                </label>
+                                <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
+                                <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
+                            </div>
                             }
                         </div>
                     </div>
@@ -685,8 +705,8 @@
                     console.log(this.projectModel);
 
                     var taskCount = 0;
-                    var taskPercentage = 0;                    
-                                       
+                    var taskPercentage = 0;
+
                     this.projectModel.project.projectRequirements.forEach(requirement => {
 
                         taskCount += requirement.tasks.length;
@@ -697,29 +717,35 @@
                             var subTasksComplete = 0;
                             var taskPercent = 0;
 
-                            task.subTasks.forEach(subtask => {
-                                if (subtask.isCompleted == true) {
-                                    subTasksComplete++;
+                            //check if the task is completed
+                            if (task.isCompleted == true) {
+                                taskPercentage += 100;
+                                task.progress = 100;
+                                console.log('hello');
+                            } else {
+                                task.subTasks.forEach(subtask => {
+                                    if (subtask.isCompleted == true) {
+                                        subTasksComplete++;
+                                    }
+                                });
+
+                                if (subTaskCount > 0) {
+                                    taskPercent = parseFloat(subTasksComplete * 100 / subTaskCount);
                                 }
-                            });
 
-                            if (subTaskCount > 0) {
-                                taskPercent = parseFloat(subTasksComplete * 100 / subTaskCount);
+                                console.log("subtasks" + subTaskCount);
+                                console.log("complete" + subTasksComplete);
+                                console.log("percent" + taskPercent);
+
+                                task.progress = taskPercent;
+                                taskPercentage += taskPercent;
                             }
-
-                            console.log("subtasks" + subTaskCount);
-                            console.log("complete" + subTasksComplete);
-                            console.log("percent" + taskPercent);
-
-                            task.progress = taskPercent;
-                            taskPercentage += taskPercent;
-
                         });
                     });
 
                     taskPercentage = taskPercentage.toFixed();
-                    var projectPercentage = parseFloat(taskPercentage / taskCount);                                    
-                    
+                    var projectPercentage = parseFloat(taskPercentage / taskCount);
+
                     console.log("Task count" + taskCount);
                     console.log("Task percentage" + taskPercentage);
                     console.log("Project percentage" + projectPercentage);
@@ -839,6 +865,19 @@
                         .then(() => {
                             this.loading = false;
                         });
+                },
+                ToggleTaskComplete(task, taskIndex, reqIndex, isCompleted) {
+                    axios({
+                        method: 'patch',
+                        url: '/Projects/ToggleTaskComplete',
+                        params: {
+                            taskId: task.id
+                        }
+                    })
+                    .then(res => {
+                        this.projectModel.project.projectRequirements[reqIndex].tasks[taskIndex].isCompleted = !isCompleted;
+                        this.CalculateProgress();
+                    })
                 },
                 EditTask(task, taskIndex, reqIndex) {
                     this.objectIndex = taskIndex;
