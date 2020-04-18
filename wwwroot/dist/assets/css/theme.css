@@ -13699,4 +13699,8 @@ pre[class*="language-"] {
     padding-top: 15px;
 }
 
+#cssTable td{    
+    vertical-align: middle;
+}
+
 /*# sourceMappingURL=theme.css.map */

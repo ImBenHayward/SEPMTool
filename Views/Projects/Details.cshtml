@@ -95,15 +95,15 @@
                                                     <br />
                                                     <div class="requirement-info">
                                                         @* Priority *@
-                                                        <b-badge style="background-color: #2dc937" data-toggle="tooltip" data-placement="bottom" title="Task Priority" v-if="req.priority == 0">Very Low</b-badge>
-                                                        <b-badge style="background-color: #99c140" data-toggle="tooltip" data-placement="bottom" title="Task Priority" v-if="req.priority == 1">Low</b-badge>
-                                                        <b-badge style="background-color: #e7b416" data-toggle="tooltip" data-placement="bottom" title="Task Priority" v-if="req.priority == 2">Medium</b-badge>
-                                                        <b-badge style="background-color: #db7b2b" data-toggle="tooltip" data-placement="bottom" title="Task Priority" v-if="req.priority == 3">High</b-badge>
-                                                        <b-badge style="background-color: #cc3232" data-toggle="tooltip" data-placement="bottom" title="Task Priority" v-if="req.priority == 4">Very High</b-badge>
+                                                        <b-badge style="background-color: #2dc937" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 0">Very Low</b-badge>
+                                                        <b-badge style="background-color: #99c140" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 1">Low</b-badge>
+                                                        <b-badge style="background-color: #e7b416" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 2">Medium</b-badge>
+                                                        <b-badge style="background-color: #db7b2b" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 3">High</b-badge>
+                                                        <b-badge style="background-color: #cc3232" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 4">Very High</b-badge>
                                                         @* Category *@
-                                                        <b-badge data-toggle="tooltip" data-placement="bottom" title="Task Priority" v-if="req.category == 0">Functional</b-badge>
-                                                        <b-badge data-toggle="tooltip" data-placement="bottom" title="Task Priority" v-if="req.category == 1">Non-Functional</b-badge>
-                                                        <b-badge data-toggle="tooltip" data-placement="bottom" title="Task Priority" v-if="req.category == 2">Domain</b-badge>
+                                                        <b-badge data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="req.category == 0">Functional</b-badge>
+                                                        <b-badge data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="req.category == 1">Non-Functional</b-badge>
+                                                        <b-badge data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="req.category == 2">Domain</b-badge>
                                                         <span class="badge badge-secondary" data-toggle="tooltip" data-placement="bottom" title="Category"></span>
                                                         <span class="badge badge-warning" data-toggle="tooltip" data-placement="bottom" title="Priority"></span>
                                                     </div>
@@ -694,6 +694,9 @@
                 }
             },
             methods: {
+                /*
+                 * Progress Calculator
+                */
                 CalculateProgress: function () {
 
                     var taskCount = 0;
@@ -749,37 +752,13 @@
                         this.projectModel.project.progress = projectPercentage;
                     });
                 },
-                subtaskToggle: function (subTaskId, subTaskIndex, taskIndex, reqIndex, isCompleted) {
 
-                    axios({
-                        method: 'patch',
-                        url: '/Projects/UpdateSubTask',
-                        params: {
-                            taskId: subTaskId
-                        }
-                    })
-                        .then(res => {
-                            console.log(res.data);
-                            this.projectModel.project.projectRequirements[reqIndex].tasks[taskIndex].subTasks[subTaskIndex].isCompleted = !isCompleted;
-                            this.CalculateProgress();
-                        });
-                },
-                moment: function () {
-                    return moment();
-                },
-                onAdd: function (event, status) {
 
-                    let id = event.item.getAttribute('data-id');
+                /*
+                 * Task Methods
+                */
 
-                    axios({
-                        method: 'patch',
-                        url: '/Projects/KanbanMoveItem',
-                        data: {
-                            Status: status,
-                            TaskId: id
-                        }
-                    });
-                },
+                // Open New-Task Modal
                 OpenModal: function (requirementId, index) {
 
                     this.taskModel.id = 0;
@@ -795,6 +774,8 @@
                     $('#task-add-modal').modal('show');
 
                 },
+
+                //Show Tasks (List)
                 ShowTasks: function (requirementId) {
 
                     const chevron = "#chevron-" + requirementId;
@@ -804,8 +785,10 @@
                     $(chevron).toggleClass("down");
                     $(accordion).toggle("slow");
                 },
-                ShowTask: function (taskId) {
 
+                //Show Task (Singular Task)
+                ShowTask: function (taskId) {
+                    console.log('hit' + taskId);
                     const chevron = "#chevron-" + taskId;
                     const task = "#task-" + taskId;
 
@@ -813,6 +796,8 @@
                     $(chevron).toggleClass("down");
                     $(task).toggle("slow");
                 },
+
+                //Show Sub-Tasks (List)
                 ShowSubTasks: function (taskId) {
 
                     const chevron = "#subtask-chevron-" + taskId;
@@ -822,6 +807,8 @@
                     $(chevron).toggleClass("down");
                     $(accordion).toggle("slow");
                 },
+
+                //Add Sub-Task
                 AddSubTask: function () {
                     const clone = Object.assign({}, this.subTask)
                     this.taskModel.subTasks.push(clone);
@@ -830,6 +817,8 @@
                         completed: false,
                     };
                 },
+
+                //Create Task
                 CreateTask() {
                     console.log(this.projectModel);
                     this.loading = true;
@@ -853,7 +842,14 @@
                             console.log(res.data);
                             this.projectModel.project.projectRequirements[this.taskModel.projectRequirementIndex].tasks.push(res.data);
                             this.UpdateKanban(res.data);
-                            this.ShowTasks(res.data.projectRequirementId);
+
+                            if ($("#accordion-" + res.data.projectRequirementId).is(":visible")) {
+                            } else {
+                                this.ShowTasks(res.data.projectRequirementId);
+                            }
+
+                            this.ShowTask(res.data.id);
+
                         })
                         .catch(err => {
                             console.log(err.message);
@@ -862,6 +858,8 @@
                             this.loading = false;
                         });
                 },
+
+                //Toggle Task Completion
                 ToggleTaskComplete(task, taskIndex, reqIndex, isCompleted) {
                     axios({
                         method: 'patch',
@@ -875,6 +873,8 @@
                         this.CalculateProgress();
                     })
                 },
+
+                //Edit Task (Populates Modal)
                 EditTask(task, taskIndex, reqIndex) {
                     this.objectIndex = taskIndex;
                     this.requirementIndex = reqIndex;
@@ -889,6 +889,8 @@
                     this.modalTitle = 'Edit Task';
                     $('#task-add-modal').modal('show');
                 },
+
+                //Update Task (Axios Request)
                 UpdateTask() {
                     console.log(this.projectModel);
                     this.loading = true;
@@ -924,6 +926,8 @@
                             this.loading = false;
                         });
                 },
+
+                // Delete Task
                 DeleteTask(id, taskIndex, reqIndex) {
                     console.log(taskIndex);
                     console.log(reqIndex);
@@ -947,6 +951,49 @@
                             this.loading = false;
                         });
                 },
+
+                // Toggle Sub-Task Completion
+                subtaskToggle: function (subTaskId, subTaskIndex, taskIndex, reqIndex, isCompleted) {
+
+                    axios({
+                        method: 'patch',
+                        url: '/Projects/UpdateSubTask',
+                        params: {
+                            taskId: subTaskId
+                        }
+                    })
+                        .then(res => {
+                            console.log(res.data);
+                            this.projectModel.project.projectRequirements[reqIndex].tasks[taskIndex].subTasks[subTaskIndex].isCompleted = !isCompleted;
+                            this.CalculateProgress();
+                        });
+                },
+
+                // Moment time helper
+                moment: function () {
+                    return moment();
+                },
+
+                /*
+                 * Kanban Board Functions
+                 */
+
+                // When a card is moved to a new column
+                onAdd: function (event, status) {
+
+                    let id = event.item.getAttribute('data-id');
+
+                    axios({
+                        method: 'patch',
+                        url: '/Projects/KanbanMoveItem',
+                        data: {
+                            Status: status,
+                            TaskId: id
+                        }
+                    });
+                },
+
+                // Render The Kanban's Cards
                 RenderKanban: function () {
 
                     this.arrBacklog = [];
@@ -973,6 +1020,8 @@
                     });
                 });
                 },
+
+                // Update the Kanban's Cards
                 UpdateKanban: function (task) {
                 switch (task.status) {
                     case 0:

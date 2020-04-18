@@ -1,54 +1,78 @@
 ﻿@model cloudscribe.Pagination.Models.PagedResult<Project>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-11 col-xl-10">
-                <div class="page-header">
-                    <h1>All Projects</h1>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Progress</th>
-                                <th scope="col">Start Date</th>
-                                <th scope="col">Deadline</th>
-                                <th scope="col"></th>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-11 col-xl-10">
+            <div class="page-header">
+                <h1>All Projects</h1>
+                <table class="table table-hover" id="cssTable">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="text-align: right">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col" style="text-align: center">Progress</th>
+                            <th scope="col" style="text-align: center">Priority</th>
+                            <th scope="col" style="text-align: right">Start Date</th>
+                            <th scope="col" style="text-align: right">Deadline</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var project in @Model.Data)
+                        {
+                            <tr onclick="location.href='@Url.Action("Details", new { id = @project.Id})'" onmouseover="" style="cursor: pointer;">
+                                
+                                <th scope="row" style="vertical-align: middle; text-align: right">@project.Id</th>
+                                <td>@project.Name</td>
+                                <td style="text-align: center">
+                                    <div class="progress-table">
+                                        <div class="progress-bar-table bg-success" role="progressbar" style="width: @project.Progress%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </td>
+                                <td style="text-align: center">
+
+                                    @switch (project.Priority)
+                                    {
+                                        case Priority.VeryLow:<b-badge style="background-color: #2dc937; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
+                                        break;
+
+                                        case Priority.Low: <b-badge style="background-color: #99c140; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
+                                        break;
+
+                                        case Priority.Medium: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
+                                        break;
+
+                                        case Priority.High: <b-badge style="background-color: #db7b2b; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
+                                        break;
+
+                                        case Priority.VeryHigh: <b-badge style="background-color: #cc3232; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
+                                        break;
+
+                                    }
+
+                                </td>
+                                <td style="text-align: right">@project.StartDate.ToString("dd MMMM yyyy")</td>
+                                <td style="text-align: right">@project.Deadline.ToString("dd MMMM yyyy")</td>
+                                <td style="text-align: right">
+                                    <input type="button" value="Open" role="button" class="btn btn-primary" onclick="location.href='@Url.Action("Details", new { id = @project.Id})'">
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var project in @Model.Data)
-                            {
-                                <tr onclick="location.href='@Url.Action("Details", new { id = @project.Id})'" onmouseover="" style="cursor: pointer;">
-                                    <th scope="row">@project.Id</th>
-                                    <td>@project.Name</td>
-                                    <td>
-                                        <div class="progress-table">
-                                            <div class="progress-bar-table bg-success" role="progressbar" style="width: @project.Progress%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </td>
-                                    <td>@project.StartDate.ToString("dd MMMM yyyy")</td>
-                                    <td>@project.Deadline.ToString("dd MMMM yyyy")</td>
-                                    <td>
-                                        <input type="button" value="Open" role="button" class="btn btn-primary" onclick="location.href='@Url.Action("Details", new { id = @project.Id})'">
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                    <cs-pager cs-paging-pagenumber="@Model.PageNumber"
-                              cs-paging-totalitems="@Model.TotalItems"
-                              cs-paging-pagesize="@Model.PageSize"
-                              cs-pagenumber-param="pagenumber"
-                              asp-controller="Projects"
-                              asp-action="Index"
-                              cs-pager-li-current-class="page-item active"
-                              cs-pager-li-other-class="page-item"
-                              cs-pager-li-non-active-class="page-item disabled"
-                              cs-pager-link-current-class="page-link"
-                              cs-pager-link-other-class="page-link">
-                    </cs-pager>
-                </div>
+                        }
+                    </tbody>
+                </table>
+                <cs-pager cs-paging-pagenumber="@Model.PageNumber"
+                          cs-paging-totalitems="@Model.TotalItems"
+                          cs-paging-pagesize="@Model.PageSize"
+                          cs-pagenumber-param="pagenumber"
+                          asp-controller="Projects"
+                          asp-action="Index"
+                          cs-pager-li-current-class="page-item active"
+                          cs-pager-li-other-class="page-item"
+                          cs-pager-li-non-active-class="page-item disabled"
+                          cs-pager-link-current-class="page-link"
+                          cs-pager-link-other-class="page-link">
+                </cs-pager>
             </div>
         </div>
     </div>
+</div>

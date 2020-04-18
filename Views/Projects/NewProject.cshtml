@@ -162,17 +162,17 @@
 
                             @for (int i = 0; i < Model.AllUsers.Count; i++)
                             {
-                            <div class="custom-control custom-checkbox">
-                                <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input" />
-                                <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
-                                    <span class="d-flex align-items-center">
-                                        <img alt="Kenny Tran" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
-                                        <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
-                                    </span>
-                                </label>
-                                <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
-                                <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
-                            </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input" />
+                                    <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
+                                        <span class="d-flex align-items-center">
+                                            <img alt="Kenny Tran" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
+                                            <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
+                                        </span>
+                                    </label>
+                                    <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
+                                    <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
+                                </div>
                             }
                         </div>
                     </div>
@@ -197,6 +197,14 @@
                     </div>
                     <!--end of modal head-->
                     <div class="modal-body">
+                        <div class="alert alert-warning d-none" id="requirementWarning">
+                            Warning! Ambiguous words detected:
+                            <span v-for="word in ambiguousWords">
+                                <span v-if="word.true == true">
+                                    {{word.word}}
+                                </span>
+                            </span>
+                        </div>
                         <div>
                             <div class="tab-content">
                                 <h6>Requirement Details</h6>
@@ -211,7 +219,7 @@
                                 </div>
                                 <div class="form-group row align-items-center">
                                     <label class="col-3">Description</label>
-                                    <textarea v-model="requirement.description" class="form-control col" rows="3" placeholder="Requirement description" id="reqdescription"></textarea>
+                                    <textarea v-model="requirement.description" class="form-control col" rows="3" placeholder="Requirement description" id="reqdescription" v-on:keyup="detectWords()" v-on:keyup.backspace="detectWords()"></textarea>
                                     <div id="form-validation">
                                         <i class="fas fa-check-circle"></i>
                                         <i class="fas fa-exclamation-circle"></i>
@@ -331,9 +339,39 @@
                     category: '',
                     priority: ''
                 },
-                requirementsList: []
+                requirementsList: [],
+
+                ambiguousWords: [
+                    {
+                        word: 'Maybe',
+                        true: 0
+                    },
+                    {
+                        word: 'Possibly',
+                        true: 0
+                    },
+                    {
+                        word: 'Could',
+                        true: 0
+                    },
+                    {
+                        word: 'May',
+                        true: 0
+                    },
+                    {
+                        word: 'Should',
+                        true: 0
+                    },
+                ],
+
+                detectedWords: []
             },
             methods: {
+                /*
+                 * Form Step Functions
+                 */
+
+                // Go to foward 1 step
                 nextStep: function () {
                     if (this.step == 1) {
                         if (this.checkInputsP1()) {
@@ -347,23 +385,17 @@
                         }
                     }
                 },
+
+                // Go back 1 step
                 prevStep: function () {
                     this.setProgressBar(this.step--);
                 },
-                addRequirement: function () {
-                    if (this.checkInputsRequirementsModal()) {
-                        $('#new-requirement-modal').modal('hide');
-                        const clone = Object.assign({}, this.requirement);
-                        this.requirementsList.push(clone);
-                        this.requirement = {
-                            index: '',
-                            name: '',
-                            description: '',
-                            category: '',
-                            priority: ''
-                        };
-                    }
-                },
+
+                /*
+                 * Form Validation
+                 */
+
+                // validate inputs on page 1
                 checkInputsP1: function () {
                     const name = document.getElementById('name');
                     const description = document.getElementById('description');
@@ -410,6 +442,8 @@
                         return true;
                     }
                 },
+
+                // Check inputs on page 2
                 checkInputsP2: function () {
                     if (this.requirementsList.length > 0) {
                         return true;
@@ -419,6 +453,8 @@
                         });
                     }
                 },
+
+                // Check if the requirements are empty
                 checkEmptyRequirements: function () {
                     if (this.requirementsList.length > 0) {
                         return true;
@@ -428,6 +464,8 @@
                         });
                     }
                 },
+
+                // validate the input on the requirements modal
                 checkInputsRequirementsModal: function () {
                     const name = document.getElementById('reqname');
                     const description = document.getElementById('reqdescription');
@@ -469,25 +507,55 @@
                         return true;
                     }
                 },
+
+                // Set error validation message
                 setErrorFor: function (input, message) {
                     const formGroup = input.parentElement;
                     const small = formGroup.querySelector('small');
                     small.innerText = message;
                     formGroup.className = 'form-group row align-items-center error';
                 },
+
+                // Set Successfull validation message
                 setSuccessFor: function (input) {
                     const formGroup = input.parentElement;
                     formGroup.className = 'form-group row align-items-center success';
                 },
+
+                /*
+                 * Requirements Functions
+                 */
+
+                // Add Requirement
+                addRequirement: function () {
+                    if (this.checkInputsRequirementsModal()) {
+                        $('#new-requirement-modal').modal('hide');
+                        const clone = Object.assign({}, this.requirement);
+                        this.requirementsList.push(clone);
+                        this.requirement = {
+                            index: '',
+                            name: '',
+                            description: '',
+                            category: '',
+                            priority: ''
+                        };
+                    }
+                },
+
+                // Edit Requirement
                 editRequirement: function (index) {
                     //this.requirementsList[index] = this.requirement;
                     const clone = Object.assign({}, this.requirement);
                     this.requirementsList.splice(index, 1, clone);
                     console.log(index);
                 },
+
+                // Delete Requirement
                 deleteRequirement: function (index) {
                     this.requirementsList.splice(index, 1);
                 },
+
+                // Which requirement was clicked
                 requirementClicked: function (requirement, index) {
                     this.requirement.index = index;
                     this.requirement.name = requirement.name;
@@ -496,6 +564,8 @@
                     this.requirement.priority = requirement.priority;
                     $('#edit-requirement-modal').modal('show');
                 },
+
+                // Update form progress bar
                 setProgressBar: function () {
                     var step = this.step - 1;
                     var steps = this.totalsteps - 1;
@@ -510,6 +580,33 @@
                     } else {
                         $progressBar.css('border-radius', '.5rem 0px');
                     }
+                },
+
+                /*
+                 * Requirements Ambiguity Scanner
+                 */
+
+                // Word Detector
+                detectWords: function () {
+
+                    this.ambiguousWords.forEach(word => {
+                        if (this.wordInString(this.requirement.description, word.word)) {
+                            word.true = 1;
+                            console.log(word.true);
+                            $("#requirementWarning").removeClass('d-none');
+                        } else {
+                            word.true = 0;
+                            //$("#requirementWarning").addClass('d-none');
+                        }
+                    })
+                },
+
+                wordInString: function (s, word) {
+                    return new RegExp('\\b' + word + '\\b', 'i').test(s);
+                },
+
+                isInArray: function (words, word) {
+                    return words.indexOf(word.toLowerCase()) > -1;
                 },
             }
         });
