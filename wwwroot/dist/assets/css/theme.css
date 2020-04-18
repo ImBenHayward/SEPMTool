@@ -13695,5 +13695,8 @@ pre[class*="language-"] {
     opacity: 0.4;
 }
 
+.requirement-info {
+    padding-top: 15px;
+}
 
 /*# sourceMappingURL=theme.css.map */
