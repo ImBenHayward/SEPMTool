@@ -21,31 +21,30 @@
                 <div class="text-center">
                     <h1 class="h2">Create an Account</h1>
                     <p class="lead">Start Managing Your Software Projects Today</p>
-                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                    <div class="text-left">
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                    </div>
                     <hr>
                     <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
                         <div class="form-group">
+                            <label class="float-left">First Name</label>
                             <input asp-for="Input.FirstName" class="form-control" placeholder="First Name" />
-                            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
                         </div>
                         <div class="form-group">
+                            <label class="float-left">Last Name</label>
                             <input asp-for="Input.LastName" class="form-control" placeholder="Last Name" />
-                            <span asp-validation-for="Input.LastName" class="text-danger"></span>
                         </div>
                         <div class="form-group">
+                            <label class="float-left">Email</label>
                             <input asp-for="Input.Email" class="form-control" placeholder="Email Address" />
-                            <span asp-validation-for="Input.Email" class="text-danger"></span>
                         </div>
                         <div class="form-group">
+                            <label class="float-left">Password</label>
                             <input asp-for="Input.Password" class="form-control" placeholder="Password" />
-                            <span asp-validation-for="Input.Password" class="text-danger"></span>
-                            <div class="text-left">
-                                <small>Your password should be at least 8 characters</small>
-                            </div>
                         </div>
                         <div class="form-group">
+                            <label class="float-left">Confirm Password</label>
                             <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Confirm Password" />
-                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                         </div>
                         <button class="btn btn-lg btn-block btn-primary" role="button" type="submit">
                             Create account

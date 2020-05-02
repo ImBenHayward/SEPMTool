@@ -184,7 +184,7 @@ namespace SEPMTool.Controllers
             ProjectUpdate projectUpdate = new ProjectUpdate
             {
                 Title = "Project Created",
-                Description = proj.Name + " was created",
+                Description = "'" + proj.Name + "' was created",
                 Project = proj,
                 Date = DateTime.UtcNow,
                 Type = UpdateType.Add
@@ -233,7 +233,7 @@ namespace SEPMTool.Controllers
             ProjectUpdate projectUpdate = new ProjectUpdate
             {
                 Title = "New Task Added",
-                Description = projTask.Name + " was added.",
+                Description = "'" + projTask.Name + "' was added.",
                 Date = DateTime.UtcNow,
                 Type = UpdateType.Add
             };
@@ -278,17 +278,27 @@ namespace SEPMTool.Controllers
                 selectedUsers = projectTask.Users.Where(u => u.IsSelected).Select(u => new TaskUser { UserId = u.UserId, Username = u.Username }).ToList();
             }
 
-            List<SubTask> subTasksDb = _mapper.Map<ICollection<SubTaskViewModel>, List<SubTask>>(projectTask.SubTasks);
+            //List<SubTask> subTasksDb = _mapper.Map<ICollection<SubTaskViewModel>, List<SubTask>>(projectTask.SubTasks);
+
+            foreach(var st in projectTask.SubTasks)
+            {
+                if(st.Id == 0)
+                {
+                    var subTask = _mapper.Map<SubTask>(st);
+
+                    task.SubTasks.Add(subTask);
+                }
+            }
 
             task.Name = projectTask.TaskName;
             task.Description = projectTask.TaskDescription;
-            task.SubTasks = subTasksDb;
+            //task.SubTasks = subTasksDb;
             task.Users = selectedUsers;
 
             ProjectUpdate projectUpdate = new ProjectUpdate
             {
                 Title = "Task Edited",
-                Description = projectTask.TaskName + " was edited.",
+                Description = "'" + projectTask.TaskName + "' was edited.",
                 Date = DateTime.UtcNow,
                 Type = UpdateType.Edit
             };
@@ -377,7 +387,7 @@ namespace SEPMTool.Controllers
             ProjectUpdate projectUpdate = new ProjectUpdate
             {
                 Title = "Task Deleted",
-                Description = task.Name + " was Deleted.",
+                Description = "'" + task.Name + "' was Deleted.",
                 Date = DateTime.UtcNow,
                 Type = UpdateType.Remove
             };

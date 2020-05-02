@@ -8,21 +8,18 @@
                 <table class="table table-hover" id="cssTable">
                     <thead>
                         <tr>
-                            <th scope="col" style="text-align: right">ID</th>
                             <th scope="col">Name</th>
                             <th scope="col" style="text-align: center">Progress</th>
                             <th scope="col" style="text-align: center">Priority</th>
                             <th scope="col" style="text-align: right">Start Date</th>
                             <th scope="col" style="text-align: right">Deadline</th>
-                            <th scope="col"></th>
+                            @*<th scope="col"></th>*@
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var project in @Model.Data)
                         {
-                            <tr onclick="location.href='@Url.Action("Details", new { id = @project.Id})'" onmouseover="" style="cursor: pointer;">
-                                
-                                <th scope="row" style="vertical-align: middle; text-align: right">@project.Id</th>
+                            <tr onclick="location.href='@Url.Action("Details", new { id = @project.Id})'" onmouseover="" style="cursor: pointer;">                                
                                 <td>@project.Name</td>
                                 <td style="text-align: center">
                                     <div class="progress-table">
@@ -42,7 +39,7 @@
                                         case Priority.Medium: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
                                         break;
 
-                                        case Priority.High: <b-badge style="background-color: #db7b2b; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
+                                        case Priority.High: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
                                         break;
 
                                         case Priority.VeryHigh: <b-badge style="background-color: #cc3232; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
@@ -53,9 +50,6 @@
                                 </td>
                                 <td style="text-align: right">@project.StartDate.ToString("dd MMMM yyyy")</td>
                                 <td style="text-align: right">@project.Deadline.ToString("dd MMMM yyyy")</td>
-                                <td style="text-align: right">
-                                    <input type="button" value="Open" role="button" class="btn btn-primary" onclick="location.href='@Url.Action("Details", new { id = @project.Id})'">
-                                </td>
                             </tr>
                         }
                     </tbody>

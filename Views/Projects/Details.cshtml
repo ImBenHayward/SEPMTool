@@ -69,18 +69,7 @@
                         <div class="row content-list-head">
                             <div class="col-auto">
                                 <h3>Requirements</h3>
-
                             </div>
-                            <form class="col-md-auto">
-                                <div class="input-group input-group-round">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="material-icons">filter_list</i>
-                                        </span>
-                                    </div>
-                                    <input type="search" class="form-control filter-list-input" placeholder="Filter files" aria-label="Filter Tasks">
-                                </div>
-                            </form>
                         </div>
                         <!--end of content list head-->
                         <div class="content-list-body row" v-for="(req, index) in this.projectModel.project.projectRequirements">
@@ -104,8 +93,6 @@
                                                         <b-badge data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="req.category == 0">Functional</b-badge>
                                                         <b-badge data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="req.category == 1">Non-Functional</b-badge>
                                                         <b-badge data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="req.category == 2">Domain</b-badge>
-                                                        <span class="badge badge-secondary" data-toggle="tooltip" data-placement="bottom" title="Category"></span>
-                                                        <span class="badge badge-warning" data-toggle="tooltip" data-placement="bottom" title="Priority"></span>
                                                     </div>
                                                 </div>
                                                 <div class="dropdown">
@@ -125,8 +112,9 @@
                                         <hr />
                                         <div class="d-flex justify-content-between align-items-center">
                                             <span>
-                                                <span class="h6-requirement align-self-center"><i class="fas fa-tasks"></i>  Requirement Tasks </span>
-                                                <a id="showRequirements" class="button_style" @@click="ShowTasks(req.id)" onmouseover="" style="cursor: pointer;"><i :id="`chevron-${req.id}`" class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
+                                                <span class="h6-requirement align-self-center span-requirement"><i class="fas fa-tasks title-icon"></i>Requirement Tasks</span>
+                                                <span class="span-requirement" v-if="!req.tasks.length">- No tasks added!</span>
+                                                <a id="showRequirements" class="button_style" @@click="ShowTasks(req.id)" onmouseover="" style="cursor: pointer;" v-show="req.tasks.length > 0"><i :id="`chevron-${req.id}`" class="fas fa-chevron-circle-down align-items-center rotate req-chevron align-self-center"></i></a>
                                             </span>
 
                                             <button class="btn btn-primary" v-on:click="OpenModal(req.id, index)">
@@ -140,19 +128,25 @@
                                                         <div :class="{'progress-bar':true, 'bg-success':(task.progress === 100 || task.isComplete), 'progress-complete':(task.progress === 100 || task.isComplete)}" :style="{width: task.progress + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                     <div class="card-header-requirements d-flex justify-content-between align-items-center">
-                                                        <a id="showRequirements" class="button_style" @@click="ShowTask(task.id)" onmouseover="" style="cursor: pointer;">{{task.name}} <i :id="`chevron-${task.id}`" class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
-                                                        <div class="dropdown">
-                                                            <span class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onmouseover="" style="cursor: pointer;">
-                                                                <i class="fas fa-pencil-alt"></i>
-                                                            </span>
-                                                            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                                                <button class="dropdown-item text-danger" type="button" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)" v-if="task.isCompleted == true">Mark as Incomplete</button>
-                                                                <div v-else>
-                                                                    <button class="dropdown-item text-success" type="button" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)">Mark as Complete</button>
-                                                                    <div class="dropdown-divider"></div>
-                                                                    <button class="dropdown-item text-primary" type="button" v-on:click="EditTask(task, taskIndex, index)">Edit</button>
-                                                                    <div class="dropdown-divider"></div>
-                                                                    <button class="dropdown-item text-danger" type="button" v-on:click="DeleteTask(task.id, taskIndex, index)">Delete</button>
+                                                        <a id="showRequirements" class="button_style" @@click="ShowTask(task.id)" onmouseover="" style="cursor: pointer;">{{task.name}} <i :id="`chevron-${task.id}`" class="fas fa-chevron-circle-down align-items-center rotate req-chevron align-self-center"></i></a>
+                                                        <div class="row">
+                                                            <div class="dropdown">
+                                                                <span class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onmouseover="" style="cursor: pointer;">
+                                                                    <i class="fas fa-pencil-alt"></i>
+                                                                </span>
+                                                                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                                                        <button class="dropdown-item text-primary" type="button" v-on:click="EditTask(task, taskIndex, index)">Edit</button>
+                                                                        <div class="dropdown-divider"></div>
+                                                                        <button class="dropdown-item text-danger" type="button" v-on:click="DeleteTask(task.id, taskIndex, index)">Delete</button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="dropdown">
+                                                                <span class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown" onmouseover="" style="cursor: pointer;">
+                                                                    <i :class="{'fas':true, 'fa-check-circle':true, 'completedTask':(task.isCompleted), 'req-chevron':true}"></i>
+                                                                </span> 
+                                                                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                                                    <button class="dropdown-item text-danger" type="button" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)" v-if="task.isCompleted == true">Mark as Incomplete</button>
+                                                                    <button class="dropdown-item text-success" type="button" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)" v-if="task.isCompleted == false">Mark as Complete</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -161,8 +155,6 @@
                                                         <div class="card-body">
                                                             <div class="card-title" style="max-width: 60%">
                                                                 <span class="text-small">{{task.description}}</span>
-                                                                <br />
-                                                                <span class="badge badge-success" data-toggle="tooltip" data-placement="bottom" title="Requirement link">{{req.name}}</span>
                                                             </div>
                                                             <div class="card-meta">
                                                                 <ul class="avatars">
@@ -174,7 +166,7 @@
                                                                 </ul>
                                                                 <div class="d-flex align-items-center">
                                                                     <i class="material-icons">playlist_add_check</i>
-                                                                    <span>3/4</span>
+                                                                    <span>{{ task.subTasks.filter((x,i) => { return x.isCompleted; }).length }}/{{ task.subTasks.length }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -589,13 +581,13 @@
 
                         <div class="tab-pane fade" id="task-add-members" role="tabpanel">
                             <div class="users-manage" data-filter-list="form-group-users">
-                                <div class="mb-3">
-                                    <ul class="avatars text-center">
-                                        <li v-for="user in this.projectModel.project.users">
-                                            <img :alt="user.username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" :data-title="user.username" />
-                                        </li>
-                                    </ul>
-                                </div>
+                                @*<div class="mb-3">
+                                        <ul class="avatars text-center">
+                                            <li v-for="user in this.projectModel.project.users">
+                                                <img :alt="user.username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" :data-title="user.username" />
+                                            </li>
+                                        </ul>
+                                    </div>*@
                                 <div class="input-group input-group-round">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
@@ -917,6 +909,7 @@
                             console.log("obj" + this.objectIndex);
 
                             this.projectModel.project.projectRequirements[this.requirementIndex].tasks.splice(this.objectIndex, 1, res.data);
+                            this.CalculateProgress();
                             this.RenderKanban();
                         })
                         .catch(err => {
@@ -1038,7 +1031,7 @@
                         this.arrDone.push(task);
                         break;
                 }
-                },
+                },                 
             },
             beforeMount() {
                 this.RenderKanban();

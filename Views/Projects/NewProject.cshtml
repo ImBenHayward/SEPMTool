@@ -7,7 +7,7 @@
 <form asp-action="Create">
     <div class="container">
         <div class="page-header">
-            <h1>Create a New Project</h1>
+            <h1>New Project</h1>
             <p class="lead">Project tasks can be added and assigned after the project is created.</p>
         </div>
 
@@ -16,9 +16,10 @@
                 <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width:0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             <div v-show="step == 1">
-                <div class="card-header">Step 1: General Details</div>
+                <div class="card-header"><b>Step 1: General Details</b></div>
                 <div class="card-body">
                     <div class="col auto"></div>
+                    <h6>Project Details</h6>
                     <div class="form-group row align-items-center">
                         <label for="name" class="col-2">Name</label>
                         <input v-model="projectModel.name" class="form-control col-4" placeholder="Project name" id="name" />
@@ -43,7 +44,7 @@
                     <h6>Timeline</h6>
                     <div class="form-group row align-items-center">
                         <label class="col-2">Start Date</label>
-                        <input v-model="projectModel.startDate" class="form-control col-2" placeholder="Select a date" data-flatpickr data-alt-input="true" id="startDate" />
+                        <input v-model="projectModel.startDate" class="form-control col-3 flatpickr-input" placeholder="Select a date" data-flatpickr data-alt-input="true" id="startDate" />
                         <div id="form-validation">
                             <i class="fas fa-check-circle"></i>
                             <i class="fas fa-exclamation-circle"></i>
@@ -53,7 +54,7 @@
                     </div>
                     <div class="form-group row align-items-center">
                         <label class="col-2">Deadline</label>
-                        <input v-model="projectModel.deadline" class="form-control col-2" placeholder="Select a date" data-flatpickr data-alt-input="true" id="deadline" />
+                        <input v-model="projectModel.deadline" class="form-control col-3 flatpickr-input" placeholder="Select a date" data-flatpickr data-alt-input="true" id="deadline" />
                         <div id="form-validation">
                             <i class="fas fa-check-circle"></i>
                             <i class="fas fa-exclamation-circle"></i>
@@ -79,7 +80,7 @@
             </div>
 
             <div v-show="step == 2">
-                <div class="card-header">Step 2: Project Requirements</div>
+                <div class="card-header"><b>Step 2: Project Requirements</b></div>
                 <div class="card-body">
                     <div class="alert alert-danger text-center alert-dismissible" id="reqValidationAlert" style="display:none">
                         <button type="button" class="close" onclick="$('#reqValidationAlert').hide()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -108,33 +109,32 @@
                                     <br />
                                     <span class="text-small">
                                         <input type="hidden" :value="requirement.priority" :name="'ProjectRequirements[' + index + '].priority'" />
-                                        Priority: {{ requirement.priority }}
                                     </span>
                                 </div>
                                 <div class="card-meta">
-                                    <ul class="avatars">
-                                        <li>
-                                            <a href="#" data-toggle="tooltip" title="Kenny">
-                                                <img alt="Kenny Tran" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div class="d-flex align-items-center">
-                                        <i class="material-icons">playlist_add_check</i>
-                                        <span>3/4</span>
+                                    <div>
+                                        <b-badge class="requirement-badge" style="background-color: #2dc937" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="requirement.priority == 0">Very Low</b-badge>
+                                        <b-badge class="requirement-badge" style="background-color: #99c140" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 1">Low</b-badge>
+                                        <b-badge class="requirement-badge" style="background-color: #e7b416" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 2">Medium</b-badge>
+                                        <b-badge class="requirement-badge" style="background-color: #db7b2b" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 3">High</b-badge>
+                                        <b-badge class="requirement-badge" style="background-color: #cc3232" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 4">Very High</b-badge>
+
+                                        <b-badge class="requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="requirement.category == 0">Functional</b-badge>
+                                        <b-badge class="requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-else-if="requirement.category == 1">Non-Funct</b-badge>
+                                        <b-badge class="requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-else-if="requirement.category == 2">Domain</b-badge>
                                     </div>
-                                    <div class="dropdown card-options">
-                                        <button class="btn-options" type="button" id="task-dropdown-button-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="material-icons">more_vert</i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" @@click="requirementClicked(requirement, index)">Edit</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item text-danger" @@click="deleteRequirement(index)">Delete</a>
+                                        <div class="dropdown card-options">
+                                            <button class="btn-options" type="button" id="task-dropdown-button-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="material-icons">more_vert</i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" @@click="requirementClicked(requirement, index)">Edit</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item text-danger" @@click="deleteRequirement(index)">Delete</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
                     @*</div>*@
@@ -146,7 +146,7 @@
             </div>
 
             <div v-show="step == 3">
-                <div class="card-header">Step 3: Project Members</div>
+                <div class="card-header"><b>Step 3: Project Members</b></div>
                 <div class="card-body">
                     @*<div class="tab-pane fade" id="project-add-members" role="tabpanel">*@
                     <div class="users-manage" data-filter-list="form-group-users">
@@ -197,12 +197,10 @@
                     </div>
                     <!--end of modal head-->
                     <div class="modal-body">
-                        <div class="alert alert-warning d-none" id="requirementWarning">
+                        <div class="alert alert-warning" id="requirementWarning" v-if="usedAmbiguousWords.length > 0">
                             Warning! Ambiguous words detected:
-                            <span v-for="word in ambiguousWords">
-                                <span v-if="word.true == true">
-                                    {{word.word}}
-                                </span>
+                            <span v-for="word in usedAmbiguousWords">
+                                    {{word}}
                             </span>
                         </div>
                         <div>
@@ -220,6 +218,7 @@
                                 <div class="form-group row align-items-center">
                                     <label class="col-3">Description</label>
                                     <textarea v-model="requirement.description" class="form-control col" rows="3" placeholder="Requirement description" id="reqdescription" v-on:keyup="detectWords()" v-on:keyup.backspace="detectWords()"></textarea>
+                                    <span v-for="word in usedAmbiguousWords">{{word.word}}</span>
                                     <div id="form-validation">
                                         <i class="fas fa-check-circle"></i>
                                         <i class="fas fa-exclamation-circle"></i>
@@ -347,15 +346,15 @@
                         true: 0
                     },
                     {
+                        word: 'Might',
+                        true: 0
+                    },
+                    {
                         word: 'Possibly',
                         true: 0
                     },
                     {
                         word: 'Could',
-                        true: 0
-                    },
-                    {
-                        word: 'May',
                         true: 0
                     },
                     {
@@ -365,6 +364,9 @@
                 ],
 
                 detectedWords: []
+            },
+            computed: {
+                usedAmbiguousWords: function () { return this.ambiguousWords.filter(word => word.true).map(word => word.word) }
             },
             methods: {
                 /*
@@ -589,24 +591,22 @@
                 // Word Detector
                 detectWords: function () {
 
+                    //For each word in the array
                     this.ambiguousWords.forEach(word => {
                         if (this.wordInString(this.requirement.description, word.word)) {
                             word.true = 1;
-                            console.log(word.true);
-                            $("#requirementWarning").removeClass('d-none');
                         } else {
                             word.true = 0;
-                            //$("#requirementWarning").addClass('d-none');
+
+                            if (this.ambiguousWords.every(word => !word.true)) {
+                                console.log('yep');
+                            }
                         }
                     })
                 },
 
                 wordInString: function (s, word) {
                     return new RegExp('\\b' + word + '\\b', 'i').test(s);
-                },
-
-                isInArray: function (words, word) {
-                    return words.indexOf(word.toLowerCase()) > -1;
                 },
             }
         });
