@@ -13584,7 +13584,7 @@ pre[class*="language-"] {
 
 .form-group form-validation {
     margin-left: 5px;
-    margin-right: 5px;
+    margin-right: 8px;
     justify-content: flex-start;
 }
 
@@ -13670,11 +13670,11 @@ pre[class*="language-"] {
     transition: all 0.5s linear;
 }
 
-.rotate.down {
-    -moz-transform: rotate(-180deg);
-    -webkit-transform: rotate(-180deg);
-    transform: rotate(-180deg);
-}
+    .rotate.down {
+        -moz-transform: rotate(-180deg);
+        -webkit-transform: rotate(-180deg);
+        transform: rotate(-180deg);
+    }
 
 .card-subtasks {
     padding-left: 1.5rem;
@@ -13699,7 +13699,7 @@ pre[class*="language-"] {
     padding-top: 15px;
 }
 
-#cssTable td{    
+#cssTable td {
     vertical-align: middle;
 }
 
@@ -13722,7 +13722,7 @@ pre[class*="language-"] {
     margin-right: 5px;
 }
 
-.req-chevron{
+.req-chevron {
     margin-left: 5px;
 }
 

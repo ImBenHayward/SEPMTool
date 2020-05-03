@@ -15,7 +15,7 @@
             <div class="progress" style="height:5px">
                 <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width:0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <div v-show="step == 1">
+            <div v-show="step == 2">
                 <div class="card-header"><b>Step 1: General Details</b></div>
                 <div class="card-body">
                     <div class="col auto"></div>
@@ -36,7 +36,7 @@
                         <div id="form-validation">
                             <i class="fas fa-check-circle"></i>
                             <i class="fas fa-exclamation-circle"></i>
-                            <small>Error Message</small>
+                            <small></small>
                         </div>
                         <input type="hidden" :value="projectModel.description" :name="'Description'" />
                     </div>
@@ -48,7 +48,7 @@
                         <div id="form-validation">
                             <i class="fas fa-check-circle"></i>
                             <i class="fas fa-exclamation-circle"></i>
-                            <small>Error Message</small>
+                            <small></small>
                         </div>
                         <input type="hidden" :value="projectModel.startDate" :name="'StartDate'" />
                     </div>
@@ -58,7 +58,7 @@
                         <div id="form-validation">
                             <i class="fas fa-check-circle"></i>
                             <i class="fas fa-exclamation-circle"></i>
-                            <small>Error Message</small>
+                            <small></small>
                         </div>
                         <input type="hidden" :value="projectModel.deadline" :name="'Deadline'" />
                     </div>
@@ -72,14 +72,14 @@
                         <div id="form-validation">
                             <i class="fas fa-check-circle"></i>
                             <i class="fas fa-exclamation-circle"></i>
-                            <small>Error Message</small>
+                            <small></small>
                         </div>
                         <input type="hidden" :value="projectModel.priority" :name="'Priority'" />
                     </div>
                 </div>
             </div>
 
-            <div v-show="step == 2">
+            <div v-show="step == 1">
                 <div class="card-header"><b>Step 2: Project Requirements</b></div>
                 <div class="card-body">
                     <div class="alert alert-danger text-center alert-dismissible" id="reqValidationAlert" style="display:none">
@@ -94,7 +94,7 @@
                                     <a href="#">
                                         <h6 data-filter-by="text">
                                             <input type="hidden" :value='requirement.name' :name="'ProjectRequirements[' + index + '].name'" />
-                                            {{ requirement.name }}
+                                                {{ requirement.name }} 
                                         </h6>
                                     </a>
                                     <span class="text-small">
@@ -104,7 +104,6 @@
                                     <br />
                                     <span class="text-small">
                                         <input type="hidden" :value="requirement.category" :name="'ProjectRequirements[' + index + '].category'" />
-                                        Category: {{ requirement.category }}
                                     </span>
                                     <br />
                                     <span class="text-small">
@@ -113,6 +112,14 @@
                                 </div>
                                 <div class="card-meta">
                                     <div>
+                                                                                                                                                          
+                                        <b-badge class="requirement-badge" style="background-color: #28A745" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-if="requirement.quality === 0">A</b-badge>
+                                        <b-badge class="requirement-badge" style="background-color: #FFC107" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 1">B</b-badge>
+                                        <b-badge class="requirement-badge" style="background-color: #FFC107" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 2">C</b-badge>
+                                        <b-badge class="requirement-badge" style="background-color: #DC3545" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 3">D</b-badge>
+                                        <b-badge class="requirement-badge" style="background-color: #DC3545" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 4">E</b-badge>
+                                        <b-badge class="requirement-badge" style="background-color: #DC3545" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else>F</b-badge>
+
                                         <b-badge class="requirement-badge" style="background-color: #2dc937" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="requirement.priority == 0">Very Low</b-badge>
                                         <b-badge class="requirement-badge" style="background-color: #99c140" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 1">Low</b-badge>
                                         <b-badge class="requirement-badge" style="background-color: #e7b416" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 2">Medium</b-badge>
@@ -123,23 +130,23 @@
                                         <b-badge class="requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-else-if="requirement.category == 1">Non-Funct</b-badge>
                                         <b-badge class="requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-else-if="requirement.category == 2">Domain</b-badge>
                                     </div>
-                                        <div class="dropdown card-options">
-                                            <button class="btn-options" type="button" id="task-dropdown-button-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="material-icons">more_vert</i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" @@click="requirementClicked(requirement, index)">Edit</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item text-danger" @@click="deleteRequirement(index)">Delete</a>
-                                            </div>
+                                    <div class="dropdown card-options">
+                                        <button class="btn-options" type="button" id="task-dropdown-button-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="material-icons">more_vert</i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" @@click="requirementClicked(requirement, index)">Edit</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item text-danger" @@click="deleteRequirement(index)">Delete</a>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                         </div>
                     </div>
                     @*</div>*@
                     <br />
-                    <button role="button" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#new-requirement-modal">
+                    <button role="button" type="button" class="btn btn-outline-primary" data-toggle="modal" v-on:click="newRequirementModal()" data-target="#new-requirement-modal">
                         New Requirement
                     </button>
                 </div>
@@ -186,124 +193,115 @@
         </div>
 
         @* New Requirements Modal *@
-        <div class="modal fade" id="new-requirement-modal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+        <div class="modal fade" id="requirement-modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Add a New Requirement</h5>
-                        <button type="button" class="close btn btn-round" data-dismiss="modal" aria-label="Close">
+                        <h5 class="modal-title">{{modalTitle}}</h5>
+                        <button type="button" class="close btn btn-round" v-on:click="closeModal()">
                             <i class="material-icons">close</i>
                         </button>
                     </div>
                     <!--end of modal head-->
                     <div class="modal-body">
-                        <div class="alert alert-warning" id="requirementWarning" v-if="usedAmbiguousWords.length > 0">
-                            Warning! Ambiguous words detected:
-                            <span v-for="word in usedAmbiguousWords">
-                                    {{word}}
-                            </span>
-                        </div>
                         <div>
-                            <div class="tab-content">
-                                <h6>Requirement Details</h6>
-                                <div class="form-group row align-items-center">
-                                    <label class="col-3">Title</label>
-                                    <input v-model="requirement.name" class="form-control col" placeholder="Requirement title" id="reqname" />
-                                    <div id="form-validation">
-                                        <i class="fas fa-check-circle"></i>
-                                        <i class="fas fa-exclamation-circle"></i>
-                                        <small>Error Message</small>
+                            <div class="row">
+                                <div class="col-8">
+                                    <h6>Requirement Details</h6>
+                                    <div class="form-group row align-items-center">
+                                        <label class="col-3">Title</label>
+                                        <input v-model="requirement.name" class="form-control col" placeholder="Requirement title" id="reqname" />
+                                        <div id="form-validation">
+                                            <i class="fas fa-check-circle"></i>
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            <small></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-items-center">
+                                        <label class="col-3">Description</label>
+                                        <textarea v-model="requirement.description" class="form-control col" rows="3" placeholder="Requirement description" id="reqdescription" v-on:keyup="detectWords()" v-on:keyup.backspace="detectWords()"></textarea>
+                                        <div id="form-validation">
+                                            <i class="fas fa-check-circle"></i>
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            <small></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-items-center">
+                                        <label class="col-3">Category</label>
+                                        <select v-model="requirement.category" asp-items="Html.GetEnumSelectList<RequirementCategory>()" class="form-control col-4" id="reqcategory">
+                                            <option value=""></option>
+                                        </select>
+                                        <div id="form-validation">
+                                            <i class="fas fa-check-circle"></i>
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            <small></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-items-center">
+                                        <label class="col-3">Priority</label>
+                                        <select v-model="requirement.priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-4" id="reqpriority">
+                                            <option value=""></option>
+                                        </select>
+                                        <div id="form-validation">
+                                            <i class="fas fa-check-circle"></i>
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            <small></small>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group row align-items-center">
-                                    <label class="col-3">Description</label>
-                                    <textarea v-model="requirement.description" class="form-control col" rows="3" placeholder="Requirement description" id="reqdescription" v-on:keyup="detectWords()" v-on:keyup.backspace="detectWords()"></textarea>
-                                    <span v-for="word in usedAmbiguousWords">{{word.word}}</span>
-                                    <div id="form-validation">
-                                        <i class="fas fa-check-circle"></i>
-                                        <i class="fas fa-exclamation-circle"></i>
-                                        <small>Error Message</small>
+                                <div class="col-4">
+                                    <h6>Quality Evaluation</h6>
+
+                                    <small>Optionality:</small><span class="float-right"><i class="fas fa-info-circle"></i></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" :style="{width: this.optionalityPercentage + '%' }"></div>
                                     </div>
-                                </div>
-                                <div class="form-group row align-items-center">
-                                    <label class="col-3">Category</label>
-                                    <select v-model="requirement.category" asp-items="Html.GetEnumSelectList<RequirementCategory>()" class="form-control col-3" id="reqcategory">
-                                        <option value=""></option>
-                                    </select>
-                                    <div id="form-validation">
-                                        <i class="fas fa-check-circle"></i>
-                                        <i class="fas fa-exclamation-circle"></i>
-                                        <small>Error Message</small>
+                                    <br />
+                                    <small>Subjectivity:</small><span class="float-right"><i class="fas fa-info-circle"></i></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" :style="{width: this.subjectivityPercentage + '%' }"></div>
                                     </div>
-                                </div>
-                                <div class="form-group row align-items-center">
-                                    <label class="col-3">Priority</label>
-                                    <select v-model="requirement.priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-3" id="reqpriority">
-                                        <option value=""></option>
-                                    </select>
-                                    <div id="form-validation">
-                                        <i class="fas fa-check-circle"></i>
-                                        <i class="fas fa-exclamation-circle"></i>
-                                        <small>Error Message</small>
+                                    <br />
+                                    <small>Vagueness:</small><span class="float-right"><i class="fas fa-info-circle"></i></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" :style="{width: this.vaguenessPercentage + '%' }"></div>
                                     </div>
+                                    <br />
+                                    <small>Weakness:</small><span class="float-right"><i class="fas fa-info-circle"></i></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" :style="{width: this.weaknessPercentage + '%' }"></div>
+                                    </div>
+                                    <br />
+                                    <small>Implicity:</small><span class="float-right"><i class="fas fa-info-circle"></i></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" :style="{width: this.implicityPercentage + '%' }"></div>
+                                    </div>
+                                    <br />
+                                    <small>Multiplicity:</small><span class="float-right"><i class="fas fa-info-circle"></i></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" :style="{width: this.multiplicityPercentage + '%' }"></div>
+                                    </div>
+                                    <br />
+                                    Quality Rating:
+                                    <b v-if="totalIndicators == 0" style="color:#28A745">A</b>
+                                    <b v-else-if="totalIndicators == 1" style="color:#FFC107">B</b>
+                                    <b v-else-if="totalIndicators == 2" style="color:#FFC107">C</b>
+                                    <b v-else-if="totalIndicators == 3" style="color:#DC3545">D</b>
+                                    <b v-else-if="totalIndicators == 4" style="color:#DC3545">E</b>
+                                    <b v-else-if="totalIndicators >= 5" style="color:#DC3545">F</b>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!--end of modal body-->
                     <div class="modal-footer">
-                        <button type="button" role="button" class="btn btn-primary" @@click="addRequirement">
+                        <button type="button" role="button" class="btn btn-primary" @@click="addRequirement" v-if="this.modalTitle === 'New Requirement'">
                             Add Requirement
                         </button>
+                        <button type="button" role="button" class="btn btn-primary" @@click="editRequirement(requirement.index)" v-if="this.modalTitle === 'Edit Requirement'">
+                            Update Requirement
+                        </button>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @* Edit Requirements Modal *@
-    <div id="edit-requirement-modal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Requirement</h5>
-                    <button type="button" class="close btn btn-round" data-dismiss="modal" aria-label="Close">
-                        <i class="material-icons">close</i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div>
-                        <div class="tab-content">
-                            <h6>Requirement Details</h6>
-                            <div class="form-group row">
-                                <label class="col-3">Title</label>
-                                <input v-model="requirement.name" class="form-control col" placeholder="Requirement title" />
-                            </div>
-                            <div class="form-group row align-items-center">
-                                <label class="col-3">Description</label>
-                                <input v-model="requirement.description" class="form-control col" rows="3" placeholder="Requirement description" />
-                            </div>
-
-                            <div class="form-group row align-items-center">
-                                <label class="col-3">Category</label>
-                                <select v-model="requirement.category" asp-items="Html.GetEnumSelectList<RequirementCategory>()" class="form-control col-3" id="priority">
-                                    <option value=""></option>
-                                </select>
-                            </div>
-                            <div class="form-group row align-items-center">
-                                <label class="col-3">Priority</label>
-                                <select v-model="requirement.priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-3" id="priority">
-                                    <option value=""></option>
-                                </select>
-                                <input asp-for="RequirementIndex" type="hidden" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" role="button" class="btn btn-primary" data-dismiss="modal" @@click="editRequirement(requirement.index)">
-                        Update Requirement
-                    </button>
                 </div>
             </div>
         </div>
@@ -320,6 +318,8 @@
                 step: 1,
                 totalsteps: 3,
 
+                modalTitle: '',
+
                 projectModel: {
                     name: null,
                     description: null,
@@ -327,46 +327,253 @@
                     deadline: null,
                     priority: null,
                 },
+
                 validation: {
                     nameValidation: '',
                 },
+
                 requirement:
                 {
                     index: '',
                     name: '',
                     description: '',
                     category: '',
-                    priority: ''
+                    priority: '',
+                    quality: '',
                 },
                 requirementsList: [],
 
-                ambiguousWords: [
+                optionalityIndicators: [
                     {
-                        word: 'Maybe',
+                        word: 'possibly',
                         true: 0
                     },
                     {
-                        word: 'Might',
+                        word: 'eventually',
                         true: 0
                     },
                     {
-                        word: 'Possibly',
+                        word: 'if case',
                         true: 0
                     },
                     {
-                        word: 'Could',
+                        word: 'if possible',
                         true: 0
                     },
                     {
-                        word: 'Should',
+                        word: 'if appropriate',
+                        true: 0
+                    },
+                    {
+                        word: 'if needed',
                         true: 0
                     },
                 ],
 
-                detectedWords: []
+                subjectivityIndicators: [
+                    {
+                        word: 'similar',
+                        true: 0
+                    },
+                    {
+                        word: 'better',
+                        true: 0
+                    },
+                    {
+                        word: 'similarly',
+                        true: 0
+                    },
+                    {
+                        word: 'worse',
+                        true: 0
+                    },
+                    {
+                        word: 'having in mind',
+                        true: 0
+                    },
+                    {
+                        word: 'take into account',
+                        true: 0
+                    }
+                ],
+
+                vaguenessIndicators: [
+                    {
+                        word: 'clear',
+                        true: 0
+                    },
+                    {
+                        word: 'clearly',
+                        true: 0
+                    },
+                    {
+                        word: 'easy',
+                        true: 0
+                    },
+                    {
+                        word: 'easily',
+                        true: 0
+                    },
+                    {
+                        word: 'strong',
+                        true: 0
+                    },
+                    {
+                        word: 'good',
+                        true: 0
+                    },
+                    {
+                        word: 'bad',
+                        true: 0
+                    },
+                    {
+                        word: 'efficient',
+                        true: 0
+                    },
+                    {
+                        word: 'useful',
+                        true: 0
+                    },
+                    {
+                        word: 'significant',
+                        true: 0
+                    },
+                    {
+                        word: 'adequate',
+                        true: 0
+                    },
+                    {
+                        word: 'fast',
+                        true: 0
+                    },
+                    {
+                        word: 'recent',
+                        true: 0
+                    },
+                    {
+                        word: 'far',
+                        true: 0
+                    },
+                    {
+                        word: 'close',
+                        true: 0
+                    },
+                    {
+                        word: 'in front',
+                        true: 0
+                    },
+                ],
+
+                weaknessIndicators: [
+                    {
+                        word: 'can',
+                        true: 0
+                    },
+                    {
+                        word: 'could',
+                        true: 0
+                    },
+                    {
+                        word: 'may',
+                        true: 0
+                    }
+                ],
+
+                implicityIndicators: [
+                    {
+                        word: 'this',
+                        true: 0
+                    },
+                    {
+                        word: 'these',
+                        true: 0
+                    },
+                    {
+                        word: 'that',
+                        true: 0
+                    },
+                    {
+                        word: 'those',
+                        true: 0
+                    },
+                    {
+                        word: 'it',
+                        true: 0
+                    },
+                    {
+                        word: 'they',
+                        true: 0
+                    },
+                    {
+                        word: 'previous',
+                        true: 0
+                    },
+                    {
+                        word: 'next',
+                        true: 0
+                    },
+                    {
+                        word: 'following',
+                        true: 0
+                    },
+                    {
+                        word: 'last',
+                        true: 0
+                    },
+                    {
+                        word: 'above',
+                        true: 0
+                    },
+                    {
+                        word: 'below',
+                        true: 0
+                    },
+                ],
+
+                multiplicityIndicators: [
+                    {
+                        word: 'and',
+                        true: 0
+                    },
+                    {
+                        word: 'or',
+                        true: 0
+                    },
+                    {
+                        word: 'and/or',
+                        true: 0
+                    }
+                ],
+
             },
             computed: {
-                usedAmbiguousWords: function () { return this.ambiguousWords.filter(word => word.true).map(word => word.word) }
+                
+                totalIndicators: function () { return (this.optionalityIndicatorCount + this.subjectivityIndicatorCount + this.vaguenessIndicatorCount + this.weaknessIndicatorCount + this.implicityIndicatorCount + this.multiplicityIndicatorCount) },
+                               
+                optionalityIndicatorCount: function () { return this.optionalityIndicators.filter(word => word.true).length },
+                optionalityPercentage: function () { return parseFloat(this.optionalityIndicatorCount * 300 / this.wordCount) },
+
+                subjectivityIndicatorCount: function () { return this.subjectivityIndicators.filter(word => word.true).length },
+                subjectivityPercentage: function () { return parseFloat(this.subjectivityIndicatorCount * 300 / this.wordCount) },
+
+                vaguenessIndicatorCount: function () { return this.vaguenessIndicators.filter(word => word.true).length },
+                vaguenessPercentage: function () { return parseFloat(this.vaguenessIndicatorCount * 300 / this.wordCount) },
+
+                weaknessIndicatorCount: function () { return this.weaknessIndicators.filter(word => word.true).length },
+                weaknessPercentage: function () { return parseFloat(this.weaknessIndicatorCount * 300 / this.wordCount) },
+
+                implicityIndicatorCount: function () { return this.implicityIndicators.filter(word => word.true).length },
+                implicityPercentage: function () { return parseFloat(this.implicityIndicatorCount * 300 / this.wordCount) },
+
+                multiplicityIndicatorCount: function () { return this.multiplicityIndicators.filter(word => word.true).length },
+                multiplicityPercentage: function () { return parseFloat(this.multiplicityIndicatorCount * 300 / this.wordCount) },
+
+                wordCount() {
+                    return this.requirement.description.trim().split(/\s+/).length;
+                },
+
+                allArrays: function () { return [...this.optionalityIndicators, ...this.subjectivityIndicators, ...this.vaguenessIndicators, ...this.weaknessIndicators, ...this.implicityIndicators, ...this.multiplicityIndicators]},
+
             },
             methods: {
                 /*
@@ -513,8 +720,8 @@
                 // Set error validation message
                 setErrorFor: function (input, message) {
                     const formGroup = input.parentElement;
-                    const small = formGroup.querySelector('small');
-                    small.innerText = message;
+                    //const small = formGroup.querySelector('small');
+                    //small.innerText = message;
                     formGroup.className = 'form-group row align-items-center error';
                 },
 
@@ -528,19 +735,34 @@
                  * Requirements Functions
                  */
 
-                // Add Requirement
-                addRequirement: function () {
-                    if (this.checkInputsRequirementsModal()) {
-                        $('#new-requirement-modal').modal('hide');
-                        const clone = Object.assign({}, this.requirement);
-                        this.requirementsList.push(clone);
-                        this.requirement = {
+                // Open New Requirement Modal
+                newRequirementModal: function () {
+                    $('#requirement-modal').modal('show');
+                    this.modalTitle = "New Requirement";
+                },
+
+                closeModal: function () {
+                    $('#requirement-modal').modal('hide');
+
+                    this.requirement = {
                             index: '',
                             name: '',
                             description: '',
                             category: '',
                             priority: ''
-                        };
+                    };
+
+                    this.resetArrays();
+                },
+
+                // Add Requirement
+                addRequirement: function () {
+                    if (this.checkInputsRequirementsModal()) {
+                        $('#new-requirement-modal').modal('hide');
+                        this.requirement.quality = this.totalIndicators;
+                        const clone = Object.assign({}, this.requirement);
+                        this.requirementsList.push(clone);
+                        this.closeModal();                        
                     }
                 },
 
@@ -550,6 +772,8 @@
                     const clone = Object.assign({}, this.requirement);
                     this.requirementsList.splice(index, 1, clone);
                     console.log(index);
+                    this.closeModal();
+                    this.resetArrays();
                 },
 
                 // Delete Requirement
@@ -564,7 +788,9 @@
                     this.requirement.description = requirement.description;
                     this.requirement.category = requirement.category;
                     this.requirement.priority = requirement.priority;
-                    $('#edit-requirement-modal').modal('show');
+                    $('#requirement-modal').modal('show');
+                    this.modalTitle = "Edit Requirement";
+                    this.detectWords();
                 },
 
                 // Update form progress bar
@@ -588,21 +814,70 @@
                  * Requirements Ambiguity Scanner
                  */
 
+                // Reset Arrays
+                resetArrays: function () {
+                    this.allArrays.forEach(word => {
+                        word.true = 0;
+                    });
+                },
+
                 // Word Detector
                 detectWords: function () {
 
                     //For each word in the array
-                    this.ambiguousWords.forEach(word => {
+                    this.optionalityIndicators.forEach(word => {
+                        if (this.wordInString(this.requirement.description, word.word)) {
+                            word.true = 1;
+                        } else {
+                            word.true = 0;
+                        }
+                    })
+
+                    this.subjectivityIndicators.forEach(word => {
+                        if (this.wordInString(this.requirement.description, word.word)) {
+                            word.true = 1;
+                        } else {
+                            word.true = 0;
+                        }
+                    })
+
+                    this.vaguenessIndicators.forEach(word => {
+                        if (this.wordInString(this.requirement.description, word.word)) {
+                            word.true = 1;
+                        } else {
+                            word.true = 0;
+                        }
+                    })
+
+                    this.weaknessIndicators.forEach(word => {
                         if (this.wordInString(this.requirement.description, word.word)) {
                             word.true = 1;
                         } else {
                             word.true = 0;
 
-                            if (this.ambiguousWords.every(word => !word.true)) {
-                                console.log('yep');
-                            }
+                            //if (this.subjectivityIndicators.every(word => !word.true)) {
+                            //    console.log('yep');
+                            //}
                         }
                     })
+
+                    this.implicityIndicators.forEach(word => {
+                        if (this.wordInString(this.requirement.description, word.word)) {
+                            word.true = 1;
+                        } else {
+                            word.true = 0;
+                        }
+                    })
+
+
+                    this.multiplicityIndicators.forEach(word => {
+                        if (this.wordInString(this.requirement.description, word.word)) {
+                            word.true = 1;
+                        } else {
+                            word.true = 0;
+                        }
+                    })
+
                 },
 
                 wordInString: function (s, word) {
