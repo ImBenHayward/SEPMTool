@@ -13,6 +13,10 @@ namespace SEPMTool.Models.ViewModels
         public int ProjectId { get; set; }
         public int RequirementId { get; set; }
         public int TaskId { get; set; }
+        public string RequirementName { get; set; }
+        public string RequirementDescription { get; set; }
+        public Priority RequirementPriority { get; set; }
+        public RequirementCategory RequirementCategory { get; set; }
         public string TaskName { get; set; }
         public string TaskDescription { get; set; }
         public List<SubTaskViewModel> SubTasks { get; set; }
@@ -27,6 +31,7 @@ namespace SEPMTool.Models.ViewModels
             public int ProjectRequirementId { get; set; }
             public string Name { get; set; }
             public string Description { get; set; }
+            public bool IsCompleted { get; set; }
             public Priority Priority { get; set; }
             public TaskStatus Status { get; set; }
             public IEnumerable<SubTaskViewModel> SubTasks { get; set; }
@@ -42,6 +47,11 @@ namespace SEPMTool.Models.ViewModels
         {
             public int Id { get; set; }
             public bool IsCompleted { get; set; }
+        }
+
+        public class UpdateReqResponse
+        {
+            public RequirementViewModel Requirement { get; set; }
         }
     }
 }

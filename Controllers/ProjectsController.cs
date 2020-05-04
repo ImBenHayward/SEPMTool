@@ -79,19 +79,23 @@ namespace SEPMTool.Controllers
             var projects = _context.Projects
                 .Include(u => u.Users)
                 .Include(r => r.ProjectRequirements)
-                .ThenInclude(ProjectRequirement => ProjectRequirement.Tasks)
-                .Skip(excludeRecords)
-                .Take(pageSize);
+                .ThenInclude(ProjectRequirement => ProjectRequirement.Tasks).ToList();
+            //.Skip(excludeRecords)
+            //.Take(pageSize);
 
-            PagedResult<Project> result = new PagedResult<Project>
-            {
-                Data = projects.AsNoTracking().ToList(),
-                TotalItems = _context.Projects.Count(),
-                PageNumber = pageNumber,
-                PageSize = pageSize
-            };
+            List<ProjectViewModel> projectList = _mapper.Map<List<Project>, List<ProjectViewModel>>(projects);
 
-            return View(result);
+            model.Projects = projectList;
+
+            //PagedResult<Project> result = new PagedResult<Project>
+            //{
+            //    Data = projects.AsNoTracking().ToList(),
+            //    TotalItems = _context.Projects.Count(),
+            //    PageNumber = pageNumber,
+            //    PageSize = pageSize
+            //};
+
+            return View(model);
         }
 
         [HttpGet]
@@ -208,6 +212,99 @@ namespace SEPMTool.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> CreateRequirement([FromBody] ProjectDetailsViewModel projectRequirement)
+        {
+            var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectRequirement.ProjectId);
+
+            ProjectRequirement requirement = new ProjectRequirement
+            {
+                Project = project,
+                Name = projectRequirement.RequirementName,
+                Description = projectRequirement.RequirementDescription,
+                Priority = projectRequirement.RequirementPriority,
+                Category = projectRequirement.RequirementCategory
+            };
+
+            ProjectUpdate projectUpdate = new ProjectUpdate
+            {
+                Title = "New Requirement Added",
+                Description = "'" + projectRequirement.RequirementName + "' was added.",
+                Date = DateTime.UtcNow,
+                Type = UpdateType.Add
+            };
+            
+            project.Updates.Add(projectUpdate);
+            _context.Requirements.Add(requirement);
+
+            //_context.Requirements.Add(requirement);
+
+            await _context.SaveChangesAsync();
+
+            var requirementVm = _mapper.Map<RequirementViewModel>(requirement);
+
+            return Ok(new UpdateReqResponse
+            {
+                Requirement = requirementVm
+            });
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateRequirement([FromBody] ProjectDetailsViewModel projectTask)
+        {
+
+            var requirement = _context.Requirements.Include(t => t.Tasks).FirstOrDefault(x => x.Id == projectTask.RequirementId);
+            var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectTask.ProjectId);
+
+            requirement.Name = projectTask.RequirementName;
+            requirement.Description = projectTask.RequirementDescription;
+            requirement.Priority = projectTask.RequirementPriority;
+            requirement.Category = projectTask.RequirementCategory;
+
+            ProjectUpdate projectUpdate = new ProjectUpdate
+            {
+                Title = "Requirement Edited",
+                Description = "'" + projectTask.RequirementName + "' was edited.",
+                Date = DateTime.UtcNow,
+                Type = UpdateType.Edit
+            };
+
+            var requirementVm = _mapper.Map<RequirementViewModel>(requirement); 
+
+            project.Updates.Add(projectUpdate);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new UpdateReqResponse
+            {
+                Requirement = requirementVm
+            });
+
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRequirement(int reqId, int projectId)
+        {
+            var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectId);
+            var requirement = _context.Requirements.Find(reqId);
+
+            ProjectUpdate projectUpdate = new ProjectUpdate
+            {
+                Title = "Requirement Deleted",
+                Description = "'" + requirement.Name + "' was Deleted.",
+                Date = DateTime.UtcNow,
+                Type = UpdateType.Remove
+            };
+
+            project.Updates.Add(projectUpdate);
+            _context.Requirements.Remove(requirement);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost]
         public async Task<IActionResult> CreateTask([FromBody] ProjectDetailsViewModel projectTask)
         {
             _ = ModelState;
@@ -238,9 +335,6 @@ namespace SEPMTool.Controllers
                 Type = UpdateType.Add
             };
 
-            List<SubTaskViewModel> subTasks = _mapper.Map<ICollection<SubTask>, List<SubTaskViewModel>>(projTask.SubTasks);
-            List<TaskUserViewModel> users = _mapper.Map<ICollection<TaskUser>, List<TaskUserViewModel>>(projTask.Users);
-
             var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectTask.ProjectId);
 
             project.Updates.Add(projectUpdate);
@@ -249,12 +343,16 @@ namespace SEPMTool.Controllers
 
             await _context.SaveChangesAsync();
 
+            List<SubTaskViewModel> subTasks = _mapper.Map<ICollection<SubTask>, List<SubTaskViewModel>>(projTask.SubTasks);
+            List<TaskUserViewModel> users = _mapper.Map<ICollection<TaskUser>, List<TaskUserViewModel>>(projTask.Users);
+
             return Ok(new CreateTaskResponse
             {
                 Id = projTask.Id,
                 Name = projTask.Name,
                 Description = projTask.Description,
                 ProjectRequirementId = projTask.ProjectRequirementId,
+                IsCompleted = false,
                 Status = projTask.Status,
                 SubTasks = subTasks,
                 Users = users,

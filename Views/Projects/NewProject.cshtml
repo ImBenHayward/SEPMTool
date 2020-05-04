@@ -13,9 +13,9 @@
 
         <div class="card">
             <div class="progress" style="height:5px">
-                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width:0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success main-progress" role="progressbar" style="width:0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <div v-show="step == 2">
+            <div v-show="step == 1">
                 <div class="card-header"><b>Step 1: General Details</b></div>
                 <div class="card-body">
                     <div class="col auto"></div>
@@ -79,7 +79,7 @@
                 </div>
             </div>
 
-            <div v-show="step == 1">
+            <div v-show="step == 2">
                 <div class="card-header"><b>Step 2: Project Requirements</b></div>
                 <div class="card-body">
                     <div class="alert alert-danger text-center alert-dismissible" id="reqValidationAlert" style="display:none">
@@ -94,7 +94,7 @@
                                     <a href="#">
                                         <h6 data-filter-by="text">
                                             <input type="hidden" :value='requirement.name' :name="'ProjectRequirements[' + index + '].name'" />
-                                                {{ requirement.name }} 
+                                            {{ requirement.name }}
                                         </h6>
                                     </a>
                                     <span class="text-small">
@@ -112,7 +112,7 @@
                                 </div>
                                 <div class="card-meta">
                                     <div>
-                                                                                                                                                          
+
                                         <b-badge class="requirement-badge" style="background-color: #28A745" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-if="requirement.quality === 0">A</b-badge>
                                         <b-badge class="requirement-badge" style="background-color: #FFC107" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 1">B</b-badge>
                                         <b-badge class="requirement-badge" style="background-color: #FFC107" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 2">C</b-badge>
@@ -169,17 +169,17 @@
 
                             @for (int i = 0; i < Model.AllUsers.Count; i++)
                             {
-                                <div class="custom-control custom-checkbox">
-                                    <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input" />
-                                    <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
-                                        <span class="d-flex align-items-center">
-                                            <img alt="Kenny Tran" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
-                                            <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
-                                        </span>
-                                    </label>
-                                    <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
-                                    <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
-                                </div>
+                            <div class="custom-control custom-checkbox">
+                                <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input" />
+                                <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
+                                    <span class="d-flex align-items-center">
+                                        <img alt="Kenny Tran" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
+                                        <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
+                                    </span>
+                                </label>
+                                <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
+                                <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
+                            </div>
                             }
                         </div>
                     </div>
@@ -251,33 +251,142 @@
                                 </div>
                                 <div class="col-4">
                                     <h6>Quality Evaluation</h6>
-
-                                    <small>Optionality:</small><span class="float-right"><i class="fas fa-info-circle"></i></span>
+                                    <small>Optionality:</small>
+                                    <span class="float-right">
+                                        <i class="fas fa-info-circle b-popover-primary"
+                                           tabindex="0"
+                                           data-html="true"
+                                           data-toggle="popover"
+                                           data-trigger="focus"
+                                           title="<b>Optionality Indicator</b>"
+                                           data-content="
+                                        <div>
+                                        An Optionality Indicator reveals a requirement sentence that contains an optional aspect.
+                                        </div>
+                                        <hr />
+                                        <b>Example indicators:</b>
+                                        <i>possibly, eventually, if case, if possible, if appropriate, if needed.</i>
+                                        ">
+                                        </i>
+                                    </span>
                                     <div class="progress">
                                         <div class="progress-bar" role="progressbar" :style="{width: this.optionalityPercentage + '%' }"></div>
                                     </div>
                                     <br />
-                                    <small>Subjectivity:</small><span class="float-right"><i class="fas fa-info-circle"></i></span>
+                                    <small>Subjectivity:</small>
+                                    <span class="float-right">
+                                        <i class="fas fa-info-circle b-popover-primary"
+                                           tabindex="0"
+                                           data-html="true"
+                                           data-toggle="popover"
+                                           data-trigger="focus"
+                                           title="<b>Subjectivity Indicator</b>"
+                                           data-content="
+                                        <div>
+                                        A Subjectivity Indicator reveals sentences that contain personal opinion.
+                                        </div>
+                                        <hr />
+                                        <b>Example indicators:</b>
+                                        <i>similar, better, similarly, worse, having in mind, take into account, take into consideration.</i>
+                                        ">
+                                        </i>
+                                    </span>
                                     <div class="progress">
                                         <div class="progress-bar" role="progressbar" :style="{width: this.subjectivityPercentage + '%' }"></div>
                                     </div>
                                     <br />
-                                    <small>Vagueness:</small><span class="float-right"><i class="fas fa-info-circle"></i></span>
+                                    <small>Vagueness:</small>
+                                    <span class="float-right">
+                                        <i class="fas fa-info-circle b-popover-primary"
+                                           tabindex="0"
+                                           data-html="true"
+                                           data-toggle="popover"
+                                           data-trigger="focus"
+                                           title="<b>Vagueness Indicator</b>"
+                                           data-content="
+                                        <div>
+                                        A Vagueness Indicator is pointed out
+                                        if the sentence includes words
+                                        holding inherent vagueness
+                                        </div>
+                                        <hr />
+                                        <b>Example indicators:</b>
+                                        <i>clear, easy, strong, good, bad, efficient, useful, significant, adequate, fast, recent, far, close, in front.</i>
+                                        ">
+                                        </i>
+                                    </span>
                                     <div class="progress">
                                         <div class="progress-bar" role="progressbar" :style="{width: this.vaguenessPercentage + '%' }"></div>
                                     </div>
                                     <br />
-                                    <small>Weakness:</small><span class="float-right"><i class="fas fa-info-circle"></i></span>
+                                    <small>Weakness:</small>
+                                    <span class="float-right">
+                                        <i class="fas fa-info-circle b-popover-primary"
+                                           tabindex="0"
+                                           data-html="true"
+                                           data-toggle="popover"
+                                           data-trigger="focus"
+                                           title="<b>Weakness Indicator</b>"
+                                           data-content="
+                                        <div>
+                                        A Weakness Indicator is pointed out
+                                        if a sentence contains a weak
+                                        main verb.
+                                        </div>
+                                        <hr />
+                                        <b>Example indicators:</b>
+                                        <i>can, could, may.</i>
+                                        ">
+                                        </i>
+                                    </span>
                                     <div class="progress">
                                         <div class="progress-bar" role="progressbar" :style="{width: this.weaknessPercentage + '%' }"></div>
                                     </div>
                                     <br />
-                                    <small>Implicity:</small><span class="float-right"><i class="fas fa-info-circle"></i></span>
+                                    <small>Implicity:</small>
+                                    <span class="float-right">
+                                        <i class="fas fa-info-circle b-popover-primary"
+                                           tabindex="0"
+                                           data-html="true"
+                                           data-toggle="popover"
+                                           data-trigger="focus"
+                                           title="<b>Implicity Indicator</b>"
+                                           data-content="
+                                        <div>
+                                        An Implicity Indicator is pointed out in a
+                                        sentence when the subject is generic rather than
+                                        specific.
+                                        </div>
+                                        <hr />
+                                        <b>Example indicators:</b>
+                                        <i>this, these, those, it, they, previous, next, following, last, above, below.</i>
+                                        ">
+                                        </i>
+                                    </span>
                                     <div class="progress">
                                         <div class="progress-bar" role="progressbar" :style="{width: this.implicityPercentage + '%' }"></div>
                                     </div>
                                     <br />
-                                    <small>Multiplicity:</small><span class="float-right"><i class="fas fa-info-circle"></i></span>
+                                    <small>Multiplicity:</small>                                    
+                                    <span class="float-right">
+                                        <i class="fas fa-info-circle b-popover-primary"
+                                        tabindex="0"
+                                        data-html="true"
+                                        data-toggle="popover"
+                                        data-trigger="focus"
+                                        title="<b>Multiplicity Indicator</b>"
+                                        data-content="
+                                        <div>
+                                        A Multiplicity Indicator is pointed if the sentence 
+                                        has more than one direct or indirect
+                                        complement that specifies its subject.
+                                        </div>
+                                        <hr />
+                                        <b>Example indicators:</b>
+                                        <i>and, or, and/or.</i>
+                                        ">
+                                        </i>
+                                    </span>
                                     <div class="progress">
                                         <div class="progress-bar" role="progressbar" :style="{width: this.multiplicityPercentage + '%' }"></div>
                                     </div>
@@ -310,6 +419,15 @@
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover({
+                placement: 'right',
+                trigger: 'hover'
+            });
+        });
+    </script>
 
     <script>
         vueMixins.push({
@@ -547,9 +665,9 @@
 
             },
             computed: {
-                
+
                 totalIndicators: function () { return (this.optionalityIndicatorCount + this.subjectivityIndicatorCount + this.vaguenessIndicatorCount + this.weaknessIndicatorCount + this.implicityIndicatorCount + this.multiplicityIndicatorCount) },
-                               
+
                 optionalityIndicatorCount: function () { return this.optionalityIndicators.filter(word => word.true).length },
                 optionalityPercentage: function () { return parseFloat(this.optionalityIndicatorCount * 300 / this.wordCount) },
 
@@ -572,7 +690,7 @@
                     return this.requirement.description.trim().split(/\s+/).length;
                 },
 
-                allArrays: function () { return [...this.optionalityIndicators, ...this.subjectivityIndicators, ...this.vaguenessIndicators, ...this.weaknessIndicators, ...this.implicityIndicators, ...this.multiplicityIndicators]},
+                allArrays: function () { return [...this.optionalityIndicators, ...this.subjectivityIndicators, ...this.vaguenessIndicators, ...this.weaknessIndicators, ...this.implicityIndicators, ...this.multiplicityIndicators] },
 
             },
             methods: {
@@ -745,11 +863,11 @@
                     $('#requirement-modal').modal('hide');
 
                     this.requirement = {
-                            index: '',
-                            name: '',
-                            description: '',
-                            category: '',
-                            priority: ''
+                        index: '',
+                        name: '',
+                        description: '',
+                        category: '',
+                        priority: ''
                     };
 
                     this.resetArrays();
@@ -762,7 +880,7 @@
                         this.requirement.quality = this.totalIndicators;
                         const clone = Object.assign({}, this.requirement);
                         this.requirementsList.push(clone);
-                        this.closeModal();                        
+                        this.closeModal();
                     }
                 },
 
@@ -797,7 +915,7 @@
                 setProgressBar: function () {
                     var step = this.step - 1;
                     var steps = this.totalsteps - 1;
-                    var $progressBar = $('.progress-bar');
+                    var $progressBar = $('.main-progress');
                     var percent = parseFloat(100 / steps) * step;
                     console.log(percent);
                     percent = percent.toFixed();

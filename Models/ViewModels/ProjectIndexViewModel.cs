@@ -7,6 +7,6 @@ namespace SEPMTool.Models.ViewModels
 {
     public class ProjectIndexViewModel
     {
-        public List<Project> Projects { get; set; }
+        public List<ProjectViewModel> Projects { get; set; }
     }
 }

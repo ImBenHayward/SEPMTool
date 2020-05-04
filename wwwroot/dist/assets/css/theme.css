@@ -5299,7 +5299,7 @@ a.badge-dark:focus, a.badge-dark.focus {
     font-size: 0.75rem;
     background-color: #dee2e6;
     border-radius: 20rem;
-    margin-top: 7%;
+    margin-top: 5%;
 }
 
 .progress-bar-table {
@@ -13726,8 +13726,20 @@ pre[class*="language-"] {
     margin-left: 5px;
 }
 
+.taskBarIcon {
+    margin-left: 7px;
+}
+
+.taskTickIcon {
+    margin-right: 5px;
+}
+
 .completedTask {
     color: #28A745;
 }
+
+/*.table-hover tbody tr:hover td {
+    background: #ededed;
+}*/
 
 /*# sourceMappingURL=theme.css.map */

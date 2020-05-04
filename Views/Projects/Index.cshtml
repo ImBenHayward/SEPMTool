@@ -1,12 +1,12 @@
-﻿@model cloudscribe.Pagination.Models.PagedResult<Project>
+﻿@model SEPMTool.Models.ViewModels.ProjectIndexViewModel
 
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-11 col-xl-10">
             <div class="page-header">
                 <h1>All Projects</h1>
-                <table class="table table-hover" id="cssTable">
-                    <thead>
+                <table id="example" class="table table-hover" style="width:100%">
+                    <thead class="thead-light">
                         <tr>
                             <th scope="col">Name</th>
                             <th scope="col" style="text-align: center">Progress</th>
@@ -17,34 +17,33 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var project in @Model.Data)
+                        @foreach (var project in @Model.Projects)
                         {
-                            <tr onclick="location.href='@Url.Action("Details", new { id = @project.Id})'" onmouseover="" style="cursor: pointer;">                                
+                            <tr onclick="location.href='@Url.Action("Details", new { id = @project.Id})'" onmouseover="" style="cursor: pointer;">
                                 <td>@project.Name</td>
                                 <td style="text-align: center">
                                     <div class="progress-table">
-                                        <div class="progress-bar-table bg-success" role="progressbar" style="width: @project.Progress%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress-bar-table bg-success" role="progressbar" style="width: @project.Progress%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><span style="display:none">@project.Progress</span></div>
                                     </div>
                                 </td>
                                 <td style="text-align: center">
 
                                     @switch (project.Priority)
                                     {
-                                        case Priority.VeryLow:<b-badge style="background-color: #2dc937; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
-                                        break;
+                                        case Priority.VeryLow:<b-badge style="background-color: #2dc937; width: 70px" data-toggle="tooltip" data-placement="bottom">Very Low</b-badge>
+                                            break;
 
-                                        case Priority.Low: <b-badge style="background-color: #99c140; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
-                                        break;
+                                        case Priority.Low: <b-badge style="background-color: #99c140; width: 70px" data-toggle="tooltip" data-placement="bottom">Low</b-badge>
+                                            break;
 
-                                        case Priority.Medium: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
-                                        break;
+                                        case Priority.Medium: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom">Medium</b-badge>
+                                            break;
 
-                                        case Priority.High: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
-                                        break;
+                                        case Priority.High: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom">High</b-badge>
+                                            break;
 
-                                        case Priority.VeryHigh: <b-badge style="background-color: #cc3232; width: 70px" data-toggle="tooltip" data-placement="bottom">@project.Priority</b-badge>
-                                        break;
-
+                                        case Priority.VeryHigh: <b-badge style="background-color: #cc3232; width: 70px" data-toggle="tooltip" data-placement="bottom">Very High</b-badge>
+                                            break;
                                     }
 
                                 </td>
@@ -54,19 +53,29 @@
                         }
                     </tbody>
                 </table>
-                <cs-pager cs-paging-pagenumber="@Model.PageNumber"
-                          cs-paging-totalitems="@Model.TotalItems"
-                          cs-paging-pagesize="@Model.PageSize"
-                          cs-pagenumber-param="pagenumber"
-                          asp-controller="Projects"
-                          asp-action="Index"
-                          cs-pager-li-current-class="page-item active"
-                          cs-pager-li-other-class="page-item"
-                          cs-pager-li-non-active-class="page-item disabled"
-                          cs-pager-link-current-class="page-link"
-                          cs-pager-link-other-class="page-link">
-                </cs-pager>
+                <div class="d-flex justify-content-center" style="width: 100%">
+                    @*<cs-pager cs-paging-pagenumber="@Model.PageNumber"
+                                  cs-paging-totalitems="@Model.TotalItems"
+                                  cs-paging-pagesize="@Model.PageSize"
+                                  cs-pagenumber-param="pagenumber"
+                                  asp-controller="Projects"
+                                  asp-action="Index"
+                                  cs-pager-li-current-class="page-item active"
+                                  cs-pager-li-other-class="page-item"
+                                  cs-pager-li-non-active-class="page-item disabled"
+                                  cs-pager-link-current-class="page-link"
+                                  cs-pager-link-other-class="page-link">
+                        </cs-pager>*@
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+$(document).ready(function() {
+    $('#example').DataTable();
+} );
+    </script>
+}

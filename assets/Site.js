@@ -6,6 +6,9 @@ window.vueMixins = vueMixins;
 import moment from 'vue-moment'
 Vue.use(moment);
 
+import VueSweetalert2 from 'vue-sweetalert2';
+Vue.use(VueSweetalert2);
+
 import vueCustomElement from 'vue-custom-element';
 Vue.use(vueCustomElement);
 

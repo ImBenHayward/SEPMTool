@@ -33,7 +33,7 @@
                             <i class="material-icons">playlist_add_check</i>
                             <span>{{totalTasksCompleted}}/{{totalTasks}}</span>
                         </div>
-                        <span>Due: {{this.projectModel.project.deadline | moment("Do MMMM, h:mmA") }}</span>
+                        <span>Due: {{this.projectModel.project.deadline | moment("Do MMMM, h:mmA, YYYY") }}</span>
                     </div>
                 </div>
             </div>
@@ -69,6 +69,10 @@
                         <div class="row content-list-head">
                             <div class="col-auto">
                                 <h3>Requirements</h3>
+
+                                <button class="btn btn-round" v-on:click="openNewRequirementModal">
+                                    <i class="material-icons">add</i>
+                                </button>
                             </div>
                         </div>
                         <!--end of content list head-->
@@ -101,10 +105,9 @@
                                                         <i class="material-icons">more_vert</i>
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-right">
-                                                        <a class="dropdown-item" href="#">Download</a>
-                                                        <a class="dropdown-item" href="#">Share</a>
+                                                        <a class="dropdown-item" href="#" v-on:click="openEditRequirementModal(req, index)">Edit</a>
                                                         <div class="dropdown-divider"></div>
-                                                        <a class="dropdown-item text-danger" href="#">Delete</a>
+                                                        <a class="dropdown-item text-danger" href="#" v-on:click="DeleteRequirement(req.id, index)">Delete</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -114,7 +117,7 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <span>
                                                 <span class="h6-requirement align-self-center span-requirement"><i class="fas fa-tasks title-icon"></i>Requirement Tasks</span>
-                                                <span class="span-requirement" v-if="!req.tasks.length">- No tasks added!</span>
+                                                <span class="span-requirement" v-show="!req.tasks.length">- No tasks added!</span>
                                                 <a id="showRequirements" class="button_style" @@click="ShowTasks(req.id)" onmouseover="" style="cursor: pointer;" v-show="req.tasks.length > 0"><i :id="`chevron-${req.id}`" class="fas fa-chevron-circle-down align-items-center rotate req-chevron align-self-center"></i></a>
                                             </span>
 
@@ -131,25 +134,15 @@
                                                     <div class="card-header-requirements d-flex justify-content-between align-items-center">
                                                         <a id="showRequirements" class="button_style" @@click="ShowTask(task.id)" onmouseover="" style="cursor: pointer;">{{task.name}} <i :id="`chevron-${task.id}`" class="fas fa-chevron-circle-down align-items-center rotate req-chevron align-self-center"></i></a>
                                                         <div class="row">
-                                                            <div class="dropdown">
-                                                                <span class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onmouseover="" style="cursor: pointer;">
-                                                                    <i class="fas fa-pencil-alt"></i>
-                                                                </span>
-                                                                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                                                        <button class="dropdown-item text-primary" type="button" v-on:click="EditTask(task, taskIndex, index)">Edit</button>
-                                                                        <div class="dropdown-divider"></div>
-                                                                        <button class="dropdown-item text-danger" type="button" v-on:click="DeleteTask(task.id, taskIndex, index)">Delete</button>
-                                                                </div>
-                                                            </div>
-                                                            <div class="dropdown">
-                                                                <span class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown" onmouseover="" style="cursor: pointer;">
-                                                                    <i :class="{'fas':true, 'fa-check-circle':true, 'completedTask':(task.isCompleted), 'req-chevron':true}"></i>
-                                                                </span> 
-                                                                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                                                    <button class="dropdown-item text-danger" type="button" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)" v-if="task.isCompleted == true">Mark as Incomplete</button>
-                                                                    <button class="dropdown-item text-success" type="button" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)" v-if="task.isCompleted == false">Mark as Complete</button>
-                                                                </div>
-                                                            </div>
+                                                            <span onmouseover="" style="cursor: pointer;" v-on:click="EditTask(task, taskIndex, index)">
+                                                                <i class="fas fa-pencil-alt"></i>
+                                                            </span>
+                                                            <span onmouseover="" style="cursor: pointer;" v-on:click="DeleteTask(task.id, taskIndex, index)">
+                                                                <i class="taskBarIcon fas fa-trash-alt"></i>
+                                                            </span>
+                                                            <span onmouseover="" style="cursor: pointer;" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)">
+                                                                <i :class="{'fas':true, 'fa-check-circle':true, 'completedTask':(task.isCompleted), 'taskBarIcon':true, 'taskTickIcon':true}"></i>
+                                                            </span>
                                                         </div>
                                                     </div>
                                                     <div :id="`task-${task.id}`" :class="{'disabled-div':(task.isCompleted)}" style="display:none" aria-labelledby="headingOne">
@@ -627,10 +620,247 @@
         </div>
     </form>
 
+
+    @*
+
+        EDIT REQUIREMENT MODAL
+
+    *@
+    <div class="modal fade" id="requirement-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{requirementModalTitle}}</h5>
+                    <button type="button" class="close btn btn-round" v-on:click="closeModal()">
+                        <i class="material-icons">close</i>
+                    </button>
+                </div>
+                <!--end of modal head-->
+                <div class="modal-body">
+                    <div>
+                        <div class="row">
+                            <div class="col-8">
+                                <h6>Requirement Details</h6>
+                                <div class="form-group row align-items-center">
+                                    <label class="col-3">Title</label>
+                                    <input v-model="requirementModel.name" class="form-control col" placeholder="Requirement title" id="reqname" />
+                                    <div id="form-validation">
+                                        <i class="fas fa-check-circle"></i>
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <small></small>
+                                    </div>
+                                </div>
+                                <div class="form-group row align-items-center">
+                                    <label class="col-3">Description</label>
+                                    <textarea v-model="requirementModel.description" class="form-control col" rows="3" placeholder="Requirement description" id="reqdescription" v-on:keyup="detectWords()" v-on:keyup.backspace="detectWords()"></textarea>
+                                    <div id="form-validation">
+                                        <i class="fas fa-check-circle"></i>
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <small></small>
+                                    </div>
+                                </div>
+                                <div class="form-group row align-items-center">
+                                    <label class="col-3">Category</label>
+                                    <select v-model="requirementModel.category" asp-items="Html.GetEnumSelectList<RequirementCategory>()" class="form-control col-4" id="reqcategory">
+                                        <option value=""></option>
+                                    </select>
+                                    <div id="form-validation">
+                                        <i class="fas fa-check-circle"></i>
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <small></small>
+                                    </div>
+                                </div>
+                                <div class="form-group row align-items-center">
+                                    <label class="col-3">Priority</label>
+                                    <select v-model="requirementModel.priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-4" id="reqpriority">
+                                        <option value=""></option>
+                                    </select>
+                                    <div id="form-validation">
+                                        <i class="fas fa-check-circle"></i>
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <small></small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <h6>Quality Evaluation</h6>
+                                <small>Optionality:</small>
+                                <span class="float-right">
+                                    <i class="fas fa-info-circle b-popover-primary"
+                                       tabindex="0"
+                                       data-html="true"
+                                       data-toggle="popover"
+                                       data-trigger="focus"
+                                       title="<b>Optionality Indicator</b>"
+                                       data-content="
+                                        <div>
+                                        An Optionality Indicator reveals a requirement sentence that contains an optional aspect.
+                                        </div>
+                                        <hr />
+                                        <b>Example indicators:</b>
+                                        <i>possibly, eventually, if case, if possible, if appropriate, if needed.</i>
+                                        ">
+                                        </i>
+                                </span>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" :style="{width: this.optionalityPercentage + '%' }"></div>
+                                </div>
+                                <br />
+                                <small>Subjectivity:</small>
+                                <span class="float-right">
+                                    <i class="fas fa-info-circle b-popover-primary"
+                                       tabindex="0"
+                                       data-html="true"
+                                       data-toggle="popover"
+                                       data-trigger="focus"
+                                       title="<b>Subjectivity Indicator</b>"
+                                       data-content="
+                                        <div>
+                                        A Subjectivity Indicator reveals sentences that contain personal opinion.
+                                        </div>
+                                        <hr />
+                                        <b>Example indicators:</b>
+                                        <i>similar, better, similarly, worse, having in mind, take into account, take into consideration.</i>
+                                        ">
+                                        </i>
+                                </span>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" :style="{width: this.subjectivityPercentage + '%' }"></div>
+                                </div>
+                                <br />
+                                <small>Vagueness:</small>
+                                <span class="float-right">
+                                    <i class="fas fa-info-circle b-popover-primary"
+                                       tabindex="0"
+                                       data-html="true"
+                                       data-toggle="popover"
+                                       data-trigger="focus"
+                                       title="<b>Vagueness Indicator</b>"
+                                       data-content="
+                                        <div>
+                                        A Vagueness Indicator is pointed out
+                                        if the sentence includes words
+                                        holding inherent vagueness
+                                        </div>
+                                        <hr />
+                                        <b>Example indicators:</b>
+                                        <i>clear, easy, strong, good, bad, efficient, useful, significant, adequate, fast, recent, far, close, in front.</i>
+                                        ">
+                                        </i>
+                                </span>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" :style="{width: this.vaguenessPercentage + '%' }"></div>
+                                </div>
+                                <br />
+                                <small>Weakness:</small>
+                                <span class="float-right">
+                                    <i class="fas fa-info-circle b-popover-primary"
+                                       tabindex="0"
+                                       data-html="true"
+                                       data-toggle="popover"
+                                       data-trigger="focus"
+                                       title="<b>Weakness Indicator</b>"
+                                       data-content="
+                                        <div>
+                                        A Weakness Indicator is pointed out
+                                        if a sentence contains a weak
+                                        main verb.
+                                        </div>
+                                        <hr />
+                                        <b>Example indicators:</b>
+                                        <i>can, could, may.</i>
+                                        ">
+                                        </i>
+                                </span>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" :style="{width: this.weaknessPercentage + '%' }"></div>
+                                </div>
+                                <br />
+                                <small>Implicity:</small>
+                                <span class="float-right">
+                                    <i class="fas fa-info-circle b-popover-primary"
+                                       tabindex="0"
+                                       data-html="true"
+                                       data-toggle="popover"
+                                       data-trigger="focus"
+                                       title="<b>Implicity Indicator</b>"
+                                       data-content="
+                                        <div>
+                                        An Implicity Indicator is pointed out in a
+                                        sentence when the subject is generic rather than
+                                        specific.
+                                        </div>
+                                        <hr />
+                                        <b>Example indicators:</b>
+                                        <i>this, these, those, it, they, previous, next, following, last, above, below.</i>
+                                        ">
+                                        </i>
+                                </span>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" :style="{width: this.implicityPercentage + '%' }"></div>
+                                </div>
+                                <br />
+                                <small>Multiplicity:</small>
+                                <span class="float-right">
+                                    <i class="fas fa-info-circle b-popover-primary"
+                                       tabindex="0"
+                                       data-html="true"
+                                       data-toggle="popover"
+                                       data-trigger="focus"
+                                       title="<b>Multiplicity Indicator</b>"
+                                       data-content="
+                                        <div>
+                                        A Multiplicity Indicator is pointed if the sentence
+                                        has more than one direct or indirect
+                                        complement that specifies its subject.
+                                        </div>
+                                        <hr />
+                                        <b>Example indicators:</b>
+                                        <i>and, or, and/or.</i>
+                                        ">
+                                        </i>
+                                </span>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" :style="{width: this.multiplicityPercentage + '%' }"></div>
+                                </div>
+                                <br />
+                                Quality Rating:
+                                <b v-if="totalIndicators == 0" style="color:#28A745">A</b>
+                                <b v-else-if="totalIndicators == 1" style="color:#FFC107">B</b>
+                                <b v-else-if="totalIndicators == 2" style="color:#FFC107">C</b>
+                                <b v-else-if="totalIndicators == 3" style="color:#DC3545">D</b>
+                                <b v-else-if="totalIndicators == 4" style="color:#DC3545">E</b>
+                                <b v-else-if="totalIndicators >= 5" style="color:#DC3545">F</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--end of modal body-->
+                <div class="modal-footer">
+                    <button type="button" role="button" class="btn btn-primary" @@click="UpdateRequirement" v-if="this.requirementModalTitle === 'Edit Requirement'">
+                        Update Requirement
+                    </button>
+                    <button type="button" role="button" class="btn btn-primary" @@click="CreateRequirement" v-if="this.requirementModalTitle === 'New Requirement'">
+                        Add Requirement
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover({
+                placement: 'right',
+                trigger: 'hover'
+            });
+        });
+    </script>
 
     <script>
         vueMixins.push({
@@ -649,6 +879,16 @@
 
                     modalTitle: '',
                     edit: 'false',
+
+                    requirementModalTitle: '',
+
+                    requirementModel: {
+                        id: '',
+                        name: '',
+                        description: '',
+                        category: '',
+                        priority: ''
+                    },
 
                     taskModel: {
                         id: 0,
@@ -674,7 +914,209 @@
                     arrBacklog: [],
                     arrInProgress: [],
                     arrTested: [],
-                    arrDone: []
+                    arrDone: [],
+
+                    optionalityIndicators: [
+                        {
+                            word: 'possibly',
+                            true: 0
+                        },
+                        {
+                            word: 'eventually',
+                            true: 0
+                        },
+                        {
+                            word: 'if case',
+                            true: 0
+                        },
+                        {
+                            word: 'if possible',
+                            true: 0
+                        },
+                        {
+                            word: 'if appropriate',
+                            true: 0
+                        },
+                        {
+                            word: 'if needed',
+                            true: 0
+                        },
+                    ],
+
+                    subjectivityIndicators: [
+                        {
+                            word: 'similar',
+                            true: 0
+                        },
+                        {
+                            word: 'better',
+                            true: 0
+                        },
+                        {
+                            word: 'similarly',
+                            true: 0
+                        },
+                        {
+                            word: 'worse',
+                            true: 0
+                        },
+                        {
+                            word: 'having in mind',
+                            true: 0
+                        },
+                        {
+                            word: 'take into account',
+                            true: 0
+                        }
+                    ],
+
+                    vaguenessIndicators: [
+                        {
+                            word: 'clear',
+                            true: 0
+                        },
+                        {
+                            word: 'clearly',
+                            true: 0
+                        },
+                        {
+                            word: 'easy',
+                            true: 0
+                        },
+                        {
+                            word: 'easily',
+                            true: 0
+                        },
+                        {
+                            word: 'strong',
+                            true: 0
+                        },
+                        {
+                            word: 'good',
+                            true: 0
+                        },
+                        {
+                            word: 'bad',
+                            true: 0
+                        },
+                        {
+                            word: 'efficient',
+                            true: 0
+                        },
+                        {
+                            word: 'useful',
+                            true: 0
+                        },
+                        {
+                            word: 'significant',
+                            true: 0
+                        },
+                        {
+                            word: 'adequate',
+                            true: 0
+                        },
+                        {
+                            word: 'fast',
+                            true: 0
+                        },
+                        {
+                            word: 'recent',
+                            true: 0
+                        },
+                        {
+                            word: 'far',
+                            true: 0
+                        },
+                        {
+                            word: 'close',
+                            true: 0
+                        },
+                        {
+                            word: 'in front',
+                            true: 0
+                        },
+                    ],
+
+                    weaknessIndicators: [
+                        {
+                            word: 'can',
+                            true: 0
+                        },
+                        {
+                            word: 'could',
+                            true: 0
+                        },
+                        {
+                            word: 'may',
+                            true: 0
+                        }
+                    ],
+
+                    implicityIndicators: [
+                        {
+                            word: 'this',
+                            true: 0
+                        },
+                        {
+                            word: 'these',
+                            true: 0
+                        },
+                        {
+                            word: 'that',
+                            true: 0
+                        },
+                        {
+                            word: 'those',
+                            true: 0
+                        },
+                        {
+                            word: 'it',
+                            true: 0
+                        },
+                        {
+                            word: 'they',
+                            true: 0
+                        },
+                        {
+                            word: 'previous',
+                            true: 0
+                        },
+                        {
+                            word: 'next',
+                            true: 0
+                        },
+                        {
+                            word: 'following',
+                            true: 0
+                        },
+                        {
+                            word: 'last',
+                            true: 0
+                        },
+                        {
+                            word: 'above',
+                            true: 0
+                        },
+                        {
+                            word: 'below',
+                            true: 0
+                        },
+                    ],
+
+                    multiplicityIndicators: [
+                        {
+                            word: 'and',
+                            true: 0
+                        },
+                        {
+                            word: 'or',
+                            true: 0
+                        },
+                        {
+                            word: 'and/or',
+                            true: 0
+                        }
+                    ],
                 }
             },
             computed: {
@@ -684,7 +1126,33 @@
                     } else {
                         return 'border-radius: .5rem 0px'
                     }
-                }
+                },
+
+                totalIndicators: function () { return (this.optionalityIndicatorCount + this.subjectivityIndicatorCount + this.vaguenessIndicatorCount + this.weaknessIndicatorCount + this.implicityIndicatorCount + this.multiplicityIndicatorCount) },
+
+                optionalityIndicatorCount: function () { return this.optionalityIndicators.filter(word => word.true).length },
+                optionalityPercentage: function () { return parseFloat(this.optionalityIndicatorCount * 300 / this.wordCount) },
+
+                subjectivityIndicatorCount: function () { return this.subjectivityIndicators.filter(word => word.true).length },
+                subjectivityPercentage: function () { return parseFloat(this.subjectivityIndicatorCount * 300 / this.wordCount) },
+
+                vaguenessIndicatorCount: function () { return this.vaguenessIndicators.filter(word => word.true).length },
+                vaguenessPercentage: function () { return parseFloat(this.vaguenessIndicatorCount * 300 / this.wordCount) },
+
+                weaknessIndicatorCount: function () { return this.weaknessIndicators.filter(word => word.true).length },
+                weaknessPercentage: function () { return parseFloat(this.weaknessIndicatorCount * 300 / this.wordCount) },
+
+                implicityIndicatorCount: function () { return this.implicityIndicators.filter(word => word.true).length },
+                implicityPercentage: function () { return parseFloat(this.implicityIndicatorCount * 300 / this.wordCount) },
+
+                multiplicityIndicatorCount: function () { return this.multiplicityIndicators.filter(word => word.true).length },
+                multiplicityPercentage: function () { return parseFloat(this.multiplicityIndicatorCount * 300 / this.wordCount) },
+
+                wordCount() {
+                    return this.requirementModel.description.trim().split(/\s+/).length;
+                },
+
+                allArrays: function () { return [...this.optionalityIndicators, ...this.subjectivityIndicators, ...this.vaguenessIndicators, ...this.weaknessIndicators, ...this.implicityIndicators, ...this.multiplicityIndicators] },
             },
             methods: {
                 /*
@@ -744,6 +1212,159 @@
                     .then(res => {
                         this.projectModel.project.progress = projectPercentage;
                     });
+                },
+
+
+                /*
+                 * Requirement Methods
+                 */
+
+                //Open New Requirement Modal
+                openNewRequirementModal: function () {
+
+                    this.requirementModel.category = '';
+                    this.requirementModel.name = '';
+                    this.requirementModel.description = '';
+                    this.requirementModel.id = '';
+                    this.requirementModel.priority = '';
+
+                    this.requirementModalTitle = 'New Requirement';
+                    this.detectWords();
+
+                    $('#requirement-modal').modal('show');
+
+                },
+
+                CreateRequirement() {
+                    this.loading = true;
+                    $('#requirement-modal').modal('hide');
+                    axios({
+                        method: 'post',
+                        url: '/Projects/CreateRequirement',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: {
+                            projectId: this.projectModel.project.id,
+                            requirementName: this.requirementModel.name,
+                            requirementDescription: this.requirementModel.description,
+                            requirementPriority: this.requirementModel.priority,
+                            requirementCategory: this.requirementModel.category
+                        }
+                    })
+                        .then(res => {
+                            console.log(res.data);
+                            this.projectModel.project.projectRequirements.push(res.data.requirement);
+                            this.CalculateProgress();
+                        })
+                        .catch(err => {
+                            console.log(err.message);
+                        })
+                        .then(() => {
+                            this.loading = false;
+                        });
+                },
+
+                // Open Edit Requirement Modal
+                openEditRequirementModal: function (req, reqIndex) {
+
+                    this.requirementModalTitle = 'Edit Requirement';
+
+                    this.requirementModel = {
+                        id: req.id,
+                        name: req.name,
+                        description: req.description,
+                        priority: req.priority,
+                        category: req.category
+                    }
+
+                    this.requirementIndex = reqIndex;
+                    this.detectWords();
+
+                    $('#requirement-modal').modal('show');
+                },
+
+                closeModal: function () {
+                    $('#requirement-modal').modal('hide');
+
+                    this.resetArrays();
+                },
+
+                //Update Requirement (Axios Request)
+                UpdateRequirement() {
+                    this.loading = true;
+                    $('#requirement-modal').modal('hide');
+                    axios({
+                        method: 'post',
+                        url: '/Projects/UpdateRequirement',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: {
+                        projectId: this.projectModel.project.id,
+                        requirementId: this.requirementModel.id,
+                        requirementName: this.requirementModel.name,
+                        requirementDescription: this.requirementModel.description,
+                        requirementPriority: this.requirementModel.priority,
+                        requirementCategory: this.requirementModel.category
+                        }
+                    })
+                        .then(res => {
+
+                            this.projectModel.project.projectRequirements.splice(this.requirementIndex, 1, res.data.requirement);
+
+                            //requirement.name = res.data.requirement.name;
+                            //requirement.description = res.data.requirement.description;
+                            //requirement.priority = res.data.requirement.priority;
+                            //requirement.category = res.data.requirement.category;
+
+                        })
+                        .catch(err => {
+                            console.log(err.message);
+                        })
+                        .then(() => {
+                            this.loading = false;
+                        });
+                },
+
+                DeleteRequirement(id, reqIndex) {
+
+                        this.$swal({
+                            title: 'Are you sure?',
+                            text: 'Deleting this requirement cannot be undone',
+                            type: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, Delete',
+                            cancelButtonText: 'No, Keep it!',
+                            showCloseButton: true,
+                            showLoaderOnConfirm: true
+                        }).then((result) => {
+                            if (result.value) {
+                                this.$swal('Deleted', 'You successfully deleted the requirement', 'success')
+
+                                this.loading = true;
+                                axios.delete('/Projects/DeleteRequirement/', {
+                                    params: {
+                                        reqId: id,
+                                        projectId: this.projectModel.project.id
+                                    }
+                                })
+                                    .then(res => {
+                                        console.log(res);
+                                        this.projectModel.project.projectRequirements.splice(reqIndex, 1);
+                                        this.RenderKanban();
+                                        this.CalculateProgress();
+                                    })
+                                    .catch(err => {
+                                        console.log(err.message);
+                                    })
+                                    .then(() => {
+                                        this.loading = false;
+                                    });
+                            } else {
+                                this.$swal.close();
+                            }
+                        })
                 },
 
 
@@ -835,6 +1456,7 @@
                             console.log(res.data);
                             this.projectModel.project.projectRequirements[this.taskModel.projectRequirementIndex].tasks.push(res.data);
                             this.UpdateKanban(res.data);
+                            this.CalculateProgress();
 
                             if ($("#accordion-" + res.data.projectRequirementId).is(":visible")) {
                             } else {
@@ -923,27 +1545,43 @@
 
                 // Delete Task
                 DeleteTask(id, taskIndex, reqIndex) {
-                    console.log(taskIndex);
-                    console.log(reqIndex);
-                    console.log(id);
-                    this.loading = true;
-                    axios.delete('/Projects/DeleteTask/', {
-                        params: {
-                            taskId: id,
-                            projectId: this.projectModel.project.id
-                        }
-                    })
-                        .then(res => {
-                            console.log(res);
-                            this.projectModel.project.projectRequirements[reqIndex].tasks.splice(taskIndex, 1);
-                            this.RenderKanban();
+
+                        this.$swal({
+                            title: 'Are you sure?',
+                            text: 'Deleting this task cannot be undone',
+                            type: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, Delete',
+                            cancelButtonText: 'No, Keep it!',
+                            showCloseButton: true,
+                            showLoaderOnConfirm: true
+                        }).then((result) => {
+                            if (result.value) {
+                                this.$swal('Deleted', 'You successfully deleted the task', 'success')
+
+                                this.loading = true;
+                                axios.delete('/Projects/DeleteTask/', {
+                                    params: {
+                                        taskId: id,
+                                        projectId: this.projectModel.project.id
+                                    }
+                                })
+                                    .then(res => {
+                                        console.log(res);
+                                        this.projectModel.project.projectRequirements[reqIndex].tasks.splice(taskIndex, 1);
+                                        this.RenderKanban();
+                                        this.CalculateProgress();
+                                    })
+                                    .catch(err => {
+                                        console.log(err.message);
+                                    })
+                                    .then(() => {
+                                        this.loading = false;
+                                    });
+                            } else {
+                                this.$swal.close();
+                            }
                         })
-                        .catch(err => {
-                            console.log(err.message);
-                        })
-                        .then(() => {
-                            this.loading = false;
-                        });
                 },
 
                 // Toggle Sub-Task Completion
@@ -1032,7 +1670,81 @@
                         this.arrDone.push(task);
                         break;
                 }
-                },                 
+                },
+
+                /*
+                 * Word Search Functions
+                 */
+
+                detectWords: function () {
+
+                    //For each word in the array
+                    this.optionalityIndicators.forEach(word => {
+                        if (this.wordInString(this.requirementModel.description, word.word)) {
+                            word.true = 1;
+                        } else {
+                            word.true = 0;
+                        }
+                    })
+
+                    this.subjectivityIndicators.forEach(word => {
+                        if (this.wordInString(this.requirementModel.description, word.word)) {
+                            word.true = 1;
+                        } else {
+                            word.true = 0;
+                        }
+                    })
+
+                    this.vaguenessIndicators.forEach(word => {
+                        if (this.wordInString(this.requirementModel.description, word.word)) {
+                            word.true = 1;
+                        } else {
+                            word.true = 0;
+                        }
+                    })
+
+                    this.weaknessIndicators.forEach(word => {
+                        if (this.wordInString(this.requirementModel.description, word.word)) {
+                            word.true = 1;
+                        } else {
+                            word.true = 0;
+
+                            //if (this.subjectivityIndicators.every(word => !word.true)) {
+                            //    console.log('yep');
+                            //}
+                        }
+                    })
+
+                    this.implicityIndicators.forEach(word => {
+                        if (this.wordInString(this.requirementModel.description, word.word)) {
+                            word.true = 1;
+                        } else {
+                            word.true = 0;
+                        }
+                    })
+
+
+                    this.multiplicityIndicators.forEach(word => {
+                        if (this.wordInString(this.requirementModel.description, word.word)) {
+                            word.true = 1;
+                        } else {
+                            word.true = 0;
+                        }
+                    })
+
+                },
+
+                // searches for words in a string
+                wordInString: function (s, word) {
+                    return new RegExp('\\b' + word + '\\b', 'i').test(s);
+                },
+
+                // Reset indicator arrays
+                resetArrays: function () {
+                    this.allArrays.forEach(word => {
+                        word.true = 0;
+                    });
+                },
             },
             beforeMount() {
                 this.RenderKanban();
