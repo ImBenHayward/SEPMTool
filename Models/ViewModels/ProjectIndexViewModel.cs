@@ -8,5 +8,6 @@ namespace SEPMTool.Models.ViewModels
     public class ProjectIndexViewModel
     {
         public List<ProjectViewModel> Projects { get; set; }
+        public string ActiveUserId { get; set; }
     }
 }

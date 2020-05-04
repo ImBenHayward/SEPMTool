@@ -15,6 +15,7 @@ using cloudscribe.Pagination.Models;
 using AutoMapper;
 using static SEPMTool.Models.ViewModels.ProjectDetailsViewModel;
 using SEPMTool.enums;
+using SmartBreadcrumbs.Attributes;
 
 namespace SEPMTool.Controllers
 {
@@ -31,7 +32,7 @@ namespace SEPMTool.Controllers
             _context = context;
             _mapper = mapper;
         }
-
+                
         public List<ProjectUsersViewModel> GetAllUsers()
         {
             var users = userManager.Users;
@@ -70,34 +71,31 @@ namespace SEPMTool.Controllers
             return taskUsersViewModel;
         }
 
-        public IActionResult Index(int pageNumber = 1, int pageSize = 10)
+        private Task<ApplicationUser> GetCurrentUserAsync() => userManager.GetUserAsync(HttpContext.User);
+
+        [Breadcrumb("Projects List")]
+        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10)
         {
             int excludeRecords = (pageSize * pageNumber) - pageSize;
 
             var model = new ProjectIndexViewModel();
+            var user = await GetCurrentUserAsync();
+
+            model.ActiveUserId = user.Id;
 
             var projects = _context.Projects
                 .Include(u => u.Users)
                 .Include(r => r.ProjectRequirements)
                 .ThenInclude(ProjectRequirement => ProjectRequirement.Tasks).ToList();
-            //.Skip(excludeRecords)
-            //.Take(pageSize);
 
             List<ProjectViewModel> projectList = _mapper.Map<List<Project>, List<ProjectViewModel>>(projects);
 
             model.Projects = projectList;
 
-            //PagedResult<Project> result = new PagedResult<Project>
-            //{
-            //    Data = projects.AsNoTracking().ToList(),
-            //    TotalItems = _context.Projects.Count(),
-            //    PageNumber = pageNumber,
-            //    PageSize = pageSize
-            //};
-
             return View(model);
         }
 
+        [Breadcrumb("Project")]
         [HttpGet]
         public IActionResult Details(int id)
         {
@@ -148,6 +146,7 @@ namespace SEPMTool.Controllers
 
         }
 
+        [Breadcrumb("New Project")]
         public IActionResult NewProject()
         {
             ProjectCreateViewModel projectCreateViewModel = new ProjectCreateViewModel
@@ -156,11 +155,6 @@ namespace SEPMTool.Controllers
             };
 
             return View(projectCreateViewModel);
-        }
-
-        public IActionResult Kanban()
-        {
-            return View();
         }
 
         [HttpPost]

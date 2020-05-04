@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SEPMTool.Data;
 using SEPMTool.Mapping;
+using SmartBreadcrumbs.Extensions;
 
 namespace SEPMTool
 {
@@ -33,13 +34,23 @@ namespace SEPMTool
                 options.CheckConsentNeeded = context => false;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+            
             services.AddAutoMapper(typeof(Startup));
             services.AddCloudscribePagination();
             services.AddSession();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ApplicationDbContextConnection")));
             services.AddAuthentication();
+            services.AddBreadcrumbs(GetType().Assembly, options =>
+            {
+                options.TagName = "navbar bg-white breadcrumb-bar";
+                options.TagClasses = "navbar bg-white breadcrumb-bar";
+                options.OlClasses = "breadcrumb";
+                options.LiClasses = "breadcrumb-item";
+                options.ActiveLiClasses = "breadcrumb-item active";
+                options.SeparatorElement = "<li class=\"separator\">&nbsp &gt &nbsp</li>";
+
+            });
 
         }
 

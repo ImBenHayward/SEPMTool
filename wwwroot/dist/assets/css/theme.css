@@ -13738,6 +13738,32 @@ pre[class*="language-"] {
     color: #28A745;
 }
 
+.checkboxes {
+    margin-top: 4px;
+}
+
+.checkboxes label {
+    display: inline-block;
+    padding-right: 10px;
+    white-space: nowrap;
+}
+
+.checkboxes input {
+    vertical-align: middle;
+}
+
+.checkboxes label span {
+    vertical-align: middle;
+}
+
+/*.tableCheckboxLabel{
+    margin-top: 5px;
+}
+
+.tableCheckbox {
+    margin-top: 5px;
+}*/
+
 /*.table-hover tbody tr:hover td {
     background: #ededed;
 }*/

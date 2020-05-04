@@ -6,17 +6,20 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SEPMTool.Models;
+using SmartBreadcrumbs.Attributes;
 
 namespace SEPMTool.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
+        [DefaultBreadcrumb("Home")]
         public IActionResult Index()
         {
             return View();
         }
 
+        [Breadcrumb("Privacy")]
         public IActionResult Privacy()
         {
             return View();
