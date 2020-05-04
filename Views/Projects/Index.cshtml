@@ -30,19 +30,19 @@
 
                                     @switch (project.Priority)
                                     {
-                                        case Priority.VeryLow:<b-badge style="background-color: #2dc937; width: 70px" data-toggle="tooltip" data-placement="bottom">Very Low</b-badge>
+                                        case Priority.VeryLow:<b-badge style="background-color: #2dc937; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">5</span>Very Low</b-badge>
                                             break;
 
-                                        case Priority.Low: <b-badge style="background-color: #99c140; width: 70px" data-toggle="tooltip" data-placement="bottom">Low</b-badge>
+                                        case Priority.Low: <b-badge style="background-color: #99c140; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">4</span>Low</b-badge>
                                             break;
 
-                                        case Priority.Medium: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom">Medium</b-badge>
+                                        case Priority.Medium: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">3</span>Medium</b-badge>
                                             break;
 
-                                        case Priority.High: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom">High</b-badge>
+                                        case Priority.High: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">2</span>High</b-badge>
                                             break;
 
-                                        case Priority.VeryHigh: <b-badge style="background-color: #cc3232; width: 70px" data-toggle="tooltip" data-placement="bottom">Very High</b-badge>
+                                        case Priority.VeryHigh: <b-badge style="background-color: #cc3232; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">1</span>Very High</b-badge>
                                             break;
                                     }
 
@@ -75,7 +75,9 @@
 @section Scripts {
     <script>
 $(document).ready(function() {
-    $('#example').DataTable();
+    $('#example').DataTable({
+        stateSave: true,
+    });
 } );
     </script>
 }
