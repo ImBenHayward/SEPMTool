@@ -161,7 +161,8 @@ namespace SEPMTool.Controllers
         public async Task<IActionResult> Create(ProjectCreateViewModel project)
         {
             List<ProjectUser> selectedUsers = project.AllUsers.Where(u => u.IsSelected).Select(u => new ProjectUser { UserId = u.UserId, Username = u.Username, ProjectRole = ProjectRole.Developer }).ToList();
-            List<Models.ProjectUpdate> projectUpdates = new List<Models.ProjectUpdate>();
+            List<NotificationUser> notificationUsers = project.AllUsers.Where(u => u.IsSelected).Select(u => new NotificationUser { UserId = u.UserId }).ToList();
+            List<ProjectUpdate> projectUpdates = new List<ProjectUpdate>();
 
             Project proj = new Project
             {
@@ -179,6 +180,15 @@ namespace SEPMTool.Controllers
                 Updates = projectUpdates
             };
 
+            Notification notification = new Notification
+            {
+                Title = "Added to a Project",
+                Body = "You have selected as a team member for the " + project.Name + " project.",
+                //IsRead = false,
+                Type = UpdateType.Add,
+                Users = notificationUsers
+            };
+
             ProjectUpdate projectUpdate = new ProjectUpdate
             {
                 Title = "Project Created",
@@ -190,6 +200,7 @@ namespace SEPMTool.Controllers
 
             projectUpdates.Add(projectUpdate);
 
+            _context.Notifications.Add(notification);
             _context.Projects.Add(proj);
 
             if (await _context.SaveChangesAsync() > 0)

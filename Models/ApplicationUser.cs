@@ -13,5 +13,7 @@ namespace SEPMTool.Models
         public int AwardPoints { get; set; }
         public ICollection<ProjectUser> Projects { get; set; }
         public ICollection<TaskUser> Tasks { get; set; }
+        public ICollection<NotificationUser> Notifications { get; set; }
+
     }
 }

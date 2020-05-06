@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SEPMTool.Data;
 
 namespace SEPMTool.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200505160128_notifications-table")]
+    partial class notificationstable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -198,7 +200,7 @@ namespace SEPMTool.Migrations
 
                     b.Property<string>("Body");
 
-                    b.Property<DateTime>("DateTime");
+                    b.Property<bool>("IsRead");
 
                     b.Property<string>("Title");
 
@@ -214,8 +216,6 @@ namespace SEPMTool.Migrations
                     b.Property<int>("NotificationId");
 
                     b.Property<string>("UserId");
-
-                    b.Property<bool>("IsRead");
 
                     b.HasKey("NotificationId", "UserId");
 

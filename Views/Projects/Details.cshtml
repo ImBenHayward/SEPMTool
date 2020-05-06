@@ -421,7 +421,7 @@
                                     <div class="media align-items-center">
                                         <div class="avatars">
                                             <div class="avatar bg-success" v-if="update.type === 0">
-                                                <i class="material-icons">create_new_folder</i>
+                                                <i class="material-icons" v-if="update.type === 0">create_new_folder</i>
                                             </div>
 
                                             <div class="avatar bg-primary" v-if="update.type === 1">
@@ -1155,6 +1155,7 @@
                 allArrays: function () { return [...this.optionalityIndicators, ...this.subjectivityIndicators, ...this.vaguenessIndicators, ...this.weaknessIndicators, ...this.implicityIndicators, ...this.multiplicityIndicators] },
             },
             methods: {
+
                 /*
                  * Progress Calculator
                 */

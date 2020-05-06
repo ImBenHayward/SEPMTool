@@ -1,5 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Hosting
+@using Microsoft.AspNetCore.Identity
+@using SEPMTool.Models;
 @inject IHostingEnvironment HostingEnvironment
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 <!DOCTYPE html>
 <html>
@@ -31,11 +35,141 @@
 </head>
 
 <body>
-    <div class="layout layout-nav-side">
-        <partial name="_LoginPartial" />
-        <div class="main-container">
-            <div id="mainContent" v-cloak>
-                <breadcrumb></breadcrumb>
+    <div id="mainContent" v-cloak>
+        <div class="layout layout-nav-side">
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <div class="navbar navbar-expand-lg bg-dark navbar-dark sticky-top">
+
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                        <img alt="SEPM Tool" src="~/assets/img/logo.svg" />
+                    </a>
+                    <div class="d-flex align-items-center">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="d-block d-lg-none ml-2">
+                            <div class="dropdown">
+                                <a href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img alt="Image" src="~/assets/img/defaultUserIcon.jpg" class="avatar" />
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="nav-side-user.html" class="dropdown-item">Profile</a>
+                                    <a href="utility-account-settings.html" class="dropdown-item">Account Settings</a>
+                                    <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                        <button class="dropdown-item" type="submit">Log Out</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="collapse navbar-collapse flex-column" id="navbar-collapse">
+                        <ul class="navbar-nav d-lg-block">
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="Index">Overview</a>
+                            </li>
+
+                        </ul>
+                        <hr>
+                        <div class="d-none d-lg-block w-100">
+                            <span class="text-small text-muted">Quick Links</span>
+                            <ul class="nav nav-small flex-column mt-2">
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="Index">
+                                        My Projects
+                                    </a>
+                                    <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="Index">
+                                        Project Archive
+                                    </a>
+                                </li>
+                            </ul>
+                            <hr>
+                        </div>
+                        <div>
+                            <form>
+                                <div class="input-group input-group-dark input-group-round">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="material-icons">search</i>
+                                        </span>
+                                    </div>
+                                    <input type="search" class="form-control form-control-dark" placeholder="Search" aria-label="Search app">
+                                </div>
+                            </form>
+                            <div class="dropdown mt-2">
+                                <button class="btn btn-primary btn-block" type="button" id="newContentButton" onclick="location.href='@Url.Action("NewProject", "Projects")'">
+                                    New Project
+                                </button>
+                                <button class="btn btn-primary btn-block" type="button" id="newContentButton" v-on:click="GetNotifications()">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-none d-lg-block">
+                        <div class="dropup">
+                            <a href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img alt="Image" src="~/assets/img/defaultUserIcon.jpg" class="avatar" />
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="nav-side-user.html" class="dropdown-item">Profile</a>
+                                <a href="utility-account-settings.html" class="dropdown-item">Account Settings</a>
+                                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                    <button class="dropdown-item" type="submit">Log Out</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+
+            }
+            <div class="main-container">
+                <div class="navbar bg-white breadcrumb-bar">
+                    <breadcrumb>
+                    </breadcrumb>
+                    <ul class="nav nav-pills">
+                        <li class="nav-item dropdown">
+                            <a href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <div class="d-flex align-items-center"><i class="fa fa-lg fa-bell notification-bell"></i> <span class="badge lg badge-danger">{{UnreadNotificationCount}}</span></div>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="head text-light bg-dark">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-sm-12 col-12">
+                                            <span>Notifications ({{UnreadNotificationCount}})</span>
+                                            <a href="" class="float-right text-light">Mark all as read</a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <hr />
+                                <li class="notification-box" v-for="item in this.notificationModel">
+                                    <div class="row">
+                                        <div class="col-lg-3 col-sm-3 col-3 text-center">
+                                            <i class="material-icons w-50 rounded-circle" v-if="item.notification.type === 0">create_new_folder</i>
+                                            <i class="material-icons w-50 rounded-circle" v-else-if="item.notification.type === 1">edit</i>
+                                            <i class="material-icons w-50 rounded-circle" v-else-if="item.notification.type === 2">delete_forever</i>
+                                            @*<img src="/demo/man-profile.jpg" class="w-50 rounded-circle">*@
+                                        </div>
+                                        <div class="col-lg-8 col-sm-8 col-8">
+                                            <strong class="text-info">{{item.notification.title}}</strong>
+                                            <div>
+                                                {{item.notification.body}}
+                                            </div>
+                                            <small class="text-warning">{{item.notification.dateTime}}</small>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </li>
+                                <li class="footer bg-dark text-center">
+                                    <a href="" class="text-light">View All</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
                 @*<partial name="_BreadcrumbBarPartial" />*@
                 <alerts></alerts>
                 @RenderBody()
@@ -71,7 +205,6 @@
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
 
-
     @*<script src="~/js/dist/site.js" asp-append-version="true"></script>*@
 
     @*<environment include="Development">
@@ -101,8 +234,49 @@
     @RenderSection("Scripts", required: false)
 
     <script>
+        vueMixins.push({
+            data: function () {
+                return {
+                    notificationModel: [],
+                    notificationUnreadCount: ''
+                }
+            },
+            methods: {
+                GetNotifications: function () {
+                    axios({
+                        method: 'post',
+                        url: '/Users/GetNotificationsForUser'
+                    })
+                        .then(res => {
+                            this.notificationModel = res.data.notifications;
+                        })
+                        .catch(err => {
+                            console.log(err.message);
+                        })
+                        .then(() => {
+                            this.loading = false;
+                        });
+                },
+                CheckForNotifications: function () {
+                    setInterval(() => {
+                        this.GetNotifications();
+                    }, 3000)
+                }
+            },
+            computed: {
+                UnreadNotificationCount: function () {
 
+                    return this.notificationModel.filter(notification => !notification.isRead).length
+                }
+            },
+            beforeMount() {
+                this.GetNotifications();
+                this.CheckForNotifications();
+            }
+        });
+    </script>
 
+    <script>
     var app = new Vue({
         el: "#mainContent",
         mixins: vueMixins,

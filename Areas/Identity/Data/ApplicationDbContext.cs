@@ -23,6 +23,8 @@ namespace SEPMTool.Data
         public DbSet<SubTask> SubTasks { get; set; }
         public DbSet<TaskUser> TaskUser { get; set; }
         public DbSet<ProjectRequirement> Requirements { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<NotificationUser> NotificationUser { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -66,6 +68,18 @@ namespace SEPMTool.Data
             builder.Entity<Project>()
                 .HasMany(p => p.Updates)
                 .WithOne(r => r.Project);
+
+            builder.Entity<NotificationUser>()
+                .HasKey(nu => new { nu.NotificationId, nu.UserId });
+            builder.Entity<NotificationUser>()
+                .HasOne(nu => nu.User)
+                .WithMany(n => n.Notifications)
+                .HasForeignKey(nu => nu.UserId);
+            builder.Entity<NotificationUser>()
+                .HasOne(nu => nu.Notification)
+                .WithMany(u => u.Users)
+                .HasForeignKey(nu => nu.NotificationId);
+
         }
     }
 }

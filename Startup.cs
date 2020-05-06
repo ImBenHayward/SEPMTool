@@ -44,7 +44,7 @@ namespace SEPMTool
             services.AddBreadcrumbs(GetType().Assembly, options =>
             {
                 options.TagName = "navbar bg-white breadcrumb-bar";
-                options.TagClasses = "navbar bg-white breadcrumb-bar";
+                options.TagClasses = "";
                 options.OlClasses = "breadcrumb";
                 options.LiClasses = "breadcrumb-item";
                 options.ActiveLiClasses = "breadcrumb-item active";
