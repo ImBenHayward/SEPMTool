@@ -77,10 +77,10 @@
                             <ul class="nav nav-small flex-column mt-2">
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="Index">
-                                        My Projects
-                                    </a>
-                                    <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="Index">
                                         Project Archive
+                                    </a>
+                                    <a class="nav-link" asp-area="" asp-controller="Notifications" asp-action="Index">
+                                        Notifications ({{UnreadNotificationCount}})
                                     </a>
                                 </li>
                             </ul>
@@ -100,8 +100,6 @@
                             <div class="dropdown mt-2">
                                 <button class="btn btn-primary btn-block" type="button" id="newContentButton" onclick="location.href='@Url.Action("NewProject", "Projects")'">
                                     New Project
-                                </button>
-                                <button class="btn btn-primary btn-block" type="button" id="newContentButton" v-on:click="GetNotifications()">
                                 </button>
                             </div>
                         </div>
@@ -158,12 +156,12 @@
                                                     </div>
                                                 </li>
                                                 <li>
-                                                    <img alt="Peggy Brown" src="~/assets/img/avatar-female-2.jpg" class="avatar font-weight" data-title="Peggy Brown" data-toggle="tooltip" data-filter-by="data-title" />
+                                                    <img alt="Peggy Brown" src="~/assets/img/avatar-female-2.jpg" class="avatar font-weight" :data-title="item.notification.fullNameLink" data-toggle="tooltip" data-filter-by="data-title" />
                                                 </li>
                                             </ul>
                                             <div class="media-body d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    <a href="#" :class="{'font-weight-bolder':(item.isRead == false)}">{{item.notification.title}}</a>
+                                                    <a href="#" :class="{'font-weight-bolder':(item.isRead == false)}" v-on:click="OpenProject(item.notification.projectLink)">{{item.notification.title}}</a>
                                                     <br>
                                                     <span :class="{'font-weight-bolder':(item.isRead == false), 'text-small':true}" data-filter-by="text">{{item.notification.body}}</span>
                                                     <br />
@@ -276,11 +274,11 @@
                             this.loading = false;
                         });
                 },
-                //CheckForNotifications: function () {
-                //    setInterval(() => {
-                //        this.GetNotifications();
-                //    }, 3000)
-                //},
+                CheckForNotifications: function () {
+                    setInterval(() => {
+                        this.GetNotifications();
+                    }, 3000)
+                },
                 ToggleIsRead: function (id) {
 
                     console.log(id);
@@ -318,6 +316,9 @@
                         url: '/Notifications/Index'
                     })
                 },
+                OpenProject: function (projectId) {
+                    window.location.replace('/projects/details/' + projectId);
+                },
                 moment(...args) {
                     return moment(...args);
                 },
@@ -335,7 +336,7 @@
             },
             beforeMount() {
                 this.GetNotifications();
-                //this.CheckForNotifications();
+                this.CheckForNotifications();
             }
         });
     </script>

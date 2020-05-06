@@ -14,5 +14,8 @@ namespace SEPMTool.Models
         public UpdateType Type { get; set; }
         public ICollection<NotificationUser> Users { get; set; }
         public DateTime DateTime { get; set; }
+        public string UserLink { get; set; }
+        public int ProjectLink { get; set; }
+
     }
 }

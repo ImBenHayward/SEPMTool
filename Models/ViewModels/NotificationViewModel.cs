@@ -13,5 +13,8 @@ namespace SEPMTool.Models.ViewModels
         public UpdateType Type { get; set; }
         public bool IsRead { get; set; }
         public DateTime DateTime { get; set; }
+        public string UserLink { get; set; }
+        public int ProjectLink { get; set; }
+        public string FullNameLink { get; set; }
     }
 }

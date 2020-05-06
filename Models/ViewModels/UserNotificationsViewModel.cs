@@ -8,5 +8,6 @@ namespace SEPMTool.Models.ViewModels
     public class UserNotificationsViewModel
     {
         public List<NotificationUserViewModel> Notifications { get; set; }
+        public ApplicationUserViewModel UserLink { get; set; }
     }
 }

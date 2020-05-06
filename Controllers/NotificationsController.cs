@@ -38,13 +38,22 @@ namespace SEPMTool.Controllers
         public async Task<UserNotificationsViewModel> GetNotificationsForUser()
         {
             var user = await GetCurrentUserAsync();
-            var notifications = _context.NotificationUser.Include(n => n.Notification).Where(x => x.UserId == user.Id).ToList();
+            var notifications = _context.NotificationUser.Include(n => n.Notification).Where(x => x.UserId == user.Id).ToList();           
 
             List<NotificationUserViewModel> notificationList = _mapper.Map<List<NotificationUser>, List<NotificationUserViewModel>>(notifications);
 
+           var orderedNotificationList = notificationList.OrderByDescending(x => x.Notification.DateTime).ToList();
+
+            foreach (var notification in notificationList)
+            {
+                var userLink = _context.Users.FirstOrDefault(x => x.Id == notification.UserId);
+
+                notification.Notification.FullNameLink = userLink.FirstName + " " + userLink.LastName;
+            }
+
             UserNotificationsViewModel model = new UserNotificationsViewModel()
             {
-                Notifications = notificationList
+                Notifications = orderedNotificationList
             };
 
             return model;

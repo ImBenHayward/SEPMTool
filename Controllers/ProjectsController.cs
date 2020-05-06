@@ -102,8 +102,7 @@ namespace SEPMTool.Controllers
             var allUsers = _context.Users.Where(u => !u.Projects.Any(p => p.ProjectId == id)).Select(x => new ProjectUsersViewModel { UserId = x.Id, Username = x.FirstName + " " + x.LastName }).ToList();
 
             if (_context.Projects.Any(p => p.Id == id))
-            {                      
-
+            {
                 var query = _context.Projects
                     .Include(u => u.Users)
                     .Include(p => p.Updates)
@@ -160,6 +159,7 @@ namespace SEPMTool.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ProjectCreateViewModel project)
         {
+            var user = await GetCurrentUserAsync();
             List<ProjectUser> selectedUsers = project.AllUsers.Where(u => u.IsSelected).Select(u => new ProjectUser { UserId = u.UserId, Username = u.Username, ProjectRole = ProjectRole.Developer }).ToList();
             List<NotificationUser> notificationUsers = project.AllUsers.Where(u => u.IsSelected).Select(u => new NotificationUser { UserId = u.UserId }).ToList();
             List<ProjectUpdate> projectUpdates = new List<ProjectUpdate>();
@@ -180,15 +180,6 @@ namespace SEPMTool.Controllers
                 Updates = projectUpdates
             };
 
-            Notification notification = new Notification
-            {
-                Title = "Added to a Project",
-                Body = "You have selected as a team member for the " + project.Name + " project.",
-                //IsRead = false,
-                Type = UpdateType.Add,
-                Users = notificationUsers
-            };
-
             ProjectUpdate projectUpdate = new ProjectUpdate
             {
                 Title = "Project Created",
@@ -199,13 +190,28 @@ namespace SEPMTool.Controllers
             };
 
             projectUpdates.Add(projectUpdate);
-
-            _context.Notifications.Add(notification);
+                        
             _context.Projects.Add(proj);
 
             if (await _context.SaveChangesAsync() > 0)
             {
                 this.AddAlertSuccess($"{project.Name} was created successfully");
+
+                Notification notification = new Notification
+                {
+                    Title = user.FirstName + " added you to a project",
+                    Body = user.FirstName + " " + user.LastName + " added you to the " + project.Name + "as a team member.",
+                    Type = UpdateType.Add,
+                    Users = notificationUsers,
+                    UserLink = user.Id,
+                    ProjectLink =  proj.Id,
+                    DateTime = DateTime.Now
+                };
+
+                _context.Notifications.Add(notification);
+
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction("Details", new { proj.Id });
             }
 
@@ -219,8 +225,10 @@ namespace SEPMTool.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRequirement([FromBody] ProjectDetailsViewModel projectRequirement)
         {
+            var user = await GetCurrentUserAsync();
             var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectRequirement.ProjectId);
-
+            List<NotificationUser> notificationUsers = _context.ProjectUser.Where(x => x.ProjectId == projectRequirement.ProjectId).Select(u => new NotificationUser { UserId = u.UserId }).ToList();
+                              
             ProjectRequirement requirement = new ProjectRequirement
             {
                 Project = project,
@@ -236,16 +244,27 @@ namespace SEPMTool.Controllers
                 Description = "'" + projectRequirement.RequirementName + "' was added.",
                 Date = DateTime.UtcNow,
                 Type = UpdateType.Add
-            };
-            
+            };            
+
             project.Updates.Add(projectUpdate);
-            _context.Requirements.Add(requirement);
-
-            //_context.Requirements.Add(requirement);
-
-            await _context.SaveChangesAsync();
+            _context.Requirements.Add(requirement);            
 
             var requirementVm = _mapper.Map<RequirementViewModel>(requirement);
+
+            Notification notification = new Notification
+            {
+                Title = "A new requirement was added to " + project.Name,
+                Body = user.FirstName + " " + user.LastName + " added the following requirement to the " + project.Name + " project: " + requirementVm.Name + ".",
+                Type = UpdateType.Add,
+                Users = notificationUsers,
+                UserLink = user.Id,
+                ProjectLink = requirementVm.ProjectId,
+                DateTime = DateTime.Now
+            };
+
+            _context.Notifications.Add(notification);
+
+            await _context.SaveChangesAsync();
 
             return Ok(new UpdateReqResponse
             {
