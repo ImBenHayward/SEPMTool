@@ -1,0 +1,142 @@
+﻿
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-11 col-xl-10">
+            <div class="content-list">
+                <div class="row content-list-head notifications-header">
+                    <div class="col-auto">
+                        <h3>Notifications</h3>
+                    </div>
+                </div>
+                <div class="content-list-body">
+                    <ol class="list-group list-group-activity">
+                        <li class="list-group-item">
+                            <span>Notifications ({{UnreadNotificationCount}})</span>
+                            <a href="#" class="font-weight-bolder float-right" v-on:click="MarkAllAsRead">Mark all as read</a>
+                        </li>
+                        <li :class="{'list-group-item':true, 'notification-bg-read':(item.isRead == true)}" v-for="item in this.notificationModel">
+                            <div class="media align-items-center">
+                                <ul class="avatars">
+                                    <li>
+                                        <div class="avatar bg-success" v-if="item.notification.type === 0">
+                                            <i class="material-icons" v-if="item.notification.type === 0">create_new_folder</i>
+                                        </div>
+
+                                        <div class="avatar bg-primary" v-if="item.notification.type === 1">
+                                            <i class="material-icons" v-if="item.notification.type === 1">edit</i>
+                                        </div>
+
+                                        <div class="avatar bg-danger" v-if="item.notification.type === 2">
+                                            <i class="material-icons" v-if="item.notification.type === 2">delete_forever</i>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <img alt="Peggy Brown" src="~/assets/img/avatar-female-2.jpg" class="avatar font-weight" data-title="Peggy Brown" data-toggle="tooltip" data-filter-by="data-title" />
+                                    </li>
+                                </ul>
+                                <div class="media-body d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <a href="#" :class="{'font-weight-bolder':(item.isRead == false)}">{{item.notification.title}}</a>
+                                        <br>
+                                        <span :class="{'font-weight-bolder':(item.isRead == false), 'text-small':true}" data-filter-by="text">{{item.notification.body}}</span>
+                                        <br />
+                                        <small>{{GetDateFromNow(item.notification.dateTime)}}</small>
+                                    </div>
+                                    <div class="material-icons">
+                                        <a href="#" v-on:click="ToggleIsRead(item.notificationId)" v-if="item.isRead == false"><i class="far fa-envelope"></i></a>
+                                        <a href="#" v-on:click="ToggleIsRead(item.notificationId)" v-else><i class="far fa-envelope-open"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        vueMixins.push({
+
+            data: function () {
+                return {
+                    notificationModel: [],
+                    notificationUnreadCount: ''
+                }
+            },
+            methods: {
+                GetNotifications: function () {
+                    axios({
+                        method: 'post',
+                        url: '/Notifications/GetNotificationsForUser'
+                    })
+                        .then(res => {
+                            this.notificationModel = res.data.notifications;
+                        })
+                        .catch(err => {
+                            console.log(err.message);
+                        })
+                        .then(() => {
+                            this.loading = false;
+                        });
+                },
+                //CheckForNotifications: function () {
+                //    setInterval(() => {
+                //        this.GetNotifications();
+                //    }, 3000)
+                //},
+                ToggleIsRead: function (id) {
+
+                    console.log(id);
+
+                    axios({
+                        method: 'patch',
+                        url: '/Notifications/ToggleIsRead',
+                        params: {
+                            notificationId: id
+                        }
+                    })
+                        .then(res => {
+                            this.GetNotifications();
+                        });
+                },
+                MarkAllAsRead: function () {
+                    axios({
+                        method: 'post',
+                        url: '/Notifications/MarkAllAsRead'
+                    })
+                        .then(res => {
+                            this.GetNotifications();
+                        })
+                        .catch(err => {
+                            console.log(err.message);
+                        })
+                        .then(() => {
+                            this.loading = false;
+                        });
+                },
+                moment(...args) {
+                    return moment(...args);
+                },
+                GetDateFromNow(date) {
+                    return this.$moment(date).fromNow();
+                }
+            },
+            computed: {
+                UnreadNotificationCount: function () {
+                    return this.notificationModel.filter(notification => !notification.isRead).length
+                }
+            },
+            beforeMount() {
+                this.GetNotifications();
+                //this.CheckForNotifications();
+            }
+        });
+    </script>
+
+}

@@ -131,46 +131,58 @@
                     <breadcrumb>
                     </breadcrumb>
                     <ul class="nav nav-pills">
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown allow-focus">
                             <a href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <div class="d-flex align-items-center"><i class="fa fa-lg fa-bell notification-bell"></i> <span class="badge lg badge-danger">{{UnreadNotificationCount}}</span></div>
+                                <div class="d-flex align-items-center"><i :class="{'fa':true, 'fa-lg':true, 'fa-bell':true, 'notification-bell':true, 'notification-empty':(this.UnreadNotificationCount == 0)}"></i> <span class="badge lg badge-danger" style="width: 17px" v-show="UnreadNotificationCount > 0">{{UnreadNotificationCount}}</span></div>
                             </a>
-                            <ul class="dropdown-menu">
-                                <li class="head text-light bg-dark">
-                                    <div class="row">
-                                        <div class="col-lg-12 col-sm-12 col-12">
-                                            <span>Notifications ({{UnreadNotificationCount}})</span>
-                                            <a href="" class="float-right text-light">Mark all as read</a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <hr />
-                                <li class="notification-box" v-for="item in this.notificationModel">
-                                    <div class="row">
-                                        <div class="col-lg-3 col-sm-3 col-3 text-center">
-                                            <i class="material-icons w-50 rounded-circle" v-if="item.notification.type === 0">create_new_folder</i>
-                                            <i class="material-icons w-50 rounded-circle" v-else-if="item.notification.type === 1">edit</i>
-                                            <i class="material-icons w-50 rounded-circle" v-else-if="item.notification.type === 2">delete_forever</i>
-                                            @*<img src="/demo/man-profile.jpg" class="w-50 rounded-circle">*@
-                                        </div>
-                                        <div class="col-lg-8 col-sm-8 col-8">
-                                            <strong class="text-info">{{item.notification.title}}</strong>
-                                            <div>
-                                                {{item.notification.body}}
+                            <div class="dropdown-menu">
+                                <ul class="list-group list-group-activity">
+                                    <li class="list-group-item">
+                                        <span>Notifications ({{UnreadNotificationCount}})</span>
+                                        <a href="#" class="font-weight-bolder float-right" v-on:click="MarkAllAsRead">Mark all as read</a>
+                                    </li>
+                                    <li :class="{'list-group-item':true, 'notification-bg-read':(item.isRead == true)}" v-for="item in this.firstResults">
+                                        <div class="media align-items-center">
+                                            <ul class="avatars">
+                                                <li>
+                                                    <div class="avatar bg-success" v-if="item.notification.type === 0">
+                                                        <i class="material-icons" v-if="item.notification.type === 0">create_new_folder</i>
+                                                    </div>
+
+                                                    <div class="avatar bg-primary" v-if="item.notification.type === 1">
+                                                        <i class="material-icons" v-if="item.notification.type === 1">edit</i>
+                                                    </div>
+
+                                                    <div class="avatar bg-danger" v-if="item.notification.type === 2">
+                                                        <i class="material-icons" v-if="item.notification.type === 2">delete_forever</i>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <img alt="Peggy Brown" src="~/assets/img/avatar-female-2.jpg" class="avatar font-weight" data-title="Peggy Brown" data-toggle="tooltip" data-filter-by="data-title" />
+                                                </li>
+                                            </ul>
+                                            <div class="media-body d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <a href="#" :class="{'font-weight-bolder':(item.isRead == false)}">{{item.notification.title}}</a>
+                                                    <br>
+                                                    <span :class="{'font-weight-bolder':(item.isRead == false), 'text-small':true}" data-filter-by="text">{{item.notification.body}}</span>
+                                                    <br />
+                                                    <small>{{GetDateFromNow(item.notification.dateTime)}}</small>
+                                                </div>
+                                                <div class="material-icons">
+                                                    <a href="#" v-on:click="ToggleIsRead(item.notificationId)" v-if="item.isRead == false"><i class="far fa-envelope"></i></a>
+                                                    <a href="#" v-on:click="ToggleIsRead(item.notificationId)" v-else><i class="far fa-envelope-open"></i></a>
+                                                </div>
                                             </div>
-                                            <small class="text-warning">{{item.notification.dateTime}}</small>
                                         </div>
-                                    </div>
-                                    <hr />
-                                </li>
-                                <li class="footer bg-dark text-center">
-                                    <a href="" class="text-light">View All</a>
-                                </li>
-                            </ul>
+                                    </li>
+                                    <li class="list-group-item text-center"><a href="#" class="font-weight-bolder" onclick="location.href='@Url.Action("Index", "Notifications")'">View All</a></li>
+
+                                </ul>
+                            </div>
                         </li>
                     </ul>
                 </div>
-                @*<partial name="_BreadcrumbBarPartial" />*@
                 <alerts></alerts>
                 @RenderBody()
             </div>
@@ -234,7 +246,14 @@
     @RenderSection("Scripts", required: false)
 
     <script>
+        $(document).on('click', '.allow-focus .dropdown-menu', function (e) {
+            e.stopPropagation();
+        });
+    </script>
+
+    <script>
         vueMixins.push({
+
             data: function () {
                 return {
                     notificationModel: [],
@@ -245,7 +264,7 @@
                 GetNotifications: function () {
                     axios({
                         method: 'post',
-                        url: '/Users/GetNotificationsForUser'
+                        url: '/Notifications/GetNotificationsForUser'
                     })
                         .then(res => {
                             this.notificationModel = res.data.notifications;
@@ -257,21 +276,66 @@
                             this.loading = false;
                         });
                 },
-                CheckForNotifications: function () {
-                    setInterval(() => {
-                        this.GetNotifications();
-                    }, 3000)
+                //CheckForNotifications: function () {
+                //    setInterval(() => {
+                //        this.GetNotifications();
+                //    }, 3000)
+                //},
+                ToggleIsRead: function (id) {
+
+                    console.log(id);
+
+                    axios({
+                        method: 'patch',
+                        url: '/Notifications/ToggleIsRead',
+                        params: {
+                            notificationId: id
+                        }
+                    })
+                        .then(res => {
+                            this.GetNotifications();
+                        });
+                },
+                MarkAllAsRead: function () {
+                    axios({
+                        method: 'post',
+                        url: '/Notifications/MarkAllAsRead'
+                    })
+                        .then(res => {
+                            this.GetNotifications();
+                        })
+                        .catch(err => {
+                            console.log(err.message);
+                        })
+                        .then(() => {
+                            this.loading = false;
+                        });
+                },
+                ViewAllNotifications: function () {
+                    console.log('hello')
+                    axios({
+                        method: 'post',
+                        url: '/Notifications/Index'
+                    })
+                },
+                moment(...args) {
+                    return moment(...args);
+                },
+                GetDateFromNow(date) {
+                    return this.$moment(date).fromNow();
                 }
             },
             computed: {
                 UnreadNotificationCount: function () {
-
                     return this.notificationModel.filter(notification => !notification.isRead).length
+                },
+                firstResults() {
+                    return this.notificationModel.slice(0, 4);
                 }
             },
             beforeMount() {
                 this.GetNotifications();
-                this.CheckForNotifications();
+                //this.CheckForNotifications();
             }
         });
     </script>
