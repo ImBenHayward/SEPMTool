@@ -1559,8 +1559,26 @@
                         }).then((result) => {
                             if (result.value) {
                                 this.$swal('Deleted', 'You successfully deleted the task', 'success')
-
-
+                                
+                                this.loading = true;
+                                axios.delete('/Projects/DeleteTask/', {
+                                    params: {
+                                        taskId: id,
+                                        projectId: this.projectModel.project.id
+                                    }
+                                })
+                                    .then(res => {
+                                        console.log(res);
+                                        this.projectModel.project.projectRequirements[reqIndex].tasks.splice(taskIndex, 1);
+                                        this.RenderKanban();
+                                        this.CalculateProgress();
+                                    })
+                                    .catch(err => {
+                                        console.log(err.message);
+                                    })
+                                    .then(() => {
+                                        this.loading = false;
+                                    });
 
                             } else {
                                 this.$swal.close();

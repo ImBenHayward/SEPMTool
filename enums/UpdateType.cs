@@ -9,6 +9,8 @@ namespace SEPMTool.enums
     {
         Add,
         Edit,
-        Remove
+        Remove,
+        Complete,
+        ProjectAdd
     }
 }

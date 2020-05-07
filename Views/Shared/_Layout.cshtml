@@ -80,7 +80,7 @@
                                         Project Archive
                                     </a>
                                     <a class="nav-link" asp-area="" asp-controller="Notifications" asp-action="Index">
-                                        Notifications ({{UnreadNotificationCount}})
+                                        Notifications <span v-if="UnreadNotificationCount > 0">({{UnreadNotificationCount}})</span>
                                     </a>
                                 </li>
                             </ul>
@@ -133,13 +133,13 @@
                             <a href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <div class="d-flex align-items-center"><i :class="{'fa':true, 'fa-lg':true, 'fa-bell':true, 'notification-bell':true, 'notification-empty':(this.UnreadNotificationCount == 0)}"></i> <span class="badge lg badge-danger" style="width: 17px" v-show="UnreadNotificationCount > 0">{{UnreadNotificationCount}}</span></div>
                             </a>
-                            <div class="dropdown-menu">
+                            <div class="dropdown-menu dropdown-menu-notifications">
                                 <ul class="list-group list-group-activity">
                                     <li class="list-group-item">
                                         <span>Notifications ({{UnreadNotificationCount}})</span>
                                         <a href="#" class="font-weight-bolder float-right" v-on:click="MarkAllAsRead">Mark all as read</a>
                                     </li>
-                                    <li :class="{'list-group-item':true, 'notification-bg-read':(item.isRead == true)}" v-for="item in this.firstResults">
+                                    <li :class="{'list-group-item':true, 'notification-bg-read':(item.isRead == true)}" v-for="(item, index) in this.firstResults">
                                         <div class="media align-items-center">
                                             <ul class="avatars">
                                                 <li>
@@ -154,6 +154,14 @@
                                                     <div class="avatar bg-danger" v-if="item.notification.type === 2">
                                                         <i class="material-icons" v-if="item.notification.type === 2">delete_forever</i>
                                                     </div>
+
+                                                    <div class="avatar bg-success" v-if="item.notification.type === 3">
+                                                        <i class="material-icons" v-if="item.notification.type === 3">done_outline</i>
+                                                    </div>
+
+                                                    <div class="avatar bg-success" v-if="item.notification.type === 4">
+                                                        <i class="material-icons" v-if="item.notification.type === 4">group_add</i>
+                                                    </div>
                                                 </li>
                                                 <li>
                                                     <img alt="Peggy Brown" src="~/assets/img/avatar-female-2.jpg" class="avatar font-weight" :data-title="item.notification.fullNameLink" data-toggle="tooltip" data-filter-by="data-title" />
@@ -161,9 +169,9 @@
                                             </ul>
                                             <div class="media-body d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    <a href="#" :class="{'font-weight-bolder':(item.isRead == false)}" v-on:click="OpenProject(item.notification.projectLink)">{{item.notification.title}}</a>
+                                                    <a href="#" :class="{'font-weight-bolder':(item.isRead == false)}" v-on:click="OpenProject(item.notification.projectLink, item.notificationId, index)">{{item.notification.title}}</a>
                                                     <br>
-                                                    <span :class="{'font-weight-bolder':(item.isRead == false), 'text-small':true}" data-filter-by="text">{{item.notification.body}}</span>
+                                                    <span :class="{'font-weight-bold':(item.isRead == false), 'text-small':true}" data-filter-by="text">{{item.notification.body}}</span>
                                                     <br />
                                                     <small>{{GetDateFromNow(item.notification.dateTime)}}</small>
                                                 </div>
@@ -316,8 +324,12 @@
                         url: '/Notifications/Index'
                     })
                 },
-                OpenProject: function (projectId) {
+                OpenProject: function (projectId, notificationId, index) {
                     window.location.replace('/projects/details/' + projectId);
+
+                    if (this.notificationModel[index].isRead == false) {
+                        this.ToggleIsRead(notificationId);
+                    }                    
                 },
                 moment(...args) {
                     return moment(...args);

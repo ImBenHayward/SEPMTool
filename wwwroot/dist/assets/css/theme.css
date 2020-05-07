@@ -13776,7 +13776,7 @@ pre[class*="language-"] {
     float:right;
 }
 
-.dropdown-menu {
+.dropdown-menu-notifications {
     top: 35px;
     right: 8px;
     left: unset;
@@ -13786,7 +13786,7 @@ pre[class*="language-"] {
     padding: 0px;
 }
 
-.dropdown-menu-empty {
+.dropdown-menu-notifications-empty {
     top: 35px;
     right: -9px;
     left: unset;
@@ -13796,14 +13796,14 @@ pre[class*="language-"] {
     padding: 0px;
 }
 
-    .dropdown-menu:before {
-        content: "";
-        position: absolute;
-        top: -20px;
-        right: 12px;
-        border: 10px solid #dc3545;
-        border-color: transparent transparent #DDE2E6 transparent;
-    }
+.dropdown-menu-notifications:before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    right: 12px;
+    border: 10px solid #dc3545;
+    border-color: transparent transparent #DDE2E6 transparent;
+}
 
 .head {
     padding: 5px 15px;

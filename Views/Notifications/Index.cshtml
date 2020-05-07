@@ -29,6 +29,14 @@
                                         <div class="avatar bg-danger" v-if="item.notification.type === 2">
                                             <i class="material-icons" v-if="item.notification.type === 2">delete_forever</i>
                                         </div>
+
+                                        <div class="avatar bg-success" v-if="item.notification.type === 3">
+                                            <i class="material-icons" v-if="item.notification.type === 3">done_outline</i>
+                                        </div>
+
+                                        <div class="avatar bg-success" v-if="item.notification.type === 4">
+                                            <i class="material-icons" v-if="item.notification.type === 4">group_add</i>
+                                        </div>
                                     </li>
                                     <li>
                                         <img alt="Peggy Brown" src="~/assets/img/avatar-female-2.jpg" class="avatar font-weight" :data-title="item.notification.fullNameLink" data-toggle="tooltip" data-filter-by="data-title" />
@@ -36,9 +44,9 @@
                                 </ul>
                                 <div class="media-body d-flex justify-content-between align-items-center">
                                     <div>
-                                        <a href="#" :class="{'font-weight-bolder':(item.isRead == false)}" v-on:click="OpenProject(item.notification.projectLink)">{{item.notification.title}}</a>
+                                        <a href="#" :class="{'font-weight-bolder':(item.isRead == false)}" v-on:click="OpenProject(item.notification.projectLink, item.notificationId)">{{item.notification.title}}</a>
                                         <br>
-                                        <span :class="{'font-weight-bolder':(item.isRead == false), 'text-small':true}" data-filter-by="text">{{item.notification.body}}</span>
+                                        <span :class="{'font-weight-bold':(item.isRead == false), 'text-small':true}" data-filter-by="text">{{item.notification.body}}</span>
                                         <br />
                                         <small>{{GetDateFromNow(item.notification.dateTime)}}</small>
                                     </div>
@@ -120,8 +128,11 @@
                             this.loading = false;
                         });
                 },
-                OpenProject: function (projectId) {
+                OpenProject: function (projectId, notificationId) {
                     window.location.replace('/projects/details/' + projectId); 
+
+                    
+                    this.ToggleIsRead(notificationId);
                 },
                 moment(...args) {
                     return moment(...args);

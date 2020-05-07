@@ -200,8 +200,8 @@ namespace SEPMTool.Controllers
                 Notification notification = new Notification
                 {
                     Title = user.FirstName + " added you to a project",
-                    Body = user.FirstName + " " + user.LastName + " added you to the " + project.Name + "as a team member.",
-                    Type = UpdateType.Add,
+                    Body = user.FirstName + " " + user.LastName + " added you to the " + project.Name + " project as a team member.",
+                    Type = UpdateType.ProjectAdd,
                     Users = notificationUsers,
                     UserLink = user.Id,
                     ProjectLink =  proj.Id,
@@ -276,9 +276,11 @@ namespace SEPMTool.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateRequirement([FromBody] ProjectDetailsViewModel projectTask)
         {
-
+            var user = await GetCurrentUserAsync();
             var requirement = _context.Requirements.Include(t => t.Tasks).FirstOrDefault(x => x.Id == projectTask.RequirementId);
             var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectTask.ProjectId);
+
+            List<NotificationUser> notificationUsers = _context.ProjectUser.Where(x => x.ProjectId == projectTask.ProjectId).Select(u => new NotificationUser { UserId = u.UserId }).ToList();
 
             requirement.Name = projectTask.RequirementName;
             requirement.Description = projectTask.RequirementDescription;
@@ -297,6 +299,19 @@ namespace SEPMTool.Controllers
 
             project.Updates.Add(projectUpdate);
 
+            Notification notification = new Notification
+            {
+                Title = "A requirement was changed in " + project.Name,
+                Body = user.FirstName + " " + user.LastName + " changed the following requirement in the " + project.Name + " project: " + requirementVm.Name + ".",
+                Type = UpdateType.Edit,
+                Users = notificationUsers,
+                UserLink = user.Id,
+                ProjectLink = requirementVm.ProjectId,
+                DateTime = DateTime.Now
+            };
+
+            _context.Notifications.Add(notification);
+
             await _context.SaveChangesAsync();
 
             return Ok(new UpdateReqResponse
@@ -309,8 +324,11 @@ namespace SEPMTool.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteRequirement(int reqId, int projectId)
         {
+            var user = await GetCurrentUserAsync();
             var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectId);
             var requirement = _context.Requirements.Find(reqId);
+
+            List<NotificationUser> notificationUsers = _context.ProjectUser.Where(x => x.ProjectId == projectId).Select(u => new NotificationUser { UserId = u.UserId }).ToList();
 
             ProjectUpdate projectUpdate = new ProjectUpdate
             {
@@ -319,6 +337,19 @@ namespace SEPMTool.Controllers
                 Date = DateTime.UtcNow,
                 Type = UpdateType.Remove
             };
+
+            Notification notification = new Notification
+            {
+                Title = "A requirement was removed from " + project.Name,
+                Body = user.FirstName + " " + user.LastName + " removed the following requirement from the " + project.Name + " project: " + requirement.Name + ".",
+                Type = UpdateType.Remove,
+                Users = notificationUsers,
+                UserLink = user.Id,
+                ProjectLink = projectId,
+                DateTime = DateTime.Now
+            };
+
+            _context.Notifications.Add(notification);
 
             project.Updates.Add(projectUpdate);
             _context.Requirements.Remove(requirement);
@@ -331,8 +362,8 @@ namespace SEPMTool.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTask([FromBody] ProjectDetailsViewModel projectTask)
         {
-            _ = ModelState;
-
+            var user = await GetCurrentUserAsync();
+            List<NotificationUser> notificationUsers = _context.ProjectUser.Where(x => x.ProjectId == projectTask.ProjectId).Select(u => new NotificationUser { UserId = u.UserId }).ToList();    
             List<TaskUser> selectedUsers = new List<TaskUser>();
 
             if (projectTask.Users != null)
@@ -362,8 +393,20 @@ namespace SEPMTool.Controllers
             var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectTask.ProjectId);
 
             project.Updates.Add(projectUpdate);
-
             _context.Tasks.Add(projTask);
+
+            Notification notification = new Notification
+            {
+                Title = "A new task was added to " + project.Name,
+                Body = user.FirstName + " " + user.LastName + " added the following task to the " + project.Name + " project: " + projectTask.TaskName + ".",
+                Type = UpdateType.Add,
+                Users = notificationUsers,
+                UserLink = user.Id,
+                ProjectLink = projectTask.ProjectId,
+                DateTime = DateTime.Now
+            };
+
+            _context.Notifications.Add(notification);
 
             await _context.SaveChangesAsync();
 
@@ -390,9 +433,11 @@ namespace SEPMTool.Controllers
         {
             _ = ModelState;
 
+            var user = await GetCurrentUserAsync();
             var task = _context.Tasks.Include(t => t.SubTasks).Include(u => u.Users).FirstOrDefault(ta => ta.Id == projectTask.TaskId);
             var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectTask.ProjectId);
 
+            List<NotificationUser> notificationUsers = _context.ProjectUser.Where(x => x.ProjectId == projectTask.ProjectId).Select(u => new NotificationUser { UserId = u.UserId }).ToList();
             List<TaskUser> selectedUsers = new List<TaskUser>();
 
             if (projectTask.Users != null)
@@ -425,6 +470,19 @@ namespace SEPMTool.Controllers
                 Type = UpdateType.Edit
             };
 
+            Notification notification = new Notification
+            {
+                Title = "A task was updated in " + project.Name,
+                Body = user.FirstName + " " + user.LastName + " updated the following task in the " + project.Name + " project: " + projectTask.TaskName + ".",
+                Type = UpdateType.Edit,
+                Users = notificationUsers,
+                UserLink = user.Id,
+                ProjectLink = projectTask.ProjectId,
+                DateTime = DateTime.Now
+            };
+
+            _context.Notifications.Add(notification);
+
             var requirementTask = _mapper.Map<RequirementTaskViewModel>(task);
             List<SubTaskViewModel> subTasks = _mapper.Map<ICollection<SubTask>, List<SubTaskViewModel>>(task.SubTasks);
             List<TaskUserViewModel> users = _mapper.Map<ICollection<TaskUser>, List<TaskUserViewModel>>(task.Users);
@@ -448,9 +506,19 @@ namespace SEPMTool.Controllers
                
         public async Task<IActionResult> ToggleTaskComplete(int taskId)
         {
+            var user = await GetCurrentUserAsync();
             var task = _context.Tasks.Find(taskId);
+            var requirement = _context.Requirements.Include(x => x.Project).FirstOrDefault(x => x.Id == task.ProjectRequirementId);
+
+            List<NotificationUser> notificationUsers = _context.ProjectUser.Where(x => x.ProjectId == requirement.Project.Id).Select(u => new NotificationUser { UserId = u.UserId }).ToList();
 
             task.IsCompleted = !task.IsCompleted;
+
+            if(task.IsCompleted == true)
+            {
+                
+
+            }
 
             await _context.SaveChangesAsync();
 
@@ -503,8 +571,11 @@ namespace SEPMTool.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteTask(int taskId, int projectId)
         {
+            var user = await GetCurrentUserAsync();
             var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectId);
-            var task = _context.Tasks.Find(taskId);            
+            var task = _context.Tasks.Find(taskId);
+
+            List<NotificationUser> notificationUsers = _context.ProjectUser.Where(x => x.ProjectId == project.Id).Select(u => new NotificationUser { UserId = u.UserId }).ToList();
 
             ProjectUpdate projectUpdate = new ProjectUpdate
             {
@@ -514,6 +585,18 @@ namespace SEPMTool.Controllers
                 Type = UpdateType.Remove
             };
 
+            Notification notification = new Notification
+            {
+                Title = "A task was removed from " + project.Name,
+                Body = user.FirstName + " " + user.LastName + " removed the following task from the " + project.Name + " project: " + task.Name + ".",
+                Type = UpdateType.Remove,
+                Users = notificationUsers,
+                UserLink = user.Id,
+                ProjectLink = projectId,
+                DateTime = DateTime.Now
+            };
+
+            _context.Notifications.Add(notification);
             project.Updates.Add(projectUpdate);
             _context.Tasks.Remove(task);            
 
@@ -525,20 +608,38 @@ namespace SEPMTool.Controllers
         [HttpPost]
         public async Task<IActionResult> AddUsers(ProjectDetailsViewModel projectUpdate)
         {
+            var currentUser = await GetCurrentUserAsync();
+            var project = _context.Projects.FirstOrDefault(x => x.Id == projectUpdate.ProjectId);
             List<ProjectUser> selectedUsers = projectUpdate.AllUsers.Where(u => u.IsSelected).Select(u => new ProjectUser { UserId = u.UserId, Username = u.Username, ProjectRole = ProjectRole.Developer, ProjectId = projectUpdate.ProjectId }).ToList();
+            List<NotificationUser> notificationUsers = selectedUsers.Select(u => new NotificationUser { UserId = u.UserId }).ToList();
             List<string> Users = new List<String>();
-
+            
             foreach (var user in selectedUsers)
             {
                 _context.ProjectUser.Add(user);
                 Users.Add(user.Username);
             }
 
-
             if (await _context.SaveChangesAsync() > 0)
             {
                 string users = string.Join(", ", Users);
                 this.AddAlertSuccess($"{users} added successfully");
+
+                Notification notification = new Notification
+                {
+                    Title = currentUser.FirstName + " added you to a project",
+                    Body = currentUser.FirstName + " " + currentUser.LastName + " added you to the " + project.Name + " project as a team member.",
+                    Type = UpdateType.ProjectAdd,
+                    Users = notificationUsers,
+                    UserLink = currentUser.Id,
+                    ProjectLink = projectUpdate.ProjectId,
+                    DateTime = DateTime.Now
+                };
+
+                _context.Notifications.Add(notification);
+
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction("Details", new { id = projectUpdate.ProjectId });
             }
 
