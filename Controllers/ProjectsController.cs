@@ -516,8 +516,18 @@ namespace SEPMTool.Controllers
 
             if(task.IsCompleted == true)
             {
-                
+                Notification notification = new Notification
+                {
+                    Title = "A task was completed in " + requirement.Project.Name,
+                    Body = user.FirstName + " " + user.LastName + " marked the following task as complete in the " + requirement.Project.Name + " project: " + task.Name + ".",
+                    Type = UpdateType.Remove,
+                    Users = notificationUsers,
+                    UserLink = user.Id,
+                    ProjectLink = requirement.Project.Id,
+                    DateTime = DateTime.Now
+                };
 
+                _context.Notifications.Add(notification);
             }
 
             await _context.SaveChangesAsync();

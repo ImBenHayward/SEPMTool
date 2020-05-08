@@ -33,7 +33,7 @@
                             <i class="material-icons">playlist_add_check</i>
                             <span>{{totalTasksCompleted}}/{{totalTasks}}</span>
                         </div>
-                        <span>Due: {{this.projectModel.project.deadline | moment("Do MMMM, h:mmA, YYYY") }}</span>
+                        <span>Due: {{GetDateFromNow(this.projectModel.project.deadline)}}</span>
                     </div>
                 </div>
             </div>
@@ -75,10 +75,140 @@
                                 </button>
                             </div>
                         </div>
+
+                        <div v-for="(req, index) in this.projectModel.project.projectRequirements">
+                            <small>Requirement #{{index +1}}</small>
+                            <br />
+                            @*<h6>{{req.name}}</h6>*@
+                            <figure class="tabBlock">
+                                <ul class="tabBlock-tabs">
+                                    <li class="tabBlock-tab is-active">Details</li>
+                                    <li class="tabBlock-tab">Tasks</li>
+                                    <li class="tabBlock-tab">Comments</li>
+                                </ul>
+                                <div class="tabBlock-content">
+                                    <div class="tabBlock-pane">
+                                        <div class="media-body d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6>{{req.name}}</h6>
+                                                <span class="text-small" data-filter-by="text">{{req.description}}</span>
+                                                <br />
+                                                <div class="requirement-info">
+                                                    @* Priority *@
+                                                    <b-badge style="background-color: #2dc937" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 0">Very Low</b-badge>
+                                                    <b-badge style="background-color: #99c140" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 1">Low</b-badge>
+                                                    <b-badge style="background-color: #e7b416" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 2">Medium</b-badge>
+                                                    <b-badge style="background-color: #db7b2b" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 3">High</b-badge>
+                                                    <b-badge style="background-color: #cc3232" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 4">Very High</b-badge>
+                                                    @* Category *@
+
+                                                    <b-badge data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="req.category == 0">Functional</b-badge>
+                                                    <b-badge data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="req.category == 1">Non-Functional</b-badge>
+                                                    <b-badge data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="req.category == 2">Domain</b-badge>
+                                                </div>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn-options" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="material-icons">more_vert</i>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="#" v-on:click="openEditRequirementModal(req, index)">Edit</a>
+                                                    <div class="dropdown-divider"></div>
+                                                    <a class="dropdown-item text-danger" href="#" v-on:click="DeleteRequirement(req.id, index)">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tabBlock-pane">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>
+                                                @*<span class="h6-requirement align-self-center span-requirement"><i class="fas fa-tasks title-icon"></i>Requirement Tasks</span>*@
+                                                <span class="span-requirement" v-show="!req.tasks.length">No tasks added!</span>
+                                                <a id="showRequirements" class="button_style" @@click="ShowTasks(req.id)" onmouseover="" style="cursor: pointer;" v-show="req.tasks.length > 0"></a>
+                                            </span>
+
+                                            <button class="btn btn-primary" v-on:click="OpenModal(req.id, index)">
+                                                Add Task
+                                            </button>
+                                        </div>
+                                        <div class="card-list-body child">
+                                            <div :id="`accordion-${req.id}`">
+                                                <div class="card card-task requirements-card" v-for="(task, taskIndex) in req.tasks">
+                                                    <div class="progress" style="height:5px">
+                                                        <div :class="{'progress-bar':true, 'bg-success':(task.progress === 100 || task.isComplete), 'progress-complete':(task.progress === 100 || task.isComplete)}" :style="{width: task.progress + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                    <div class="card-header-requirements d-flex justify-content-between align-items-center">
+                                                        <a id="showRequirements" class="button_style" @@click="ShowTask(task.id)" onmouseover="" style="cursor: pointer;">{{task.name}} <i :id="`chevron-${task.id}`" class="fas fa-chevron-circle-down align-items-center rotate req-chevron align-self-center"></i></a>
+                                                        <div class="row">
+                                                            <span onmouseover="" style="cursor: pointer;" v-on:click="EditTask(task, taskIndex, index)">
+                                                                <i class="fas fa-pencil-alt"></i>
+                                                            </span>
+                                                            <span onmouseover="" style="cursor: pointer;" v-on:click="DeleteTask(task.id, taskIndex, index)">
+                                                                <i class="taskBarIcon fas fa-trash-alt"></i>
+                                                            </span>
+                                                            <span onmouseover="" style="cursor: pointer;" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)">
+                                                                <i :class="{'fas':true, 'fa-check-circle':true, 'completedTask':(task.isCompleted), 'taskBarIcon':true, 'taskTickIcon':true}"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div :id="`task-${task.id}`" :class="{'disabled-div':(task.isCompleted)}" style="display:none" aria-labelledby="headingOne">
+                                                        <div class="card-body">
+                                                            <div class="card-title" style="max-width: 60%">
+                                                                <span class="text-small">{{task.description}}</span>
+                                                            </div>
+                                                            <div class="card-meta">
+                                                                <ul class="avatars">
+                                                                    <li v-for="user in task.users">
+                                                                        <a href="#" data-toggle="tooltip" :title="user.username">
+                                                                            <img :alt="user.username" class="avatar" src="~/assets/img/defaultUserIcon.jpg" />
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="material-icons">playlist_add_check</i>
+                                                                    <span>{{ task.subTasks.filter((x,i) => { return x.isCompleted; }).length }}/{{ task.subTasks.length }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr />
+                                                        <div class="card-subtasks">
+                                                            <span>
+                                                                <span class="h6-requirement align-self-center">Sub-Tasks</span>
+                                                                <a id="showRequirements" class="button_style" @@click="ShowSubTasks(task.id)" onmouseover="" style="cursor: pointer;"><i :id="`subtask-chevron-${task.id}`" class="fas fa-chevron-circle-down align-items-center rotate"></i></a>
+                                                            </span>
+                                                            <div :id="`accordion-${task.id}`" style="display:none">
+                                                                <div v-for="(subtask, subTaskIndex) in task.subTasks">
+
+                                                                    <div v-if="subtask.isCompleted === false">
+                                                                        <input type="checkbox" @@click="subtaskToggle(subtask.id, subTaskIndex, taskIndex, index, subtask.isCompleted)" />
+                                                                        {{subtask.description}}
+                                                                    </div>
+
+                                                                    <div v-if="subtask.isCompleted === true">
+                                                                        <input type="checkbox" checked @@click="subtaskToggle(subtask.id, subTaskIndex, taskIndex, index, subtask.isCompleted)" />
+                                                                        <strike>
+                                                                            {{subtask.description}}
+                                                                        </strike>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </figure>
+                        </div>
+
+
                         <!--end of content list head-->
-                        <div class="content-list-body row" v-for="(req, index) in this.projectModel.project.projectRequirements">
+                        @*<div class="content-list-body row" v-for="(req, index) in this.projectModel.project.projectRequirements">
                             <div class="col">
-                                <ul class="list-group list-group-activity dropzone-previews flex-column-reverse">
+                                <ul class="list-group list-group-activity dropzone-previews">
+                                    <li class="list-group-item-requirements-header"></li>
                                     <li class="list-group-item-requirements">
                                         <div class="media align-items-center">
                                             <div class="media-body d-flex justify-content-between align-items-center">
@@ -87,14 +217,13 @@
                                                     <span class="text-small" data-filter-by="text">{{req.description}}</span>
                                                     <br />
                                                     <div class="requirement-info">
-                                                        @* Priority *@
+                                                        
                                                         <b-badge style="background-color: #2dc937" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 0">Very Low</b-badge>
                                                         <b-badge style="background-color: #99c140" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 1">Low</b-badge>
                                                         <b-badge style="background-color: #e7b416" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 2">Medium</b-badge>
                                                         <b-badge style="background-color: #db7b2b" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 3">High</b-badge>
                                                         <b-badge style="background-color: #cc3232" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="req.priority == 4">Very High</b-badge>
-                                                        @* Category *@
-
+                                                        
                                                         <b-badge data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="req.category == 0">Functional</b-badge>
                                                         <b-badge data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="req.category == 1">Non-Functional</b-badge>
                                                         <b-badge data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="req.category == 2">Domain</b-badge>
@@ -195,7 +324,7 @@
                                     </li>
                                 </ul>
                             </div>
-                        </div>
+                        </div>*@
                     </div>
                     <!--end of content list-->
                 </div>
@@ -474,9 +603,9 @@
                             <ul class="avatars text-center">
                                 @foreach (var user in Model.Project.Users)
                                 {
-                                    <li>
-                                        <img alt="@user.Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" data-title="@user.Username" />
-                                    </li>
+                                <li>
+                                    <img alt="@user.Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" data-title="@user.Username" />
+                                </li>
                                 }
                             </ul>
                         </div>
@@ -491,18 +620,18 @@
                         <div class="form-group-users">
                             @for (int i = 0; i < Model.AllUsers.Count; i++)
                             {
-                                <div class="custom-control custom-checkbox">
-                                    <input asp-for="ProjectId" value="@Model.Project.Id" class="form-control col" type="hidden" placeholder="Task name" />
-                                    <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input">
-                                    <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
-                                        <span class="d-flex align-items-center">
-                                            <img alt="@Model.AllUsers[i].Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
-                                            <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
-                                        </span>
-                                    </label>
-                                    <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
-                                    <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
-                                </div>
+                            <div class="custom-control custom-checkbox">
+                                <input asp-for="ProjectId" value="@Model.Project.Id" class="form-control col" type="hidden" placeholder="Task name" />
+                                <input asp-for="@Model.AllUsers[i].IsSelected" type="checkbox" class="custom-control-input">
+                                <label asp-for="@Model.AllUsers[i].IsSelected" class="custom-control-label">
+                                    <span class="d-flex align-items-center">
+                                        <img alt="@Model.AllUsers[i].Username" src="~/assets/img/defaultUserIcon.jpg" class="avatar mr-2" />
+                                        <span class="h6 mb-0" data-filter-by="text">@Model.AllUsers[i].Username</span>
+                                    </span>
+                                </label>
+                                <input asp-for="@Model.AllUsers[i].UserId" type="hidden" />
+                                <input asp-for="@Model.AllUsers[i].Username" type="hidden" />
+                            </div>
                             }
                         </div>
                     </div>
@@ -1559,7 +1688,7 @@
                         }).then((result) => {
                             if (result.value) {
                                 this.$swal('Deleted', 'You successfully deleted the task', 'success')
-                                
+
                                 this.loading = true;
                                 axios.delete('/Projects/DeleteTask/', {
                                     params: {
@@ -1604,8 +1733,11 @@
                 },
 
                 // Moment time helper
-                moment: function () {
-                    return moment();
+                moment(...args) {
+                    return moment(...args);
+                },
+                GetDateFromNow(date) {
+                    return this.$moment(date).fromNow();
                 },
 
                 /*
@@ -1754,5 +1886,60 @@
             },
         });
 
+    </script>
+
+    <script>
+        var TabBlock = {
+            s: {
+                animLen: 200
+            },
+
+            init: function () {
+                TabBlock.bindUIActions();
+                TabBlock.hideInactive();
+            },
+
+            bindUIActions: function () {
+                $('.tabBlock-tabs').on('click', '.tabBlock-tab', function () {
+                    TabBlock.switchTab($(this));
+                });
+            },
+
+            hideInactive: function () {
+                var $tabBlocks = $('.tabBlock');
+
+                $tabBlocks.each(function (i) {
+                    var
+                        $tabBlock = $($tabBlocks[i]),
+                        $panes = $tabBlock.find('.tabBlock-pane'),
+                        $activeTab = $tabBlock.find('.tabBlock-tab.is-active');
+
+                    $panes.hide();
+                    $($panes[$activeTab.index()]).show();
+                });
+            },
+
+            switchTab: function ($tab) {
+                var $context = $tab.closest('.tabBlock');
+
+                if (!$tab.hasClass('is-active')) {
+                    $tab.siblings().removeClass('is-active');
+                    $tab.addClass('is-active');
+
+                    TabBlock.showPane($tab.index(), $context);
+                }
+            },
+
+            showPane: function (i, $context) {
+                var $panes = $context.find('.tabBlock-pane');
+
+                $panes.slideUp(TabBlock.s.animLen);
+                $($panes[i]).slideDown(TabBlock.s.animLen);
+            }
+        };
+
+        $(function () {
+            TabBlock.init();
+        });
     </script>
 }

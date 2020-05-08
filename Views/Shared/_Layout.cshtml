@@ -175,10 +175,10 @@
                                                     <br />
                                                     <small>{{GetDateFromNow(item.notification.dateTime)}}</small>
                                                 </div>
-                                                <div class="material-icons">
-                                                    <a href="#" v-on:click="ToggleIsRead(item.notificationId)" v-if="item.isRead == false"><i class="far fa-envelope"></i></a>
-                                                    <a href="#" v-on:click="ToggleIsRead(item.notificationId)" v-else><i class="far fa-envelope-open"></i></a>
-                                                </div>
+                                            </div>
+                                            <div class="material-icons">
+                                                <a href="#" v-on:click="ToggleIsRead(item.notificationId)" v-if="item.isRead == false"><i class="far fa-envelope notification-envelope"></i></a>
+                                                <a href="#" v-on:click="ToggleIsRead(item.notificationId)" v-else><i class="far fa-envelope-open notification-envelope"></i></a>
                                             </div>
                                         </div>
                                     </li>
