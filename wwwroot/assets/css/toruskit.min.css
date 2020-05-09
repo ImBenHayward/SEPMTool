@@ -1,0 +1,267 @@
+.badge {
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .1);
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent
+}
+
+.badge-primary-light {
+    box-shadow: none;
+    border-color: #d9e6ff;
+    background-color: #d9e6ff;
+    color: #005aff
+}
+
+a.badge-primary-light:focus,
+a.badge-primary-light:hover {
+    border-color: #bfd6ff;
+    background-color: #bfd6ff;
+    color: #0044bf
+}
+
+.badge-secondary-light {
+    box-shadow: none;
+    border-color: #eaebec;
+    background-color: #eaebec;
+    color: #737880
+}
+
+a.badge-secondary-light:focus,
+a.badge-secondary-light:hover {
+    border-color: #dcdddf;
+    background-color: #dcdddf;
+    color: #565a60
+}
+
+.badge-success-light {
+    box-shadow: none;
+    border-color: #def5e5;
+    background-color: #def5e5;
+    color: #21bc53
+}
+
+a.badge-success-light:focus,
+a.badge-success-light:hover {
+    border-color: #c8eed4;
+    background-color: #c8eed4;
+    color: #198d3e
+}
+
+.badge-info-light {
+    box-shadow: none;
+    border-color: #e3f3f7;
+    background-color: #e3f3f7;
+    color: #46aec9
+}
+
+a.badge-info-light:focus,
+a.badge-info-light:hover {
+    border-color: #d1ebf2;
+    background-color: #d1ebf2;
+    color: #358397
+}
+
+.badge-warning-light {
+    box-shadow: none;
+    border-color: #fff3e1;
+    background-color: #fff3e1;
+    color: #ffae36
+}
+
+a.badge-warning-light:focus,
+a.badge-warning-light:hover {
+    border-color: #ffebcd;
+    background-color: #ffebcd;
+    color: #bf8329
+}
+
+.badge-danger-light {
+    box-shadow: none;
+    border-color: #fbe2e5;
+    background-color: #fbe2e5;
+    color: #e43f51
+}
+
+a.badge-danger-light:focus,
+a.badge-danger-light:hover {
+    border-color: #f8cfd4;
+    background-color: #f8cfd4;
+    color: #ab2f3d
+}
+
+.badge-light-light {
+    box-shadow: none;
+    border-color: #fefefe;
+    background-color: #fefefe;
+    color: #f9f9f9
+}
+
+a.badge-light-light:focus,
+a.badge-light-light:hover {
+    border-color: #fefefe;
+    background-color: #fefefe;
+    color: #bbb
+}
+
+.badge-dark-light {
+    box-shadow: none;
+    border-color: #dedede;
+    background-color: #dedede;
+    color: #202020
+}
+
+a.badge-dark-light:focus,
+a.badge-dark-light:hover {
+    border-color: #c7c7c7;
+    background-color: #c7c7c7;
+    color: #181818
+}
+
+.badge-grey-light {
+    box-shadow: none;
+    border-color: #ececec;
+    background-color: #ececec;
+    color: grey
+}
+
+a.badge-grey-light:focus,
+a.badge-grey-light:hover {
+    border-color: #dfdfdf;
+    background-color: #dfdfdf;
+    color: #606060
+}
+
+.badge-primary-outline {
+    box-shadow: none;
+    border-width: 1px;
+    border-style: solid;
+    background-color: transparent;
+    border-color: #005aff;
+    color: #005aff
+}
+
+a.badge-primary-outline:focus,
+a.badge-primary-outline:hover {
+    background-color: #005aff;
+    color: #fff
+}
+
+.badge-secondary-outline {
+    box-shadow: none;
+    border-width: 1px;
+    border-style: solid;
+    background-color: transparent;
+    border-color: #737880;
+    color: #737880
+}
+
+a.badge-secondary-outline:focus,
+a.badge-secondary-outline:hover {
+    background-color: #737880;
+    color: #fff
+}
+
+.badge-success-outline {
+    box-shadow: none;
+    border-width: 1px;
+    border-style: solid;
+    background-color: transparent;
+    border-color: #21bc53;
+    color: #21bc53
+}
+
+a.badge-success-outline:focus,
+a.badge-success-outline:hover {
+    background-color: #21bc53;
+    color: #fff
+}
+
+.badge-info-outline {
+    box-shadow: none;
+    border-width: 1px;
+    border-style: solid;
+    background-color: transparent;
+    border-color: #46aec9;
+    color: #46aec9
+}
+
+a.badge-info-outline:focus,
+a.badge-info-outline:hover {
+    background-color: #46aec9;
+    color: #fff
+}
+
+.badge-warning-outline {
+    box-shadow: none;
+    border-width: 1px;
+    border-style: solid;
+    background-color: transparent;
+    border-color: #ffae36;
+    color: #ffae36
+}
+
+a.badge-warning-outline:focus,
+a.badge-warning-outline:hover {
+    background-color: #ffae36;
+    color: #fff
+}
+
+.badge-danger-outline {
+    box-shadow: none;
+    border-width: 1px;
+    border-style: solid;
+    background-color: transparent;
+    border-color: #e43f51;
+    color: #e43f51
+}
+
+a.badge-danger-outline:focus,
+a.badge-danger-outline:hover {
+    background-color: #e43f51;
+    color: #fff
+}
+
+.badge-light-outline {
+    box-shadow: none;
+    border-width: 1px;
+    border-style: solid;
+    background-color: transparent;
+    border-color: #f9f9f9;
+    color: #f9f9f9
+}
+
+a.badge-light-outline:focus,
+a.badge-light-outline:hover {
+    background-color: #f9f9f9;
+    color: #fff
+}
+
+.badge-dark-outline {
+    box-shadow: none;
+    border-width: 1px;
+    border-style: solid;
+    background-color: transparent;
+    border-color: #202020;
+    color: #202020
+}
+
+a.badge-dark-outline:focus,
+a.badge-dark-outline:hover {
+    background-color: #202020;
+    color: #fff
+}
+
+.badge-grey-outline {
+    box-shadow: none;
+    border-width: 1px;
+    border-style: solid;
+    background-color: transparent;
+    border-color: grey;
+    color: grey
+}
+
+a.badge-grey-outline:focus,
+a.badge-grey-outline:hover {
+    background-color: grey;
+    color: #fff
+}

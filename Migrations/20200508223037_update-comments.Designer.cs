@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SEPMTool.Data;
 
 namespace SEPMTool.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200508223037_update-comments")]
+    partial class updatecomments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,17 +204,13 @@ namespace SEPMTool.Migrations
 
                     b.Property<int?>("ParentId");
 
-                    b.Property<int?>("RequirementId");
+                    b.Property<int?>("ProjectId");
 
                     b.Property<int?>("TaskId");
 
                     b.Property<string>("UserId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RequirementId");
-
-                    b.HasIndex("TaskId");
 
                     b.ToTable("Comments");
                 });
@@ -476,17 +474,6 @@ namespace SEPMTool.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("SEPMTool.Models.Comment", b =>
-                {
-                    b.HasOne("SEPMTool.Models.ProjectRequirement", "Requirement")
-                        .WithMany("Comments")
-                        .HasForeignKey("RequirementId");
-
-                    b.HasOne("SEPMTool.Models.RequirementTask", "Task")
-                        .WithMany("Comments")
-                        .HasForeignKey("TaskId");
                 });
 
             modelBuilder.Entity("SEPMTool.Models.CommentLike", b =>

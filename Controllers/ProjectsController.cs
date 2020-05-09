@@ -111,10 +111,27 @@ namespace SEPMTool.Controllers
                     .ThenInclude(Task => Task.Users)
                     .Include(r => r.ProjectRequirements)
                     .ThenInclude(ProjectRequirement => ProjectRequirement.Tasks)
+                    .ThenInclude(Task => Task.Comments)
+                    .Include(r => r.ProjectRequirements)
+                    .ThenInclude(ProjectRequirement => ProjectRequirement.Tasks)
                     .ThenInclude(Task => Task.SubTasks)
+                    .Include(r => r.ProjectRequirements)
+                    .ThenInclude(ProjectRequirement => ProjectRequirement.Comments)
                     .First(p => p.Id == id);
 
                 var project = _mapper.Map<ProjectViewModel>(query);
+
+                foreach(var req in project.ProjectRequirements)
+                {
+                    foreach(var comment in req.Comments)
+                    {
+                        var userId = comment.UserId;
+                        var commentPoster = _context.Users.FirstOrDefault(x => x.Id == userId);
+
+                        comment.FirstName = commentPoster.FirstName;
+                        comment.LastName = commentPoster.LastName;
+                    }
+                }
 
                 var projectViewModel = new ProjectViewModel
                 {
@@ -127,8 +144,10 @@ namespace SEPMTool.Controllers
                     Status = project.Status,
                     ProjectRequirements = project.ProjectRequirements,
                     Users = project.Users,
-                    Updates = project.Updates
+                    Updates = project.Updates                    
                 };
+
+
 
                 var model = new ProjectDetailsViewModel()
                 {  
@@ -220,6 +239,49 @@ namespace SEPMTool.Controllers
                 this.AddAlertDanger($"{project.Name} was not created, please try again later.");
                 return View("NewProject", project);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComment(int projectId, int requirementId, int? parentId, string commentBody)
+        {
+            var user = await GetCurrentUserAsync();
+            var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectId);
+            var requirement = _context.Requirements.FirstOrDefault(x => x.Id == requirementId);
+
+            Comment comment = new Comment
+            {
+                UserId = user.Id,
+                DateTime = DateTime.Now,
+                CommentBody = commentBody,
+                ParentId = parentId,
+                Requirement = requirement             
+            };
+
+            _context.Comments.Add(comment);
+
+            //ProjectUpdate projectUpdate = new ProjectUpdate
+            //{
+            //    Title = "New Requirement Added",
+            //    Description = "'" + projectRequirement.RequirementName + "' was added.",
+            //    Date = DateTime.UtcNow,
+            //    Type = UpdateType.Add
+            //};
+
+            //project.Updates.Add(projectUpdate);
+            //_context.Requirements.Add(requirement);
+
+            //var requirementVm = _mapper.Map<RequirementViewModel>(requirement);
+
+
+            //_context.Notifications.Add(notification);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new UpdateReqResponse
+            {
+                //Requirement = requirementVm
+            });
+
         }
 
         [HttpPost]

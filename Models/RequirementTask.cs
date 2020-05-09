@@ -21,5 +21,6 @@ namespace SEPMTool.Models
         public DateTime Deadline { get; set; }
         public TimeSpan EstimatedDuration { get; set; }
         public bool IsCompleted { get; set; }
+        public ICollection<Comment> Comments { get; set; }
     }
 }

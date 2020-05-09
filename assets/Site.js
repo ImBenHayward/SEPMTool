@@ -26,5 +26,8 @@ Vue.use(IconsPlugin);
 import axios from 'axios';
 window.axios = axios;
 
-import kanbanComponent from './components/Kanban.vue';
-Vue.customElement('kanban-board', kanbanComponent); 
+import TreeComments from './components/TreeComments.vue';
+Vue.component('tree-comments', TreeComments); 
+
+//import kanbanComponent from './components/Kanban.vue';
+//Vue.customElement('kanban-board', kanbanComponent); 

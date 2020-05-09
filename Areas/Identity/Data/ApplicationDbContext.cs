@@ -25,6 +25,8 @@ namespace SEPMTool.Data
         public DbSet<ProjectRequirement> Requirements { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<NotificationUser> NotificationUser { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<CommentLike> CommentLikes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -45,10 +47,18 @@ namespace SEPMTool.Data
                 .HasMany(p => p.Tasks)
                 .WithOne(t => t.ProjectRequirement);
 
+            builder.Entity<ProjectRequirement>()
+                .HasMany(p => p.Comments)
+                .WithOne(c => c.Requirement);
+
             builder.Entity<RequirementTask>()
                 .HasMany(p => p.SubTasks)
                 .WithOne(s => s.ProjectTask)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<RequirementTask>()
+                .HasMany(p => p.Comments)
+                .WithOne(s => s.Task);
 
             builder.Entity<TaskUser>()
                 .HasKey(tu => new { tu.TaskId, tu.UserId });

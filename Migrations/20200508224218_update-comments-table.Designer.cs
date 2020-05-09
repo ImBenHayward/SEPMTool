@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SEPMTool.Data;
 
 namespace SEPMTool.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200508224218_update-comments-table")]
+    partial class updatecommentstable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -481,7 +483,7 @@ namespace SEPMTool.Migrations
             modelBuilder.Entity("SEPMTool.Models.Comment", b =>
                 {
                     b.HasOne("SEPMTool.Models.ProjectRequirement", "Requirement")
-                        .WithMany("Comments")
+                        .WithMany()
                         .HasForeignKey("RequirementId");
 
                     b.HasOne("SEPMTool.Models.RequirementTask", "Task")

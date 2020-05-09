@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SEPMTool.Data;
 
 namespace SEPMTool.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200508233907_update-fluent-comments-table")]
+    partial class updatefluentcommentstable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -225,11 +227,15 @@ namespace SEPMTool.Migrations
 
                     b.Property<int>("CommentId");
 
+                    b.Property<int?>("ProjectRequirementId");
+
                     b.Property<int>("UserId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CommentId");
+
+                    b.HasIndex("ProjectRequirementId");
 
                     b.ToTable("CommentLikes");
                 });
@@ -481,7 +487,7 @@ namespace SEPMTool.Migrations
             modelBuilder.Entity("SEPMTool.Models.Comment", b =>
                 {
                     b.HasOne("SEPMTool.Models.ProjectRequirement", "Requirement")
-                        .WithMany("Comments")
+                        .WithMany()
                         .HasForeignKey("RequirementId");
 
                     b.HasOne("SEPMTool.Models.RequirementTask", "Task")
@@ -495,6 +501,10 @@ namespace SEPMTool.Migrations
                         .WithMany("CommentLikes")
                         .HasForeignKey("CommentId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("SEPMTool.Models.ProjectRequirement")
+                        .WithMany("Comments")
+                        .HasForeignKey("ProjectRequirementId");
                 });
 
             modelBuilder.Entity("SEPMTool.Models.NotificationUser", b =>

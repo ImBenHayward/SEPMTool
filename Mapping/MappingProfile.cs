@@ -23,6 +23,7 @@ namespace SEPMTool.Mapping
             CreateMap<ApplicationUser, ApplicationUserViewModel>();
             CreateMap<NotificationUser, NotificationUserViewModel>();
             CreateMap<Notification, NotificationViewModel>();
+            CreateMap<Comment, CommentViewModel>();
 
         }
     }

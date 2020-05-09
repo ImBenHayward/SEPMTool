@@ -14,5 +14,6 @@ namespace SEPMTool.Models.ViewModels
         public Priority Priority { get; set; }
         public RequirementCategory Category { get; set; }
         public IEnumerable<RequirementTaskViewModel> Tasks { get; set; }
+        public IEnumerable<CommentViewModel> Comments { get; set; }
     }
 }

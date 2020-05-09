@@ -11,5 +11,6 @@ namespace SEPMTool.Models
         public Priority Priority { get; set; }
         public RequirementCategory Category { get; set; }
         public ICollection<RequirementTask> Tasks { get; set; }
+        public ICollection<Comment> Comments { get; set; }
     }
 }
