@@ -14024,3 +14024,16 @@ hr.requirement-heading-hr {
     margin-top: 5px;
     margin-bottom: 15px;
 }
+
+.media-buttons {
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+.media-comment {
+    font-size: 15px;
+}
+
+.media-heading{
+    margin-bottom: 5px;
+}

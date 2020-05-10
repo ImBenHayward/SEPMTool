@@ -87,7 +87,7 @@
                                 <ul class="tabBlock-tabs">
                                     <li class="tabBlock-tab is-active">Details</li>
                                     <li class="tabBlock-tab">Tasks</li>
-                                    <li class="tabBlock-tab">Comments</li>
+                                    <li class="tabBlock-tab" v-on:click="sortComments(req.comments)">Comments</li>
                                 </ul>
                                 <div class="tabBlock-content">
                                     <div class="tabBlock-pane">
@@ -205,19 +205,19 @@
                                     <div class="tabBlock-pane">
                                         <div class="d-flex flex-row-reverse bd-highlight">
                                             <button class="btn btn-primary new-comment-button" type="button" v-on:click="OpenCommentsModal(req.id)">New Comment</button>
-                                            <button type="button" v-on:click="hierarchy(req.comments)">sdds</button>
-                                        </div>                                                                                                     
-                                                <tree-comments v-for="(comment, commentIndex) in tree"
-                                                               :id="comment.id"
-                                                               :req-id="req.id"
-                                                               :first-name="comment.firstName"
-                                                               :last-name="comment.lastName"
-                                                               :date-time="comment.dateTime"
-                                                               :children="comment.children || []"
-                                                               :comment-body="comment.commentBody"
-                                                               />
-                                                {{comment.children}}
-                                            </div>                                    
+                                        </div>
+                                        <tree-comments v-for="(comment, commentIndex) in tree"
+                                                       :id="comment.id"
+                                                       :req-id="req.id"
+                                                       :comment-user="comment.userId"
+                                                       :current-user="comment.currentUser"
+                                                       :first-name="comment.firstName"
+                                                       :last-name="comment.lastName"
+                                                       :date-time="comment.dateTime"
+                                                       :children="comment.children || []"
+                                                       :comment-body="comment.commentBody" />
+                                        
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -552,7 +552,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add a new comment</h5>
+                    <h5 class="modal-title">Add a new comment {{commentModel.parentId}}</h5>
                     <button type="button" class="close btn btn-round" data-dismiss="modal">
                         <i class="material-icons">close</i>
                     </button>
@@ -1222,40 +1222,14 @@
             },
             methods: {
 
-                //buildHierarchy: function(arry) {
+                RenderComments: function () {
+                    this.projectModel.project.projectRequirements.forEach(requirement => {
+                        this.sortComments(requirement.comments);
+                    })
+                },
 
-                //    var roots = [], children = {};
+                sortComments: function(data) {
 
-                //    // find the top level nodes and hash the children based on parent
-                //    for (var i = 0, len = arry.length; i < len; ++i) {
-                //        var item = arry[i],
-                //            p = item.parentId,
-                //            target = !p ? roots : (children[p] || (children[p] = []));
-
-                //        target.push({ value: item });
-                //    }
-
-                //    // function to recursively build the tree
-                //    var findChildren = function(parent) {
-                //        if (children[parent.value.id]) {
-                //            parent.children = children[parent.value.id];
-                //            for (var i = 0, len = parent.children.length; i < len; ++i) {
-                //                findChildren(parent.children[i]);
-                //            }
-                //        }
-                //    };
-
-                //    // enumerate through to handle the case where there are multiple roots
-                //    for (var i = 0, len = roots.length; i < len; ++i) {
-                //        findChildren(roots[i]);
-                //    }
-
-                //    console.log(roots);
-
-                //    return roots;
-                //},
-
-                hierarchy: function(data) {
                     const tree = [];
                     const childOf = {};
                     data.forEach((item) => {
@@ -1265,7 +1239,7 @@
                         parentId ? (childOf[parentId] = childOf[parentId] || []).push(item) : tree.push(item);
                     });
 
-                    console.log(tree);
+                    console.log("tree",tree);
 
                     this.tree = tree;
 
@@ -1975,7 +1949,14 @@
                 this.RenderKanban();
                 this.CalculateProgress();
                 this.RenderRequirements();
+                this.RenderComments();
             },
+            mounted() {
+                this.$root.$on('component1', (payload) => {
+                    console.log(payload);
+                    this.OpenCommentsModal(payload.reqId, payload.parentId, payload.commentBody, payload.parentFName, payload.parentLName);
+                })
+            }
         });
 
     </script>

@@ -97,8 +97,9 @@ namespace SEPMTool.Controllers
 
         [Breadcrumb("Project")]
         [HttpGet]
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
+            var currentUser = await GetCurrentUserAsync();
             var allUsers = _context.Users.Where(u => !u.Projects.Any(p => p.ProjectId == id)).Select(x => new ProjectUsersViewModel { UserId = x.Id, Username = x.FirstName + " " + x.LastName }).ToList();
 
             if (_context.Projects.Any(p => p.Id == id))
@@ -130,6 +131,7 @@ namespace SEPMTool.Controllers
 
                         comment.FirstName = commentPoster.FirstName;
                         comment.LastName = commentPoster.LastName;
+                        comment.CurrentUser = currentUser.Id;
                     }
                 }
 
@@ -153,7 +155,8 @@ namespace SEPMTool.Controllers
                 {  
                     Project = projectViewModel,
                     Users = GetAllUsersInProject(id),
-                    AllUsers = allUsers
+                    AllUsers = allUsers,
+                    CurrentUser = currentUser.Id                    
                 };
 
                 return View(model);

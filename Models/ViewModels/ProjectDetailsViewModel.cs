@@ -24,6 +24,7 @@ namespace SEPMTool.Models.ViewModels
         public bool IsCompleted { get; set; }
         public List<TaskUsersViewModel> Users { get; set; }
         public List<ProjectUsersViewModel> AllUsers { get; set; }
+        public string CurrentUser { get; set; }
 
         public class CreateTaskResponse
         {
