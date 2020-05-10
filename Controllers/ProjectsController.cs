@@ -245,7 +245,7 @@ namespace SEPMTool.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddComment(int projectId, int requirementId, int? parentId, string commentBody)
+        public async Task<IActionResult> AddComment(int projectId, int requirementId, int? parentId, string commentBody, string posterId)
         {
             var user = await GetCurrentUserAsync();
             var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectId);
@@ -260,15 +260,34 @@ namespace SEPMTool.Controllers
                 Requirement = requirement             
             };
 
-            _context.Comments.Add(comment);
-
-            //ProjectUpdate projectUpdate = new ProjectUpdate
+            //NotificationUser notificationUser = new NotificationUser()
             //{
-            //    Title = "New Requirement Added",
-            //    Description = "'" + projectRequirement.RequirementName + "' was added.",
-            //    Date = DateTime.UtcNow,
-            //    Type = UpdateType.Add
+            //    UserId = posterId
             //};
+
+            //if(posterId != null)
+            //{
+            //    Notification notification = new Notification
+            //    {
+            //        Title = user.FirstName + " added you to a project",
+            //        Body = user.FirstName + " " + user.LastName + " added you to the " + project.Name + " project as a team member.",
+            //        Type = UpdateType.ProjectAdd,
+            //        Users = notificationUsers,
+            //        UserLink = user.Id,
+            //        ProjectLink = proj.Id,
+            //        DateTime = DateTime.Now
+            //    };
+            //}
+
+            var commentVm = _mapper.Map<CommentViewModel>(comment);
+
+            commentVm.LastName = user.LastName;
+            commentVm.FirstName = user.FirstName;
+            commentVm.CurrentUser = user.Id;
+                       
+            //_context.Notifications.Add(notification);
+
+            _context.Comments.Add(comment);
 
             //project.Updates.Add(projectUpdate);
             //_context.Requirements.Add(requirement);
@@ -280,9 +299,9 @@ namespace SEPMTool.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(new UpdateReqResponse
+            return Ok(new CreateCommentResponse
             {
-                //Requirement = requirementVm
+                Comment = commentVm
             });
 
         }

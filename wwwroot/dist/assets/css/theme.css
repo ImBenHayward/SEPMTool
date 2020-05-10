@@ -14037,3 +14037,7 @@ hr.requirement-heading-hr {
 .media-heading{
     margin-bottom: 5px;
 }
+
+body.modal-open {
+    overflow: hidden;
+}

@@ -87,7 +87,7 @@
                                 <ul class="tabBlock-tabs">
                                     <li class="tabBlock-tab is-active">Details</li>
                                     <li class="tabBlock-tab">Tasks</li>
-                                    <li class="tabBlock-tab" v-on:click="sortComments(req.comments)">Comments</li>
+                                    <li class="tabBlock-tab" v-on:click="sortComments(req.comments, index)">Comments</li>
                                 </ul>
                                 <div class="tabBlock-content">
                                     <div class="tabBlock-pane">
@@ -204,12 +204,13 @@
                                     </div>
                                     <div class="tabBlock-pane">
                                         <div class="d-flex flex-row-reverse bd-highlight">
-                                            <button class="btn btn-primary new-comment-button" type="button" v-on:click="OpenCommentsModal(req.id)">New Comment</button>
+                                            <button class="btn btn-primary new-comment-button" type="button" v-on:click="OpenCommentsModal(index, req.id)">New Comment</button>
                                         </div>
-                                        <tree-comments v-for="(comment, commentIndex) in tree"
+                                        <tree-comments v-for="(comment, commentIndex) in req.commentsTree"
                                                        :id="comment.id"
                                                        :req-id="req.id"
-                                                       :comment-user="comment.userId"
+                                                       :req-index="index"
+                                                       :user-id="comment.userId"
                                                        :current-user="comment.currentUser"
                                                        :first-name="comment.firstName"
                                                        :last-name="comment.lastName"
@@ -938,8 +939,10 @@
                     requirementModalTitle: '',
 
                     commentModel: {
+                        requirementIndex: '',
                         requirementId: '',
                         parentId: '',
+                        posterId: '',
                         parentComment: '',
                         parentFName: '',
                         parentLName: '',
@@ -1228,7 +1231,9 @@
                     })
                 },
 
-                sortComments: function(data) {
+                sortComments: function (data, index) {
+
+                    console.log(index);
 
                     const tree = [];
                     const childOf = {};
@@ -1239,9 +1244,10 @@
                         parentId ? (childOf[parentId] = childOf[parentId] || []).push(item) : tree.push(item);
                     });
 
-                    console.log("tree",tree);
+                    console.log("tree", tree);
 
-                    this.tree = tree;
+                    this.projectModel.project.projectRequirements[index].commentsTree = tree;
+                    //this.tree = tree;
 
                     return tree;
                 },
@@ -1300,9 +1306,9 @@
                             progress: projectPercentage
                         }
                     })
-                    .then(res => {
-                        this.projectModel.project.progress = projectPercentage;
-                    });
+                        .then(res => {
+                            this.projectModel.project.progress = projectPercentage;
+                        });
                 },
 
 
@@ -1393,12 +1399,12 @@
                             'Content-Type': 'application/json'
                         },
                         data: {
-                        projectId: this.projectModel.project.id,
-                        requirementId: this.requirementModel.id,
-                        requirementName: this.requirementModel.name,
-                        requirementDescription: this.requirementModel.description,
-                        requirementPriority: this.requirementModel.priority,
-                        requirementCategory: this.requirementModel.category
+                            projectId: this.projectModel.project.id,
+                            requirementId: this.requirementModel.id,
+                            requirementName: this.requirementModel.name,
+                            requirementDescription: this.requirementModel.description,
+                            requirementPriority: this.requirementModel.priority,
+                            requirementCategory: this.requirementModel.category
                         }
                     })
                         .then(res => {
@@ -1421,42 +1427,42 @@
 
                 DeleteRequirement(id, reqIndex) {
 
-                        this.$swal({
-                            title: 'Are you sure?',
-                            text: 'Deleting this requirement cannot be undone',
-                            type: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Yes, Delete',
-                            cancelButtonText: 'No, Keep it!',
-                            showCloseButton: true,
-                            showLoaderOnConfirm: true
-                        }).then((result) => {
-                            if (result.value) {
-                                this.$swal('Deleted', 'You successfully deleted the requirement', 'success')
+                    this.$swal({
+                        title: 'Are you sure?',
+                        text: 'Deleting this requirement cannot be undone',
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, Delete',
+                        cancelButtonText: 'No, Keep it!',
+                        showCloseButton: true,
+                        showLoaderOnConfirm: true
+                    }).then((result) => {
+                        if (result.value) {
+                            this.$swal('Deleted', 'You successfully deleted the requirement', 'success')
 
-                                this.loading = true;
-                                axios.delete('/Projects/DeleteRequirement/', {
-                                    params: {
-                                        reqId: id,
-                                        projectId: this.projectModel.project.id
-                                    }
+                            this.loading = true;
+                            axios.delete('/Projects/DeleteRequirement/', {
+                                params: {
+                                    reqId: id,
+                                    projectId: this.projectModel.project.id
+                                }
+                            })
+                                .then(res => {
+                                    console.log(res);
+                                    this.projectModel.project.projectRequirements.splice(reqIndex, 1);
+                                    this.RenderKanban();
+                                    this.CalculateProgress();
                                 })
-                                    .then(res => {
-                                        console.log(res);
-                                        this.projectModel.project.projectRequirements.splice(reqIndex, 1);
-                                        this.RenderKanban();
-                                        this.CalculateProgress();
-                                    })
-                                    .catch(err => {
-                                        console.log(err.message);
-                                    })
-                                    .then(() => {
-                                        this.loading = false;
-                                    });
-                            } else {
-                                this.$swal.close();
-                            }
-                        })
+                                .catch(err => {
+                                    console.log(err.message);
+                                })
+                                .then(() => {
+                                    this.loading = false;
+                                });
+                        } else {
+                            this.$swal.close();
+                        }
+                    })
                 },
 
                 //Render Requirement Tab Blocks
@@ -1519,13 +1525,15 @@
                  * Comment Methods
                 */
 
-                OpenCommentsModal: function (reqId, parentId, commentBody, parentFName, parentLName) {
+                OpenCommentsModal: function (reqIndex, reqId, parentId, commentBody, parentFName, parentLName, userId) {
 
+                    this.commentModel.requirementIndex = reqIndex;
                     this.commentModel.requirementId = reqId;
                     this.commentModel.parentId = parentId;
                     this.commentModel.parentComment = commentBody;
                     this.commentModel.parentFName = parentFName;
                     this.commentModel.parentLName = parentLName;
+                    this.commentModel.posterId = userId;
 
                     $('#new-comment-modal').modal('show');
 
@@ -1537,6 +1545,7 @@
                     console.log(this.projectModel.project.id);
                     console.log(this.commentModel.requirementId);
                     console.log(this.commentModel.comment);
+                    console.log("index:", this.commentModel.requirementIndex);
 
                     var formData = new FormData();
 
@@ -1544,16 +1553,24 @@
                     formData.append('requirementId', this.commentModel.requirementId);
                     formData.append('commentBody', this.commentModel.comment);
                     formData.append('parentId', this.commentModel.parentId);
+                    formData.append('posterId', this.commentModel.posterId);
 
                     $('#requirement-modal').modal('hide');
                     axios({
                         method: 'post',
                         url: '/Projects/AddComment',
-                        headers: {'Content-Type': 'multipart/form-data' },
+                        headers: { 'Content-Type': 'multipart/form-data' },
                         data: formData
                     })
                         .then(res => {
-                            console.log(res.data);
+                            console.log(this.requirementIndex);
+                            console.log("comments:", this.projectModel.project.projectRequirements[this.requirementIndex].comments);
+
+                            this.projectModel.project.projectRequirements[this.commentModel.requirementIndex].comments.push(res.data.comment);
+
+                            this.sortComments(this.projectModel.project.projectRequirements[this.commentModel.requirementIndex].comments, this.commentModel.requirementIndex);
+
+                            //this.RenderComments();
                         })
                         .catch(err => {
                             console.log(err.message);
@@ -1954,7 +1971,7 @@
             mounted() {
                 this.$root.$on('component1', (payload) => {
                     console.log(payload);
-                    this.OpenCommentsModal(payload.reqId, payload.parentId, payload.commentBody, payload.parentFName, payload.parentLName);
+                    this.OpenCommentsModal(payload.reqIndex, payload.reqId, payload.parentId, payload.commentBody, payload.parentFName, payload.parentLName, payload.userId);
                 })
             }
         });

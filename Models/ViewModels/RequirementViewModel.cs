@@ -15,5 +15,6 @@ namespace SEPMTool.Models.ViewModels
         public RequirementCategory Category { get; set; }
         public IEnumerable<RequirementTaskViewModel> Tasks { get; set; }
         public IEnumerable<CommentViewModel> Comments { get; set; }
+        public List<CommentViewModel> CommentsTree { get; set; }
     }
 }

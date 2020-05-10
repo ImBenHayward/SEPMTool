@@ -4,12 +4,10 @@
         <div class="media-body">
             <h6 class="media-heading">{{firstName + " " + lastName}}<small><i> {{GetDateFromNow(dateTime)}}</i></small></h6>
             <div class="media-comment">{{ commentBody }}</div>
-            {{currentUser}}
-            {{userId}}
             <div class="media-buttons">
                 <a href="#" class="badge badge-primary-light"><i class="far fa-thumbs-up"></i> 32</a>
-                <a href="#" class="badge badge-primary-light" v-on:click="OpenCommentsModal2(reqId, id, commentBody, firstName, lastName)"><i class="fas fa-reply"></i> Reply</a>
-                <a href="#" class="badge badge-danger-light" v-on:click="OpenCommentsModal2(reqId, id, commentBody, firstName, lastName)" v-if="currentUser == userId"><i class="fas fa-reply"></i> Delete</a>
+                <a href="#" class="badge badge-primary-light" v-on:click="OpenCommentsModal2(reqIndex, reqId, id, commentBody, firstName, lastName, userId)"><i class="fas fa-reply"></i> Reply</a>
+                <a href="#" class="badge badge-danger-light" v-on:click="" v-if="currentUser == userId"><i class="fas fa-trash-alt"></i> Delete</a>
             </div>
             <!--<div ><i class="fas fa-reply comments-reply"></i> Reply</div>-->
 
@@ -17,7 +15,8 @@
                            v-for="child in children"
                            :id="child.id"
                            :req-id="reqId"
-                           :comment-user="child.userId"
+                           :req-index="reqIndex"
+                           :user-id="child.userId"
                            :current-user="child.currentUser"
                            :first-name="child.firstName"
                            :last-name="child.lastName"
@@ -38,6 +37,9 @@
         props: {
             id: Number,
             reqId: Number,
+            reqIndex: Number,
+            userId: String,
+            currentUser: String,
             commentBody: String,
             firstName: String,
             lastName: String,
@@ -49,14 +51,16 @@
             },
         },
         methods: {
-            OpenCommentsModal2: function (reqId, parentId, commentBody, parentFName, parentLName) {
+            OpenCommentsModal2: function (reqIndex, reqId, parentId, commentBody, parentFName, parentLName, userId) {
 
                 var payload = {
+                    reqIndex: this.reqIndex,
                     reqId: this.reqId,
                     parentId: this.id,
                     commentBody: this.commentBody,
                     parentFName: this.firstName,
-                    parentLName: this.lastName
+                    parentLName: this.lastName,
+                    userId: this.userId
                 }
 
                 this.$root.$emit('component1', payload);

@@ -44,6 +44,11 @@ namespace SEPMTool.Models.ViewModels
             public ProjectUpdate Update { get; set; }
         }
 
+        public class CreateCommentResponse
+        {
+            public CommentViewModel Comment { get; set; }
+        }
+
         public class UpdateSubTaskResponse
         {
             public int Id { get; set; }
