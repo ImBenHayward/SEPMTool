@@ -32,7 +32,7 @@ namespace SEPMTool.Controllers
             _context = context;
             _mapper = mapper;
         }
-                
+
         public List<ProjectUsersViewModel> GetAllUsers()
         {
             var users = userManager.Users;
@@ -122,9 +122,9 @@ namespace SEPMTool.Controllers
 
                 var project = _mapper.Map<ProjectViewModel>(query);
 
-                foreach(var req in project.ProjectRequirements)
+                foreach (var req in project.ProjectRequirements)
                 {
-                    foreach(var comment in req.Comments)
+                    foreach (var comment in req.Comments)
                     {
                         var userId = comment.UserId;
                         var commentPoster = _context.Users.FirstOrDefault(x => x.Id == userId);
@@ -146,17 +146,17 @@ namespace SEPMTool.Controllers
                     Status = project.Status,
                     ProjectRequirements = project.ProjectRequirements,
                     Users = project.Users,
-                    Updates = project.Updates                    
+                    Updates = project.Updates
                 };
 
 
 
                 var model = new ProjectDetailsViewModel()
-                {  
+                {
                     Project = projectViewModel,
                     Users = GetAllUsersInProject(id),
                     AllUsers = allUsers,
-                    CurrentUser = currentUser.Id                    
+                    CurrentUser = currentUser.Id
                 };
 
                 return View(model);
@@ -212,7 +212,7 @@ namespace SEPMTool.Controllers
             };
 
             projectUpdates.Add(projectUpdate);
-                        
+
             _context.Projects.Add(proj);
 
             if (await _context.SaveChangesAsync() > 0)
@@ -226,7 +226,7 @@ namespace SEPMTool.Controllers
                     Type = UpdateType.ProjectAdd,
                     Users = notificationUsers,
                     UserLink = user.Id,
-                    ProjectLink =  proj.Id,
+                    ProjectLink = proj.Id,
                     DateTime = DateTime.Now
                 };
 
@@ -257,35 +257,34 @@ namespace SEPMTool.Controllers
                 DateTime = DateTime.Now,
                 CommentBody = commentBody,
                 ParentId = parentId,
-                Requirement = requirement             
+                Requirement = requirement
             };
 
-            //NotificationUser notificationUser = new NotificationUser()
-            //{
-            //    UserId = posterId
-            //};
+            List<NotificationUser> notificationUserList = new List<NotificationUser>();
 
-            //if(posterId != null)
-            //{
-            //    Notification notification = new Notification
-            //    {
-            //        Title = user.FirstName + " added you to a project",
-            //        Body = user.FirstName + " " + user.LastName + " added you to the " + project.Name + " project as a team member.",
-            //        Type = UpdateType.ProjectAdd,
-            //        Users = notificationUsers,
-            //        UserLink = user.Id,
-            //        ProjectLink = proj.Id,
-            //        DateTime = DateTime.Now
-            //    };
-            //}
+            NotificationUser notificationUser = new NotificationUser()
+            {
+                UserId = posterId
+            };
 
-            var commentVm = _mapper.Map<CommentViewModel>(comment);
+            notificationUserList.Add(notificationUser);
 
-            commentVm.LastName = user.LastName;
-            commentVm.FirstName = user.FirstName;
-            commentVm.CurrentUser = user.Id;
-                       
-            //_context.Notifications.Add(notification);
+            if (posterId != null)
+            {
+                Notification notification = new Notification
+                {
+                    Title = user.FirstName + " replied to your comment",
+                    Body = user.FirstName + " " + user.LastName + " replied to a comment you posted in the " + project.Name + " project.",
+                    Type = UpdateType.ProjectAdd,
+                    Users = notificationUserList,
+                    UserLink = posterId,
+                    ProjectLink = projectId,
+                    DateTime = DateTime.Now
+                };
+
+                _context.Notifications.Add(notification);
+            }
+
 
             _context.Comments.Add(comment);
 
@@ -299,11 +298,30 @@ namespace SEPMTool.Controllers
 
             await _context.SaveChangesAsync();
 
+            var commentVm = _mapper.Map<CommentViewModel>(comment);
+
+            commentVm.LastName = user.LastName;
+            commentVm.FirstName = user.FirstName;
+            commentVm.CurrentUser = user.Id;
+
             return Ok(new CreateCommentResponse
             {
                 Comment = commentVm
             });
 
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteComment(int commentId, int projectId)
+        {
+            var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectId);
+            var comment = _context.Comments.Find(commentId);
+
+            _context.Comments.Remove(comment);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         [HttpPost]
@@ -312,7 +330,7 @@ namespace SEPMTool.Controllers
             var user = await GetCurrentUserAsync();
             var project = _context.Projects.Include(p => p.Updates).FirstOrDefault(x => x.Id == projectRequirement.ProjectId);
             List<NotificationUser> notificationUsers = _context.ProjectUser.Where(x => x.ProjectId == projectRequirement.ProjectId).Select(u => new NotificationUser { UserId = u.UserId }).ToList();
-                              
+
             ProjectRequirement requirement = new ProjectRequirement
             {
                 Project = project,
@@ -328,10 +346,10 @@ namespace SEPMTool.Controllers
                 Description = "'" + projectRequirement.RequirementName + "' was added.",
                 Date = DateTime.UtcNow,
                 Type = UpdateType.Add
-            };            
+            };
 
             project.Updates.Add(projectUpdate);
-            _context.Requirements.Add(requirement);            
+            _context.Requirements.Add(requirement);
 
             var requirementVm = _mapper.Map<RequirementViewModel>(requirement);
 
@@ -379,7 +397,7 @@ namespace SEPMTool.Controllers
                 Type = UpdateType.Edit
             };
 
-            var requirementVm = _mapper.Map<RequirementViewModel>(requirement); 
+            var requirementVm = _mapper.Map<RequirementViewModel>(requirement);
 
             project.Updates.Add(projectUpdate);
 
@@ -447,7 +465,7 @@ namespace SEPMTool.Controllers
         public async Task<IActionResult> CreateTask([FromBody] ProjectDetailsViewModel projectTask)
         {
             var user = await GetCurrentUserAsync();
-            List<NotificationUser> notificationUsers = _context.ProjectUser.Where(x => x.ProjectId == projectTask.ProjectId).Select(u => new NotificationUser { UserId = u.UserId }).ToList();    
+            List<NotificationUser> notificationUsers = _context.ProjectUser.Where(x => x.ProjectId == projectTask.ProjectId).Select(u => new NotificationUser { UserId = u.UserId }).ToList();
             List<TaskUser> selectedUsers = new List<TaskUser>();
 
             if (projectTask.Users != null)
@@ -455,7 +473,7 @@ namespace SEPMTool.Controllers
                 selectedUsers = projectTask.Users.Where(u => u.IsSelected).Select(u => new TaskUser { UserId = u.UserId, Username = u.Username }).ToList();
             }
 
-            ICollection<SubTask> requirementTasks = _mapper.Map<List<SubTaskViewModel>, ICollection<SubTask>>(projectTask.SubTasks);            
+            ICollection<SubTask> requirementTasks = _mapper.Map<List<SubTaskViewModel>, ICollection<SubTask>>(projectTask.SubTasks);
 
             RequirementTask projTask = new RequirementTask
             {
@@ -531,9 +549,9 @@ namespace SEPMTool.Controllers
 
             //List<SubTask> subTasksDb = _mapper.Map<ICollection<SubTaskViewModel>, List<SubTask>>(projectTask.SubTasks);
 
-            foreach(var st in projectTask.SubTasks)
+            foreach (var st in projectTask.SubTasks)
             {
-                if(st.Id == 0)
+                if (st.Id == 0)
                 {
                     var subTask = _mapper.Map<SubTask>(st);
 
@@ -587,7 +605,7 @@ namespace SEPMTool.Controllers
             });
 
         }
-               
+
         public async Task<IActionResult> ToggleTaskComplete(int taskId)
         {
             var user = await GetCurrentUserAsync();
@@ -598,7 +616,7 @@ namespace SEPMTool.Controllers
 
             task.IsCompleted = !task.IsCompleted;
 
-            if(task.IsCompleted == true)
+            if (task.IsCompleted == true)
             {
                 Notification notification = new Notification
                 {
@@ -635,33 +653,6 @@ namespace SEPMTool.Controllers
             });
         }
 
-        public async Task<IActionResult> UpdateProjectProgress(int projectId, decimal progress)
-        {
-            _ = ModelState;
-
-            var project = _context.Projects.Find(projectId);
-
-            project.Progress = progress;
-
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        public async Task<IActionResult> KanbanMoveItem([FromBody] KanbanMoveItemViewModel viewModel)        
-        {
-            _ = ModelState;
-
-            var task = _context.Tasks.Find(viewModel.TaskId);
-
-            task.Status = (enums.TaskStatus)viewModel.Status;
-
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-
         [HttpDelete]
         public async Task<IActionResult> DeleteTask(int taskId, int projectId)
         {
@@ -692,7 +683,33 @@ namespace SEPMTool.Controllers
 
             _context.Notifications.Add(notification);
             project.Updates.Add(projectUpdate);
-            _context.Tasks.Remove(task);            
+            _context.Tasks.Remove(task);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        public async Task<IActionResult> UpdateProjectProgress(int projectId, decimal progress)
+        {
+            _ = ModelState;
+
+            var project = _context.Projects.Find(projectId);
+
+            project.Progress = progress;
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        public async Task<IActionResult> KanbanMoveItem([FromBody] KanbanMoveItemViewModel viewModel)
+        {
+            _ = ModelState;
+
+            var task = _context.Tasks.Find(viewModel.TaskId);
+
+            task.Status = (enums.TaskStatus)viewModel.Status;
 
             await _context.SaveChangesAsync();
 
@@ -707,7 +724,7 @@ namespace SEPMTool.Controllers
             List<ProjectUser> selectedUsers = projectUpdate.AllUsers.Where(u => u.IsSelected).Select(u => new ProjectUser { UserId = u.UserId, Username = u.Username, ProjectRole = ProjectRole.Developer, ProjectId = projectUpdate.ProjectId }).ToList();
             List<NotificationUser> notificationUsers = selectedUsers.Select(u => new NotificationUser { UserId = u.UserId }).ToList();
             List<string> Users = new List<String>();
-            
+
             foreach (var user in selectedUsers)
             {
                 _context.ProjectUser.Add(user);

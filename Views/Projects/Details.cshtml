@@ -115,9 +115,9 @@
                                                     <i class="material-icons">more_vert</i>
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#" v-on:click="openEditRequirementModal(req, index)">Edit</a>
+                                                    <a class="dropdown-item" href="javascript:;" v-on:click="openEditRequirementModal(req, index)">Edit</a>
                                                     <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item text-danger" href="#" v-on:click="DeleteRequirement(req.id, index)">Delete</a>
+                                                    <a class="dropdown-item text-danger" href="javascript:;" v-on:click="DeleteRequirement(req.id, index)">Delete</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -210,6 +210,7 @@
                                                        :id="comment.id"
                                                        :req-id="req.id"
                                                        :req-index="index"
+                                                       :comment-index="commentIndex"
                                                        :user-id="comment.userId"
                                                        :current-user="comment.currentUser"
                                                        :first-name="comment.firstName"
@@ -217,7 +218,7 @@
                                                        :date-time="comment.dateTime"
                                                        :children="comment.children || []"
                                                        :comment-body="comment.commentBody" />
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -250,15 +251,6 @@
                                             <div :class="{'progress-bar':true, 'bg-success':(task.progress === 100 || task.isComplete), 'progress-complete':(task.progress === 100 || task.isComplete)}" role="progressbar" :style="{width: task.progress + '%'}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                         <div class="card-body">
-                                            <div class="dropdown card-options">
-                                                <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="material-icons">more_vert</i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item text-danger" href="#">Archive Card</a>
-                                                </div>
-                                            </div>
                                             <div class="card-title">
                                                 <a href="#" data-toggle="modal" data-target="#task-modal">
                                                     {{ task.name }}
@@ -1225,15 +1217,14 @@
             },
             methods: {
 
-                RenderComments: function () {
-                    this.projectModel.project.projectRequirements.forEach(requirement => {
-                        this.sortComments(requirement.comments);
-                    })
-                },
+                //RenderComments: function () {
+                //    this.projectModel.project.projectRequirements.forEach(requirement, index => {
+                //        this.sortComments(requirement.comments, index);
+                //        console.log("render index:", index);
+                //    })
+                //},
 
                 sortComments: function (data, index) {
-
-                    console.log(index);
 
                     const tree = [];
                     const childOf = {};
@@ -1247,9 +1238,7 @@
                     console.log("tree", tree);
 
                     this.projectModel.project.projectRequirements[index].commentsTree = tree;
-                    //this.tree = tree;
 
-                    return tree;
                 },
 
                 /*
@@ -1365,6 +1354,8 @@
 
                 // Open Edit Requirement Modal
                 openEditRequirementModal: function (req, reqIndex) {
+
+                    console.log("req:", req);
 
                     this.requirementModalTitle = 'Edit Requirement';
 
@@ -1570,6 +1561,15 @@
 
                             this.sortComments(this.projectModel.project.projectRequirements[this.commentModel.requirementIndex].comments, this.commentModel.requirementIndex);
 
+                            this.commentModel.comment = '';
+                            this.commentModel.requirementIndex = '';
+                            this.commentModel.requirementId = '';
+                            this.commentModel.parentId = '';
+                            this.commentModel.parentComment = '';
+                            this.commentModel.parentFName = '';
+                            this.commentModel.parentLName = '';
+                            this.commentModel.posterId = '';
+
                             //this.RenderComments();
                         })
                         .catch(err => {
@@ -1578,6 +1578,39 @@
                         .then(() => {
                             this.loading = false;
                         });
+                },
+
+                DeleteComment: function (reqIndex, commentIndex, commentId) {
+
+                    console.log("reqIndezx:", reqIndex);
+                    console.log("commentIndex:", commentIndex);
+                    console.log("commentId:", commentId);
+                                                         
+                        this.loading = true;
+                        axios.delete('/Projects/DeleteComment/', {
+                            params: {
+                                commentId: commentId,
+                                projectId: this.projectModel.project.id
+                            }
+                        })
+                            .then(res => {
+
+                                //var requirementComments = this.projectModel.project.projectRequirements[reqIndex].comments;
+
+                                this.projectModel.project.projectRequirements[reqIndex].comments = this.projectModel.project.projectRequirements[reqIndex].comments.filter(comment => comment.id !== commentId);
+
+                                //console.log("filtered array:", this.projectModel.project.projectRequirements[reqIndex].comments.filter(comment => comment.id !== commentId));  
+                                
+                                this.sortComments(this.projectModel.project.projectRequirements[reqIndex].comments, reqIndex);
+                                
+                            })
+                            .catch(err => {
+                                console.log(err.message);
+                            })
+                            .then(() => {
+                                this.loading = false;
+                            });
+
                 },
 
                 /*
@@ -1966,13 +1999,18 @@
                 this.RenderKanban();
                 this.CalculateProgress();
                 this.RenderRequirements();
-                this.RenderComments();
+                //this.RenderComments();
             },
             mounted() {
-                this.$root.$on('component1', (payload) => {
+                this.$root.$on('CommentsModal', (payload) => {
                     console.log(payload);
                     this.OpenCommentsModal(payload.reqIndex, payload.reqId, payload.parentId, payload.commentBody, payload.parentFName, payload.parentLName, payload.userId);
-                })
+                });
+
+                this.$root.$on('DeleteComment', (payload) => {
+                    console.log(payload);
+                    this.DeleteComment(payload.reqIndex, payload.commentIndex, payload.id);
+                });
             }
         });
 

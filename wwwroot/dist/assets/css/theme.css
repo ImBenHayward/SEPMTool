@@ -14040,4 +14040,5 @@ hr.requirement-heading-hr {
 
 body.modal-open {
     overflow: hidden;
+    position: inherit;
 }

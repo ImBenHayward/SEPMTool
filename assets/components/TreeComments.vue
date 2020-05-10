@@ -5,9 +5,9 @@
             <h6 class="media-heading">{{firstName + " " + lastName}}<small><i> {{GetDateFromNow(dateTime)}}</i></small></h6>
             <div class="media-comment">{{ commentBody }}</div>
             <div class="media-buttons">
-                <a href="#" class="badge badge-primary-light"><i class="far fa-thumbs-up"></i> 32</a>
-                <a href="#" class="badge badge-primary-light" v-on:click="OpenCommentsModal2(reqIndex, reqId, id, commentBody, firstName, lastName, userId)"><i class="fas fa-reply"></i> Reply</a>
-                <a href="#" class="badge badge-danger-light" v-on:click="" v-if="currentUser == userId"><i class="fas fa-trash-alt"></i> Delete</a>
+                <a href="javascript:;" class="badge badge-primary-light"><i class="far fa-thumbs-up"></i> 32</a>
+                <a href="javascript:;" class="badge badge-primary-light open-comments-btn" v-on:click="EmitOpenCommentsModal(reqIndex, reqId, id, commentBody, firstName, lastName, userId)"><i class="fas fa-reply"></i> Reply</a>
+                <a href="javascript:;" class="badge badge-danger-light delete-comments-btn" v-on:click="EmitDeleteComment(reqIndex, commentIndex, id)" v-if="currentUser == userId"><i class="fas fa-trash-alt"></i> Delete</a>
             </div>
             <!--<div ><i class="fas fa-reply comments-reply"></i> Reply</div>-->
 
@@ -16,6 +16,7 @@
                            :id="child.id"
                            :req-id="reqId"
                            :req-index="reqIndex"
+                           :comment-index="commentIndex"
                            :user-id="child.userId"
                            :current-user="child.currentUser"
                            :first-name="child.firstName"
@@ -26,8 +27,18 @@
                            :depth="depth + 1" />
         </div>
     </div>
-    
+
 </template>
+
+<script>
+    //$('.open-comments-btn').click(function ($e) {
+    //    $e.preventDefault();
+    //});
+
+    //$('.delete-comments-btn').click(function ($e) {
+    //    $e.preventDefault();
+    //});
+</script>
 
 <script>
     const MAX_DEPTH = 99;
@@ -38,6 +49,7 @@
             id: Number,
             reqId: Number,
             reqIndex: Number,
+            commentIndex: Number,
             userId: String,
             currentUser: String,
             commentBody: String,
@@ -51,7 +63,7 @@
             },
         },
         methods: {
-            OpenCommentsModal2: function (reqIndex, reqId, parentId, commentBody, parentFName, parentLName, userId) {
+            EmitOpenCommentsModal: function (reqIndex, reqId, parentId, commentBody, parentFName, parentLName, userId) {
 
                 var payload = {
                     reqIndex: this.reqIndex,
@@ -63,18 +75,21 @@
                     userId: this.userId
                 }
 
-                this.$root.$emit('component1', payload);
-
-                //this.commentModel.requirementId = reqId;
-                //this.commentModel.parentId = parentId;
-                //this.commentModel.parentComment = commentBody;
-                //this.commentModel.parentFName = parentFName;
-                //this.commentModel.parentLName = parentLName;
+                this.$root.$emit('CommentsModal', payload);
 
             },
-            //moment(...args) {
-            //    return moment(...args);
-            //},
+
+            EmitDeleteComment(reqIndex, reqId, id) {
+
+                var payload = {
+                    reqIndex: this.reqIndex,
+                    commentIndex: this.commentIndex,
+                    id: this.id
+                }
+
+                this.$root.$emit('DeleteComment', payload);
+
+            },
             GetDateFromNow(date) {
                 return this.$moment(date).fromNow();
             },
