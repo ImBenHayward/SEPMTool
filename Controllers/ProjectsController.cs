@@ -269,7 +269,7 @@ namespace SEPMTool.Controllers
 
             notificationUserList.Add(notificationUser);
 
-            if (posterId != null)
+            if (posterId != "undefined")
             {
                 Notification notification = new Notification
                 {
@@ -285,16 +285,8 @@ namespace SEPMTool.Controllers
                 _context.Notifications.Add(notification);
             }
 
-
             _context.Comments.Add(comment);
 
-            //project.Updates.Add(projectUpdate);
-            //_context.Requirements.Add(requirement);
-
-            //var requirementVm = _mapper.Map<RequirementViewModel>(requirement);
-
-
-            //_context.Notifications.Add(notification);
 
             await _context.SaveChangesAsync();
 

@@ -203,13 +203,20 @@
                                         </div>
                                     </div>
                                     <div class="tabBlock-pane">
-                                        <div class="d-flex flex-row-reverse bd-highlight">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>
+                                                <span v-show="!req.comments.length">No comments added!</span>
+                                            </span>
+
                                             <button class="btn btn-primary new-comment-button" type="button" v-on:click="OpenCommentsModal(index, req.id)">New Comment</button>
+
                                         </div>
                                         <tree-comments v-for="(comment, commentIndex) in req.commentsTree"
                                                        :id="comment.id"
+                                                       :main-id="comment.id"
                                                        :req-id="req.id"
                                                        :req-index="index"
+                                                       :parent-id="comment.parentId"
                                                        :comment-index="commentIndex"
                                                        :user-id="comment.userId"
                                                        :current-user="comment.currentUser"
@@ -545,15 +552,20 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add a new comment {{commentModel.parentId}}</h5>
+                    <h5 class="modal-title" v-if="commentModel.parentId > 0">Add a reply</h5>
+                    <h5 class="modal-title" v-else>Add a new comment</h5>
                     <button type="button" class="close btn btn-round" data-dismiss="modal">
                         <i class="material-icons">close</i>
                     </button>
                 </div>
                 <!--end of modal head-->
+
                 <div class="modal-body">
                     <div class="tab-content">
+
                         <div class="tab-pane fade show active" id="task-add-details" role="tabpanel">
+                            <div class="comment-reply" v-if="commentModel.parentId > 0"><div class="comment-reply-heading">Replying To {{commentModel.parentFName}}'s comment:</div><i>{{commentModel.parentComment}}</i></div>
+
                             <div class="form-group row align-items-center">
                                 <textarea v-model="commentModel.comment" class="form-control col" rows="3" placeholder="Insert your comment here..."></textarea>
                             </div>
@@ -1585,7 +1597,7 @@
                     console.log("reqIndezx:", reqIndex);
                     console.log("commentIndex:", commentIndex);
                     console.log("commentId:", commentId);
-                                                         
+
                         this.loading = true;
                         axios.delete('/Projects/DeleteComment/', {
                             params: {
@@ -1599,10 +1611,10 @@
 
                                 this.projectModel.project.projectRequirements[reqIndex].comments = this.projectModel.project.projectRequirements[reqIndex].comments.filter(comment => comment.id !== commentId);
 
-                                //console.log("filtered array:", this.projectModel.project.projectRequirements[reqIndex].comments.filter(comment => comment.id !== commentId));  
-                                
+                                //console.log("filtered array:", this.projectModel.project.projectRequirements[reqIndex].comments.filter(comment => comment.id !== commentId));
+
                                 this.sortComments(this.projectModel.project.projectRequirements[reqIndex].comments, reqIndex);
-                                
+
                             })
                             .catch(err => {
                                 console.log(err.message);

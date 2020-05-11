@@ -14038,7 +14038,29 @@ hr.requirement-heading-hr {
     margin-bottom: 5px;
 }
 
-body.modal-open {
-    overflow: hidden;
-    position: inherit;
+.comment-reply {
+    margin-bottom: 15px;
+}
+
+.comment-reply-heading {
+    font-weight: bold;
+}
+
+.hide {
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+}
+
+.collapse.in {
+    padding-bottom: 5px;
+}
+
+.faq__questions li .collapse {
+    margin-top: 0;
+    transition: all .2s ease-in-out;
+}
+
+.faq__questions li.active .collapse {
+    margin-top: 30px;
 }
