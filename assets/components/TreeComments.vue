@@ -8,35 +8,33 @@
                 <a href="javascript:;" class="badge badge-primary-light"><i class="far fa-thumbs-up"></i> 32</a>
                 <a href="javascript:;" class="badge badge-primary-light open-comments-btn" v-on:click="EmitOpenCommentsModal(reqIndex, reqId, id, commentBody, firstName, lastName, userId)"><i class="fas fa-reply"></i> Reply</a>
                 <a href="javascript:;" class="badge badge-danger-light delete-comments-btn" v-on:click="EmitDeleteComment(reqIndex, commentIndex, id)" v-if="currentUser == userId"><i class="fas fa-trash-alt"></i> Delete</a>
-                <a href="javascript:;" class="badge badge-secondary-light delete-comments-btn" v-on:click="ShowReplies(mainId)" data-toggle="collapse" :data-target="`#children-${mainId}`" v-if="parentId == null && children.length"><i :id="`replies-chevron-${mainId}`" class="fas fa-chevron-circle-down rotate"></i> See Replies</a>
+                <a href="javascript:;" class="badge badge-secondary-light delete-comments-btn" v-on:click="ShowReplies(mainId)" data-toggle="collapse" :data-target="`#children-${mainId}`" v-if="parentId == null && children.length"><i :id="`replies-chevron-${mainId}`" class="fas fa-chevron-circle-down rotate-replies"></i> See Replies</a>
             </div>
 
             <div :id="`children-${mainId}`" class="row collapse">
                 <div>
-                    <div>
-                        <tree-comments v-if="children.length && !maxDepthReached"
-                                       v-for="child in children"
-                                       :id="child.id"
-                                       :main-id="mainId"
-                                       :req-id="reqId"
-                                       :req-index="reqIndex"
-                                       :parent-id="child.parentId"
-                                       :comment-index="commentIndex"
-                                       :user-id="child.userId"
-                                       :current-user="child.currentUser"
-                                       :first-name="child.firstName"
-                                       :last-name="child.lastName"
-                                       :date-time="child.dateTime"
-                                       :children="child.children || []"
-                                       :comment-body="child.commentBody"
-                                       :depth="depth + 1" />
-                    </div>
+                    <tree-comments v-if="children.length && !maxDepthReached"
+                                   v-for="child in children"
+                                   :id="child.id"
+                                   :main-id="mainId"
+                                   :req-id="reqId"
+                                   :req-index="reqIndex"
+                                   :parent-id="child.parentId"
+                                   :comment-index="commentIndex"
+                                   :user-id="child.userId"
+                                   :current-user="child.currentUser"
+                                   :first-name="child.firstName"
+                                   :last-name="child.lastName"
+                                   :date-time="child.dateTime"
+                                   :children="child.children || []"
+                                   :comment-body="child.commentBody"
+                                   :depth="depth + 1" />
                 </div>
 
-
-                <hr v-if="parentId == null" />
             </div>
+            <hr v-if="parentId == null" />
         </div>
+    </div>
 </template>
 
 <script>
