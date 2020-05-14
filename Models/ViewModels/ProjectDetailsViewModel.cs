@@ -17,6 +17,7 @@ namespace SEPMTool.Models.ViewModels
         public string RequirementDescription { get; set; }
         public Priority RequirementPriority { get; set; }
         public RequirementCategory RequirementCategory { get; set; }
+        public Status Status { get; set; }
         public string TaskName { get; set; }
         public string TaskDescription { get; set; }
         public List<SubTaskViewModel> SubTasks { get; set; }

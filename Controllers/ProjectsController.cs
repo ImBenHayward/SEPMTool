@@ -191,7 +191,7 @@ namespace SEPMTool.Controllers
                 Name = project.Name,
                 Description = project.Description,
                 Priority = project.Priority,
-                Status = enums.Status.Active,
+                Status = Status.Active,
                 AwardEligibility = true,
                 ProjectRequirements = project.ProjectRequirements,
                 Progress = 0,
@@ -245,6 +245,64 @@ namespace SEPMTool.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> UpdateProject(int id, string name, string description, Priority priority)
+        {
+            var user = await GetCurrentUserAsync();
+            var project = _context.Projects.FirstOrDefault(x => x.Id == id);
+
+            List<NotificationUser> notificationUsers = _context.ProjectUser.Where(x => x.ProjectId == id).Select(u => new NotificationUser { UserId = u.UserId }).ToList();
+            
+            project.Name = name;
+            project.Description = description;
+            project.Priority = priority;
+
+            Notification notification = new Notification
+            {
+                Title = user.FirstName + " updated a project",
+                Body = user.FirstName + " " + user.LastName + " updated the details of the " + project.Name + " project.",
+                Type = UpdateType.Edit,
+                Users = notificationUsers,
+                UserLink = user.Id,
+                ProjectLink = id,
+                DateTime = DateTime.Now
+            };
+
+            _context.Notifications.Add(notification);
+
+            await _context.SaveChangesAsync();
+            
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProjectStatus(int id, Status status)
+        {
+            var user = await GetCurrentUserAsync();
+            var project = _context.Projects.FirstOrDefault(x => x.Id == id);
+
+            List<NotificationUser> notificationUsers = _context.ProjectUser.Where(x => x.ProjectId == id).Select(u => new NotificationUser { UserId = u.UserId }).ToList();
+
+            project.Status = status;
+
+            Notification notification = new Notification
+            {
+                Title = user.FirstName + " updated the status of a project",
+                Body = user.FirstName + " " + user.LastName + " updated " + project.Name + " project.",
+                Type = UpdateType.Edit,
+                Users = notificationUsers,
+                UserLink = user.Id,
+                ProjectLink = id,
+                DateTime = DateTime.Now
+            };
+
+            _context.Notifications.Add(notification);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost]
         public async Task<IActionResult> AddComment(int projectId, int requirementId, int? parentId, string commentBody, string posterId)
         {
             var user = await GetCurrentUserAsync();
@@ -275,7 +333,7 @@ namespace SEPMTool.Controllers
                 {
                     Title = user.FirstName + " replied to your comment",
                     Body = user.FirstName + " " + user.LastName + " replied to a comment you posted in the " + project.Name + " project.",
-                    Type = UpdateType.ProjectAdd,
+                    Type = UpdateType.Reply,
                     Users = notificationUserList,
                     UserLink = posterId,
                     ProjectLink = projectId,
@@ -614,7 +672,7 @@ namespace SEPMTool.Controllers
                 {
                     Title = "A task was completed in " + requirement.Project.Name,
                     Body = user.FirstName + " " + user.LastName + " marked the following task as complete in the " + requirement.Project.Name + " project: " + task.Name + ".",
-                    Type = UpdateType.Remove,
+                    Type = UpdateType.Complete,
                     Users = notificationUsers,
                     UserLink = user.Id,
                     ProjectLink = requirement.Project.Id,

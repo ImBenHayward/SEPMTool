@@ -11,6 +11,7 @@ namespace SEPMTool.enums
         Edit,
         Remove,
         Complete,
-        ProjectAdd
+        ProjectAdd,
+        Reply
     }
 }

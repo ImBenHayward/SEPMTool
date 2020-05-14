@@ -1,18 +1,18 @@
 ﻿<template>
-    <div class="media">
-        <img class="mr-3 comments-img" src="http://placekitten.com/100/100" alt="Generic placeholder image">
-        <div class="media-body">
-            <h6 class="media-heading">{{firstName + " " + lastName}}<small><i> {{GetDateFromNow(dateTime)}}</i></small></h6>
-            <div class="media-comment">{{ commentBody }}</div>
-            <div class="media-buttons">
-                <a href="javascript:;" class="badge badge-primary-light"><i class="far fa-thumbs-up"></i> 32</a>
-                <a href="javascript:;" class="badge badge-primary-light open-comments-btn" v-on:click="EmitOpenCommentsModal(reqIndex, reqId, id, commentBody, firstName, lastName, userId)"><i class="fas fa-reply"></i> Reply</a>
-                <a href="javascript:;" class="badge badge-danger-light delete-comments-btn" v-on:click="EmitDeleteComment(reqIndex, commentIndex, id)" v-if="currentUser == userId"><i class="fas fa-trash-alt"></i> Delete</a>
-                <a href="javascript:;" class="badge badge-secondary-light delete-comments-btn" v-on:click="ShowReplies(mainId)" data-toggle="collapse" :data-target="`#children-${mainId}`" v-if="parentId == null && children.length"><i :id="`replies-chevron-${mainId}`" class="fas fa-chevron-circle-down rotate-replies"></i> See Replies</a>
-            </div>
+    <div class="container">
+        <div class="media">
+            <img class="mr-3 comments-img" src="http://placekitten.com/100/100" alt="Generic placeholder image">
+            <div class="media-body">
+                <h6 class="media-heading">{{firstName + " " + lastName}}<small><i> {{GetDateFromNow(dateTime)}}</i></small></h6>
+                <div class="media-comment">{{ commentBody }}</div>
+                <div class="media-buttons">
+                    <a href="javascript:;" class="badge badge-primary-light"><i class="far fa-thumbs-up"></i> 32</a>
+                    <a href="javascript:;" class="badge badge-primary-light open-comments-btn" v-on:click="EmitOpenCommentsModal(reqIndex, reqId, id, commentBody, firstName, lastName, userId)"><i class="fas fa-reply"></i> Reply</a>
+                    <a href="javascript:;" class="badge badge-danger-light delete-comments-btn" v-on:click="EmitDeleteComment(reqIndex, commentIndex, id)" v-if="currentUser == userId"><i class="fas fa-trash-alt"></i> Delete</a>
+                    <a href="javascript:;" class="badge badge-secondary-light delete-comments-btn" v-on:click="ShowReplies(mainId)" data-toggle="collapse" :data-target="`#children-${mainId}`" v-if="parentId == null && children.length"><i :id="`replies-chevron-${mainId}`" class="fas fa-chevron-circle-down rotate-replies"></i> See Replies</a>
+                </div>
 
-            <div :id="`children-${mainId}`" class="row collapse">
-                <div>
+                <div :id="`children-${mainId}`" class="collapse">
                     <tree-comments v-if="children.length && !maxDepthReached"
                                    v-for="child in children"
                                    :id="child.id"
@@ -29,10 +29,10 @@
                                    :children="child.children || []"
                                    :comment-body="child.commentBody"
                                    :depth="depth + 1" />
-                </div>
 
+                </div>
+                <hr v-if="parentId == null" />
             </div>
-            <hr v-if="parentId == null" />
         </div>
     </div>
 </template>

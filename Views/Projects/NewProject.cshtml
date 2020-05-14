@@ -113,22 +113,22 @@
                                 <div class="card-meta">
                                     <div>
 
-                                        <b-badge class="requirement-badge" style="background-color: #28A745" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-if="requirement.quality === 0">A</b-badge>
-                                        <b-badge class="requirement-badge" style="background-color: #FFC107" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 1">B</b-badge>
-                                        <b-badge class="requirement-badge" style="background-color: #FFC107" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 2">C</b-badge>
-                                        <b-badge class="requirement-badge" style="background-color: #DC3545" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 3">D</b-badge>
-                                        <b-badge class="requirement-badge" style="background-color: #DC3545" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 4">E</b-badge>
-                                        <b-badge class="requirement-badge" style="background-color: #DC3545" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else>F</b-badge>
+                                        <b-badge class="badge badge-pill badge-success requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-if="requirement.quality === 0">A</b-badge>
+                                        <b-badge class="badge badge-pill badge-success requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 1">B</b-badge>
+                                        <b-badge class="badge badge-pill badge-warning requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 2">C</b-badge>
+                                        <b-badge class="badge badge-pill badge-warning requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 3">D</b-badge>
+                                        <b-badge class="badge badge-pill badge-danger requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else-if="requirement.quality === 4">E</b-badge>
+                                        <b-badge class="badge badge-pill badge-danger requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Quality Score" v-else>F</b-badge>
 
-                                        <b-badge class="requirement-badge" style="background-color: #2dc937" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="requirement.priority == 0">Very Low</b-badge>
-                                        <b-badge class="requirement-badge" style="background-color: #99c140" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 1">Low</b-badge>
-                                        <b-badge class="requirement-badge" style="background-color: #e7b416" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 2">Medium</b-badge>
-                                        <b-badge class="requirement-badge" style="background-color: #db7b2b" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 3">High</b-badge>
-                                        <b-badge class="requirement-badge" style="background-color: #cc3232" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 4">Very High</b-badge>
-
-                                        <b-badge class="requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="requirement.category == 0">Functional</b-badge>
-                                        <b-badge class="requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-else-if="requirement.category == 1">Non-Funct</b-badge>
-                                        <b-badge class="requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-else-if="requirement.category == 2">Domain</b-badge>
+                                        <b-badge class="badge badge-pill badge-success requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-if="requirement.priority == 0">Very Low</b-badge>
+                                        <b-badge class="badge badge-pill badge-success requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 1">Low</b-badge>
+                                        <b-badge class="badge badge-pill badge-warning requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 2">Medium</b-badge>
+                                        <b-badge class="badge badge-pill badge-danger requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 3">High</b-badge>
+                                        <b-badge class="badge badge-pill badge-danger requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Priority" v-else-if="requirement.priority == 4">Very High</b-badge>
+                                                                                      
+                                        <b-badge class="badge badge-pill badge-secondary requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-if="requirement.category == 0">Functional</b-badge>
+                                        <b-badge class="badge badge-pill badge-secondary requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-else-if="requirement.category == 1">Non-Funct</b-badge>
+                                        <b-badge class="badge badge-pill badge-secondary requirement-badge" data-toggle="tooltip" data-placement="bottom" title="Requirement Category" v-else-if="requirement.category == 2">Domain</b-badge>
                                     </div>
                                     <div class="dropdown card-options">
                                         <button class="btn-options" type="button" id="task-dropdown-button-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

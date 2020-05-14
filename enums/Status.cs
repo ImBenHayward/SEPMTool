@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SEPMTool.enums
+namespace SEPMTool.Models
 {
     public enum Status
     {

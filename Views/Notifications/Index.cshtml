@@ -37,6 +37,10 @@
                                         <div class="avatar bg-success" v-if="item.notification.type === 4">
                                             <i class="material-icons" v-if="item.notification.type === 4">group_add</i>
                                         </div>
+
+                                        <div class="avatar bg-primary" v-if="item.notification.type === 5">
+                                            <i class="material-icons" v-if="item.notification.type === 5">reply</i>
+                                        </div>
                                     </li>
                                     <li>
                                         <img alt="Peggy Brown" src="~/assets/img/avatar-female-2.jpg" class="avatar font-weight" :data-title="item.notification.fullNameLink" data-toggle="tooltip" data-filter-by="data-title" />

@@ -68,6 +68,13 @@ a.badge-info-light:hover {
     color: #ffae36
 }
 
+.badge-warning-light-task-status {
+    box-shadow: none;
+    border-color: #ffe1b7;
+    background-color: #ffe1b7;
+    color: #e27c00
+}
+
 a.badge-warning-light:focus,
 a.badge-warning-light:hover {
     border-color: #ffebcd;
@@ -264,4 +271,43 @@ a.badge-grey-outline:focus,
 a.badge-grey-outline:hover {
     background-color: grey;
     color: #fff
+}
+
+.btn-primary-light {
+    border-color: #d9e6ff;
+    background-color: #d9e6ff;
+    color: #005aff
+}
+
+.btn-primary-light:hover,
+.btn-primary-light:focus {
+    border-color: #bfd6ff;
+    background-color: #bfd6ff;
+    color: #0044bf
+}
+
+.btn-success-light {
+    border-color: #def5e5;
+    background-color: #def5e5;
+    color: #21bc53
+}
+
+.btn-success-light:hover,
+.btn-success-light:focus {
+    border-color: #c8eed4;
+    background-color: #c8eed4;
+    color: #198d3e
+}
+
+.btn-danger-light {
+    border-color: #fbe2e5;
+    background-color: #fbe2e5;
+    color: #e43f51
+}
+
+.btn-danger-light:hover,
+.btn-danger-light:focus {
+    border-color: #f8cfd4;
+    background-color: #f8cfd4;
+    color: #ab2f3d
 }

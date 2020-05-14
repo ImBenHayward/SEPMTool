@@ -165,6 +165,10 @@
                                                     <div class="avatar bg-success" v-if="item.notification.type === 4">
                                                         <i class="material-icons" v-if="item.notification.type === 4">group_add</i>
                                                     </div>
+
+                                                    <div class="avatar bg-primary" v-if="item.notification.type === 5">
+                                                        <i class="material-icons" v-if="item.notification.type === 5">reply</i>
+                                                    </div>
                                                 </li>
                                                 <li>
                                                     <img alt="Peggy Brown" src="~/assets/img/avatar-female-2.jpg" class="avatar font-weight" :data-title="item.notification.fullNameLink" data-toggle="tooltip" data-filter-by="data-title" />
@@ -263,97 +267,99 @@
     <script>
         vueMixins.push({
 
-        data: function () {
-            return {
-                notificationModel: [],
-                notificationUnreadCount: ''
-            }
-        },
-        methods: {
-            GetNotifications: function () {
-                axios({
-                    method: 'post',
-                    url: '/Notifications/GetNotificationsForUser'
-                })
-                    .then(res => {
-                        this.notificationModel = res.data.notifications;
-                    })
-                    .catch(err => {
-                        console.log(err.message);
-                    })
-                    .then(() => {
-                        this.loading = false;
-                    });
-            },
-            CheckForNotifications: function () {
-                setInterval(() => {
-                    this.GetNotifications();
-                }, 3000)
-            },
-            ToggleIsRead: function (id) {
-
-                console.log(id);
-
-                axios({
-                    method: 'patch',
-                    url: '/Notifications/ToggleIsRead',
-                    params: {
-                        notificationId: id
-                    }
-                })
-                    .then(res => {
-                        this.GetNotifications();
-                    });
-            },
-            MarkAllAsRead: function () {
-                axios({
-                    method: 'post',
-                    url: '/Notifications/MarkAllAsRead'
-                })
-                    .then(res => {
-                        this.GetNotifications();
-                    })
-                    .catch(err => {
-                        console.log(err.message);
-                    })
-                    .then(() => {
-                        this.loading = false;
-                    });
-            },
-            ViewAllNotifications: function () {
-                console.log('hello')
-                axios({
-                    method: 'post',
-                    url: '/Notifications/Index'
-                })
-            },
-            OpenProject: function (projectId, notificationId, index) {
-                window.location.replace('/projects/details/' + projectId);
-
-                if (this.notificationModel[index].isRead == false) {
-                    this.ToggleIsRead(notificationId);
+            data: function () {
+                return {
+                    notificationModel: [],
+                    notificationUnreadCount: ''
                 }
             },
-            moment(...args) {
-                return moment(...args);
+            methods: {
+                GetNotifications: function () {
+                    axios({
+                        method: 'post',
+                        url: '/Notifications/GetNotificationsForUser'
+                    })
+                        .then(res => {
+                            this.notificationModel = res.data.notifications;
+                        })
+                        .catch(err => {
+                            console.log(err.message);
+                        })
+                        .then(() => {
+                            this.loading = false;
+                        });
+                },
+                CheckForNotifications: function () {
+                    setInterval(() => {
+                        this.GetNotifications();
+                    }, 3000)
+                },
+                ToggleIsRead: function (id) {
+
+                    console.log(id);
+
+                    axios({
+                        method: 'patch',
+                        url: '/Notifications/ToggleIsRead',
+                        params: {
+                            notificationId: id
+                        }
+                    })
+                        .then(res => {
+                            this.GetNotifications();
+                        });
+                },
+                MarkAllAsRead: function () {
+                    axios({
+                        method: 'post',
+                        url: '/Notifications/MarkAllAsRead'
+                    })
+                        .then(res => {
+                            this.GetNotifications();
+                        })
+                        .catch(err => {
+                            console.log(err.message);
+                        })
+                        .then(() => {
+                            this.loading = false;
+                        });
+                },
+                ViewAllNotifications: function () {
+                    console.log('hello')
+                    axios({
+                        method: 'post',
+                        url: '/Notifications/Index'
+                    })
+                },
+                OpenProject: function (projectId, notificationId, index) {
+                    window.location.replace('/projects/details/' + projectId);
+
+                    if (this.notificationModel[index].isRead == false) {
+                        this.ToggleIsRead(notificationId);
+                    }
+                },
+                moment(...args) {
+                    return moment(...args);
+                },
+                GetDateFromNow(date) {
+                    return this.$moment(date).fromNow();
+                }
             },
-            GetDateFromNow(date) {
-                return this.$moment(date).fromNow();
-            }
-        },
-        computed: {
-            UnreadNotificationCount: function () {
-                return this.notificationModel.filter(notification => !notification.isRead).length
+            computed: {
+                UnreadNotificationCount: function () {
+                    return this.notificationModel.filter(notification => !notification.isRead).length
+                },
+                firstResults() {
+                    return this.notificationModel.slice(0, 4);
+                }
             },
-            firstResults() {
-                return this.notificationModel.slice(0, 4);
+            beforeMount() {
+                    this.GetNotifications(),
+                    this.CheckForNotifications()
+                
+
             }
-        },
-        beforeMount() {
-            this.GetNotifications();
-            this.CheckForNotifications();
-        }
-            });
+        });
     </script>
 
     <script>

@@ -13,6 +13,7 @@
                             <th scope="col">Name</th>
                             <th scope="col" style="text-align: center">Progress</th>
                             <th scope="col" style="text-align: center">Priority</th>
+                            <th scope="col" style="text-align: center">Status</th>
                             <th scope="col" style="text-align: right">Start Date</th>
                             <th scope="col" style="text-align: right">Deadline</th>
                             <th style="display:none">CurrentUserId</th>
@@ -22,44 +23,58 @@
                     <tbody>
                         @foreach (var project in @Model.Projects)
                         {
-                            <tr onclick="location.href='@Url.Action("Details", new { id = @project.Id })'" onmouseover="" style="cursor: pointer;">
-                                <td>@project.Name</td>
-                                <td style="text-align: center">
-                                    <div class="progress-table">
-                                        <div class="progress-bar-table bg-success" role="progressbar" style="width: @project.Progress%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><span style="display:none">@project.Progress</span></div>
-                                    </div>
-                                </td>
-                                <td style="text-align: center">
+                        <tr onclick="location.href='@Url.Action("Details", new { id = @project.Id })'" onmouseover="" style="cursor: pointer;">
+                            <td>@project.Name</td>
+                            <td style="text-align: center">
+                                <div class="progress-table">
+                                    <div class="progress-bar-table bg-success" role="progressbar" style="width: @project.Progress%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><span style="display:none">@project.Progress</span></div>
+                                </div>
+                            </td>
+                            <td style="text-align: center">
 
-                                    @switch (project.Priority)
+                                @switch (project.Priority)
+                                {
+                                    case Priority.VeryLow:<b-badge style="background-color: #2dc937; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">5</span>Very Low</b-badge>
+                                        break;
+
+                                    case Priority.Low: <b-badge style="background-color: #99c140; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">4</span>Low</b-badge>
+                                        break;
+
+                                    case Priority.Medium: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">3</span>Medium</b-badge>
+                                        break;
+
+                                    case Priority.High: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">2</span>High</b-badge>
+                                        break;
+
+                                    case Priority.VeryHigh: <b-badge style="background-color: #cc3232; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">1</span>Very High</b-badge>
+                                        break;
+                                }
+                            </td>
+                            <td style="text-align: center">
+
+                                @switch (project.Status)
+                                {
+                                    case Status.Active:<b-badge class="badge badge-primary-light" style="width: 85px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">5</span>ACTIVE</b-badge>
+                                        break;
+
+                                    case Status.Complete: <b-badge class="badge badge-success-light" style="width: 85px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">4</span>COMPLETED</b-badge>
+                                        break;
+
+                                    case Status.Cancelled: <b-badge class="badge badge-danger-light" style="width: 85px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">3</span>CANCELLED</b-badge>
+                                        break;
+                                }
+                            </td>
+                            <td style="text-align: right">@project.StartDate.ToString("dd MMMM yyyy")</td>
+                            <td style="text-align: right">@project.Deadline.ToString("dd MMMM yyyy")</td>
+                            <td style="display:none">
+                                @{if (project.Users.Any(x => x.UserId == Model.ActiveUserId))
                                     {
-                                        case Priority.VeryLow:<b-badge style="background-color: #2dc937; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">5</span>Very Low</b-badge>
-                                            break;
-
-                                        case Priority.Low: <b-badge style="background-color: #99c140; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">4</span>Low</b-badge>
-                                            break;
-
-                                        case Priority.Medium: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">3</span>Medium</b-badge>
-                                            break;
-
-                                        case Priority.High: <b-badge style="background-color: #e7b416; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">2</span>High</b-badge>
-                                            break;
-
-                                        case Priority.VeryHigh: <b-badge style="background-color: #cc3232; width: 70px" data-toggle="tooltip" data-placement="bottom"><span style="display:none">1</span>Very High</b-badge>
-                                            break;
+                                        @Html.Raw("True");
                                     }
-                                </td>
-                                <td style="text-align: right">@project.StartDate.ToString("dd MMMM yyyy")</td>
-                                <td style="text-align: right">@project.Deadline.ToString("dd MMMM yyyy")</td>
-                                <td style="display:none">
-                                    @{if (project.Users.Any(x => x.UserId == Model.ActiveUserId))
-                                        {
-                                            @Html.Raw("True");
-                                        }
-                                    }
-                                </td>
+                                }
+                            </td>
 
-                            </tr>
+                        </tr>
                         }
                     </tbody>
                 </table>

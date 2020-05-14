@@ -1,5 +1,7 @@
 ﻿@model SEPMTool.Models.ViewModels.ProjectDetailsViewModel
-
+<b-alert :show="projectDeadlineExpired == true" variant="danger" dismissible>
+    This project is now overdue!
+</b-alert>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-11 col-xl-10">
@@ -23,6 +25,17 @@
                     <button class="btn btn-round" data-toggle="modal" data-target="#user-manage-modal">
                         <i class="material-icons">add</i>
                     </button>
+                    <button class="btn btn-round project-settings-btn" data-toggle="modal" data-target="#project-settings-modal">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                    <button class="btn btn-primary-light dropdown-toggle" data-toggle="dropdown" v-if="projectModel.project.status == 0">ACTIVE</button>
+                    <button class="btn btn-success-light dropdown-toggle" data-toggle="dropdown" v-if="projectModel.project.status == 1">COMPLETED</button>
+                    <button class="btn btn-danger-light dropdown-toggle" data-toggle="dropdown" v-if="projectModel.project.status == 2">CANCELLED</button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <button class="dropdown-item btn-primary-light project-status-item" type="button" v-if="projectModel.project.status !== 0" v-on:click="ChangeStatus(0)">Active</button>
+                        <button class="dropdown-item btn-success-light project-status-item" type="button" v-if="projectModel.project.status !== 1" v-on:click="ChangeStatus(1)">Completed</button>
+                        <button class="dropdown-item btn-danger-light" type="button" v-if="projectModel.project.status !== 2" v-on:click="ChangeStatus(2)">Cancelled</button>
+                    </div>
                 </div>
                 <div>
                     <div class="progress" style="height: 10px">
@@ -33,7 +46,7 @@
                             <i class="material-icons">playlist_add_check</i>
                             <span>{{totalTasksCompleted}}/{{totalTasks}}</span>
                         </div>
-                        <span>Due: {{GetDateFromNow(this.projectModel.project.deadline)}}</span>
+                        <span :class="{'project-overdue':(projectDeadlineExpired == true)}">Due: {{GetProjectDateFromNow(this.projectModel.project.deadline)}}</span>
                     </div>
                 </div>
             </div>
@@ -56,7 +69,7 @@
                 </li>
             </ul>
 
-            <div class="tab-content">
+            <div :class="{'tab-content':true, 'disabled-div':(projectModel.project.status === 2)}">
 
 
                 @*
@@ -78,7 +91,7 @@
 
                         <div v-for="(req, index) in this.projectModel.project.projectRequirements">
 
-                            <h5 class="requirement-badge"><span class="badge badge-pill badge-light" style="">Requirement {{index +1}}</span></h5>
+                            <h5 class="requirement-heading-badge"><span class="badge badge-pill badge-light" style="">Requirement {{index +1}}</span></h5>
                             @*<h5 class="requirement-badge"><span class="badge badge-pill" style="background-color:#bccdff; color: white">Requirement {{index +1}}</span></h5>*@
                             @*Requirement {{index +1}}
                                 <hr class="requirement-heading-hr" />*@
@@ -138,7 +151,7 @@
                                             <div :id="`accordion-${req.id}`">
                                                 <div class="card card-task requirements-card" v-for="(task, taskIndex) in req.tasks">
                                                     <div class="progress" style="height:5px">
-                                                        <div :class="{'progress-bar':true, 'bg-success':(task.progress === 100 || task.isComplete), 'progress-complete':(task.progress === 100 || task.isComplete)}" :style="{width: task.progress + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        <div :class="{'progress-bar':true, 'bg-success':(task.isCompleted), 'bg-warning':(task.progress === 100 && task.isCompleted === false), 'progress-complete':(task.progress === 100 || task.isComplete)}" :style="{width: task.progress + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                     <div class="card-header-requirements d-flex justify-content-between align-items-center">
                                                         <a id="showRequirements" class="button_style" @@click="ShowTask(task.id)" onmouseover="" style="cursor: pointer;">{{task.name}} <i :id="`chevron-${task.id}`" class="fas fa-chevron-circle-down align-items-center rotate req-chevron align-self-center"></i></a>
@@ -152,6 +165,16 @@
                                                             <span onmouseover="" style="cursor: pointer;" v-on:click="ToggleTaskComplete(task, taskIndex, index, task.isCompleted)">
                                                                 <i :class="{'fas':true, 'fa-check-circle':true, 'completedTask':(task.isCompleted), 'taskBarIcon':true, 'taskTickIcon':true}"></i>
                                                             </span>
+                                                            <span class="d-flex justify-content-between align-items-center">
+                                                                <b-badge class="badge badge-primary-light task-status-badge" data-toggle="tooltip" data-placement="bottom" title="Task Status" v-if="task.progress !== 100"><b>ACTIVE</b></b-badge>
+                                                            </span>
+                                                            <span class="d-flex justify-content-between align-items-center">
+                                                                <b-badge class="badge badge-warning-light-task-status task-status-badge" data-toggle="tooltip" data-placement="bottom" title="Task Status" v-if="task.progress === 100 && task.isCompleted === false"><span class="text-status-text"><b>SIGN OFF REQUIRED</b></span></b-badge>
+                                                            </span>
+                                                            <span class="d-flex justify-content-between align-items-center">
+                                                                <b-badge class="badge badge-success-light task-status-badge" data-toggle="tooltip" data-placement="bottom" title="Task Status" v-if="task.isCompleted"><b>SIGNED OFF</b></b-badge>
+                                                            </span>
+
                                                         </div>
                                                     </div>
                                                     <div :id="`task-${task.id}`" :class="{'disabled-div':(task.isCompleted)}" style="display:none" aria-labelledby="headingOne">
@@ -225,7 +248,6 @@
                                                        :date-time="comment.dateTime"
                                                        :children="comment.children || []"
                                                        :comment-body="comment.commentBody" />
-
                                     </div>
                                 </div>
                             </div>
@@ -543,6 +565,47 @@
     </form>
 
 
+    <div class="modal fade" id="project-settings-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" v-if="commentModel.parentId > 0">Add a reply</h5>
+                    <h5 class="modal-title" v-else>Edit project settings</h5>
+                    <button type="button" class="close btn btn-round" data-dismiss="modal">
+                        <i class="material-icons">close</i>
+                    </button>
+                </div>
+                <!--end of modal head-->
+                <div class="modal-body">
+                    <div class="tab-content">
+
+                        <div class="tab-pane fade show active" id="task-add-details" role="tabpanel">
+                            <div class="tab-content">
+                                <h6>Project Details</h6>
+                                <div class="form-group row align-items-center">
+                                    <label class="col-3">Name</label>
+                                    <input v-model="projectModel.project.name" class="form-control col" type="text" placeholder="Task name" />
+                                </div>
+                                <div class="form-group row align-items-center">
+                                    <label class="col-3">Description</label>
+                                    <textarea v-model="projectModel.project.description" class="form-control col" rows="3" placeholder="Task description"></textarea>
+                                </div>
+                                <div class="form-group row align-items-center">
+                                    <label class="col-3">Priority</label>
+                                    <select v-model="projectModel.project.priority" asp-items="Html.GetEnumSelectList<Priority>()" class="form-control col-4" id="reqcategory">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary float-right" type="button" data-dismiss="modal" v-on:click="UpdateProject">Update Project</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     @*
 
         NEW COMMENT MODAL
@@ -559,7 +622,6 @@
                     </button>
                 </div>
                 <!--end of modal head-->
-
                 <div class="modal-body">
                     <div class="tab-content">
 
@@ -582,8 +644,8 @@
         NEW TASK MODAL
 
     *@
-    <form class="modal fade" id="task-add-modal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <form class="modal fade" id="task-add-modal" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{this.modalTitle}}</h5>
@@ -594,17 +656,16 @@
                 <!--end of modal head-->
                 <ul class="nav nav-tabs nav-fill" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="task-add-details-tab" data-toggle="tab" href="#task-add-details" role="tab" aria-controls="task-add-details" aria-selected="true">Details</a>
+                        <a class="nav-link active" id="task-add-details-tab" data-toggle="tab" href="#tab1" role="tab" aria-controls="task-add-details" aria-selected="true">Details</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="task-add-members-tab" data-toggle="tab" href="#task-add-members" role="tab" aria-controls="task-add-members" aria-selected="false">Members</a>
+                        <a class="nav-link" id="task-add-members-tab" data-toggle="tab" href="#tab2" role="tab" aria-controls="task-add-members" aria-selected="false">Members</a>
                     </li>
                 </ul>
                 <div class="modal-body">
                     <div class="tab-content">
-                        <div class="tab-pane fade show active" id="task-add-details" role="tabpanel">
+                        <div class="tab-pane fade show active" id="tab1" role="tabpanel">
                             <h6>General Details</h6>
-                            @*<input asp-for="ProjectId" value="@Model.Project.Id" class="form-control col" type="hidden" placeholder="Task name" />*@
                             <div class="form-group row align-items-center">
                                 <label class="col-3">Name</label>
                                 <input v-model="taskModel.name" class="form-control col" type="text" placeholder="Task name" />
@@ -632,15 +693,8 @@
                             </div>
                         </div>
 
-                        <div class="tab-pane fade" id="task-add-members" role="tabpanel">
+                        <div class="tab-pane fade" id="tab2" role="tabpanel">
                             <div class="users-manage" data-filter-list="form-group-users">
-                                @*<div class="mb-3">
-                                        <ul class="avatars text-center">
-                                            <li v-for="user in this.projectModel.project.users">
-                                                <img :alt="user.username" src="~/assets/img/defaultUserIcon.jpg" class="avatar" data-toggle="tooltip" :data-title="user.username" />
-                                            </li>
-                                        </ul>
-                                    </div>*@
                                 <div class="input-group input-group-round">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
@@ -678,7 +732,6 @@
             </div>
         </div>
     </form>
-
 
     @*
 
@@ -930,6 +983,8 @@
             data: function () {
                 return {
                     projectModel: @Json.Serialize(Model),
+
+                    projectDeadlineExpired: '',
 
                     totalTasks: 0,
                     totalTasksCompleted: 0,
@@ -1312,6 +1367,48 @@
                         });
                 },
 
+                 /*
+                 * Project Methods
+                 */
+
+                UpdateProject: function () {
+
+                    var formData = new FormData();
+
+                    formData.append('id', this.projectModel.project.id);
+                    formData.append('name', this.projectModel.project.name);
+                    formData.append('description', this.projectModel.project.description);
+                    formData.append('priority', this.projectModel.project.priority);
+
+                    $('#requirement-modal').modal('hide');
+                    axios({
+                        method: 'post',
+                        url: '/Projects/UpdateProject',
+                        headers: { 'Content-Type': 'multipart/form-data' },
+                        data: formData
+                    })
+                },
+
+                ChangeStatus: function (status) {
+
+                    var formData = new FormData();
+
+                    formData.append('id', this.projectModel.project.id);
+                    formData.append('status', status);
+
+                    $('#requirement-modal').modal('hide');
+                    axios({
+                        method: 'post',
+                        url: '/Projects/UpdateProjectStatus',
+                        headers: { 'Content-Type': 'multipart/form-data' },
+                        data: formData
+                    })
+                        .then(res => {
+                            this.projectModel.project.status = status;
+                        })
+
+                },
+
 
                 /*
                  * Requirement Methods
@@ -1544,11 +1641,6 @@
 
                 AddNewComment: function () {
                     this.loading = true;
-
-                    console.log(this.projectModel.project.id);
-                    console.log(this.commentModel.requirementId);
-                    console.log(this.commentModel.comment);
-                    console.log("index:", this.commentModel.requirementIndex);
 
                     var formData = new FormData();
 
@@ -1863,8 +1955,23 @@
                 moment(...args) {
                     return moment(...args);
                 },
-                GetDateFromNow(date) {
+                GetProjectDateFromNow(date) {
+
+                    var dateTime = this.getNow()
+
+                    if (this.$moment(date).isBefore(dateTime)) {
+                        this.projectDeadlineExpired = true;
+                        console.log('hello');
+                    }
+
                     return this.$moment(date).fromNow();
+                },
+                getNow: function() {
+                    const today = new Date();
+                    const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                    const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                    const dateTime = date +' '+ time;
+                    this.timestamp = dateTime;
                 },
 
                 /*
