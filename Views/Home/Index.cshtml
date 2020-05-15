@@ -2,39 +2,42 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="nero-heading">Welcome to <span class="nero-logo">NERO</span></h1>
-    <span>Improving software project success rates in small enterprises</span>
-</div>
+<div class="container">
+    <div class="text-center">
+        <h1 class="nero-heading display-1">Welcome to <span class="nero-logo display-1">NERO</span></h1>
+        <small>Improving software project success rates in small enterprises</small>
+    </div>
 
-<div class="d-flex justify-content-between home-card-container">
-    <div class="col 4">
-        <div class="card card-center" style="width: 18rem;">
-            <img class="card-img-top" src="..." alt="Card image cap">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+    <div class="d-flex justify-content-between home-card-container">
+        <div class="col 4">
+            <div class="card card-center image-box" style="width: 18rem;">
+                <img class="card-img-top" src="~/assets/img/Progress.jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">Track Project Progress</h5>
+                    <p class="card-text">Tracking project progress is easy, with highly flexible tasks and sub-tasks that are linked directly to requirements.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col 4">
+            <div class="card card-center image-box" style="width: 18rem;">
+                <img class="card-img-top" src="~/assets/img/Requirements.jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">Automatically Evaluate Requirements</h5>
+                    <p class="card-text">The quality of requirements is automatically evaluated, subsequently improving project success rates.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col 4">
+            <div class="card card-center image-box" style="width: 18rem;">
+                <img class="card-img-top" src="~/assets/img/Comments.png" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">Communicate Effectively</h5>
+                    <p class="card-text">The communication system allows users to discuss aspects of their projects easily with teammates.</p>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col 4">
-        <div class="card card-center" style="width: 18rem;">
-            <img class="card-img-top" src="..." alt="Card image cap">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
-        </div>
+    <div class="btn-landing-page-container">
+        <button class="btn btn-primary btn-lg btn-landing-page" onclick="location.href='@Url.Action("NewProject", "Projects")'">Create your first project today</button>
     </div>
-    <div class="col 4">
-        <div class="card card-center" style="width: 18rem;">
-            <img class="card-img-top" src="..." alt="Card image cap">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
-        </div>
-    </div>
+</div>

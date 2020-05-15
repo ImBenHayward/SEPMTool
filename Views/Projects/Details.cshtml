@@ -280,10 +280,20 @@
                                             <div :class="{'progress-bar':true, 'bg-success':(task.progress === 100 || task.isComplete), 'progress-complete':(task.progress === 100 || task.isComplete)}" role="progressbar" :style="{width: task.progress + '%'}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                         <div class="card-body">
+                                            <div class="dropdown card-options">
+                                                <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="material-icons">more_vert</i>
+                                                </button>
+
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a href="javascript:;" class="dropdown-item" v-on:click="EditTask(task, index, index)">Edit</a>
+                                                    <a href="javascript:;" class="dropdown-item text-danger" v-on:click="DeleteTask(task.id, index, index)">Delete</a>
+                                                </div>
+                                            </div>
                                             <div class="card-title">
-                                                <a href="#" data-toggle="modal" data-target="#task-modal">
+                                                <span>
                                                     {{ task.name }}
-                                                </a>
+                                                </span>
                                             </div>
 
                                             <ul class="avatars">
@@ -295,10 +305,9 @@
                                             </ul>
 
                                             <div class="card-meta d-flex justify-content-between">
-                                                <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
                                                 <div class="d-flex align-items-center">
                                                     <i class="material-icons">playlist_add_check</i>
-                                                    <span>{{ task.subTasks.length }}</span>
+                                                    <span>{{ task.subTasks.filter((x,i) => { return x.isCompleted; }).length }}/{{ task.subTasks.length }}</span>
                                                 </div>
                                             </div>
 
@@ -312,7 +321,7 @@
                             <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
                                 <h5>In Progress</h5>
                                 <draggable class="list-group kanban-column" :list="arrInProgress" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 1)">
-                                    <div class="card card-kanban" v-for="task in arrInProgress" :key="task.id" :data-id="task.id" style="border-color: #CCE5FF; border-width: 2px">
+                                    <div class="card card-kanban" v-for="(task, index) in arrInProgress" :key="task.id" :data-id="task.id" style="border-color: #CCE5FF; border-width: 2px">
                                         <div class="progress">
                                             <div :class="{'progress-bar':true, 'bg-success':(task.progress === 100 || task.isComplete), 'progress-complete':(task.progress === 100 || task.isComplete)}" role="progressbar" :style="{width: task.progress + '%'}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
@@ -321,15 +330,16 @@
                                                 <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <i class="material-icons">more_vert</i>
                                                 </button>
+
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item text-danger" href="#">Archive Card</a>
+                                                    <a href="javascript:;" class="dropdown-item" v-on:click="EditTask(task, index, index)">Edit</a>
+                                                    <a href="javascript:;" class="dropdown-item text-danger" v-on:click="DeleteTask(task.id, index, index)">Delete</a>
                                                 </div>
                                             </div>
                                             <div class="card-title">
-                                                <a href="#" data-toggle="modal" data-target="#task-modal">
+                                                <span>
                                                     {{ task.name }}
-                                                </a>
+                                                </span>
                                             </div>
 
                                             <ul class="avatars">
@@ -341,10 +351,9 @@
                                             </ul>
 
                                             <div class="card-meta d-flex justify-content-between">
-                                                <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
                                                 <div class="d-flex align-items-center">
                                                     <i class="material-icons">playlist_add_check</i>
-                                                    <span>{{ task.subTasks.length }}</span>
+                                                    <span>{{ task.subTasks.filter((x,i) => { return x.isCompleted; }).length }}/{{ task.subTasks.length }}</span>
                                                 </div>
                                             </div>
 
@@ -358,7 +367,7 @@
                             <div class="p-2 alert alert alert-secondary" onmouseover="" style="cursor: pointer;">
                                 <h5>Testing</h5>
                                 <draggable class="list-group kanban-column" :list="arrTested" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 2)">
-                                    <div class="card card-kanban" v-for="task in arrTested" :key="task.id" :data-id="task.id" style="border-color: #FFF3CD; border-width: 2px">
+                                    <div class="card card-kanban" v-for="(task, index) in arrTested" :key="task.id" :data-id="task.id" style="border-color: #FFF3CD; border-width: 2px">
                                         <div class="progress">
                                             <div :class="{'progress-bar':true, 'bg-success':(task.progress === 100 || task.isComplete), 'progress-complete':(task.progress === 100 || task.isComplete)}" role="progressbar" :style="{width: task.progress + '%'}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
@@ -367,15 +376,16 @@
                                                 <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <i class="material-icons">more_vert</i>
                                                 </button>
+
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item text-danger" href="#">Archive Card</a>
+                                                    <a href="javascript:;" class="dropdown-item" v-on:click="EditTask(task, index, index)">Edit</a>
+                                                    <a href="javascript:;" class="dropdown-item text-danger" v-on:click="DeleteTask(task.id, index, index)">Delete</a>
                                                 </div>
                                             </div>
                                             <div class="card-title">
-                                                <a href="#" data-toggle="modal" data-target="#task-modal">
+                                                <span>
                                                     {{ task.name }}
-                                                </a>
+                                                </span>
                                             </div>
 
                                             <ul class="avatars">
@@ -387,10 +397,9 @@
                                             </ul>
 
                                             <div class="card-meta d-flex justify-content-between">
-                                                <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
                                                 <div class="d-flex align-items-center">
                                                     <i class="material-icons">playlist_add_check</i>
-                                                    <span>{{ task.subTasks.length }}</span>
+                                                    <span>{{ task.subTasks.filter((x,i) => { return x.isCompleted; }).length }}/{{ task.subTasks.length }}</span>
                                                 </div>
                                             </div>
 
@@ -404,7 +413,7 @@
                             <div class="p-2 alert alert-secondary" onmouseover="" style="cursor: pointer;">
                                 <h5>Done</h5>
                                 <draggable class="list-group kanban-column" :list="arrDone" :options="{animation:200, group:'tasks'}" @@add="onAdd($event, 3)">
-                                    <div class="card card-kanban" v-for="task in arrDone" :key="task.id" :data-id="task.id" style="border-color: #D4EDDA; border-width: 2px;">
+                                    <div class="card card-kanban" v-for="(task, index) in arrDone" :key="task.id" :data-id="task.id" style="border-color: #D4EDDA; border-width: 2px;">
                                         <div class="progress">
                                             <div :class="{'progress-bar':true, 'bg-success':(task.progress === 100 || task.isComplete), 'progress-complete':(task.progress === 100 || task.isComplete)}" role="progressbar" :style="{width: task.progress + '%'}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
@@ -413,15 +422,16 @@
                                                 <button class="btn-options" type="button" id="kanban-dropdown-button-14" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <i class="material-icons">more_vert</i>
                                                 </button>
+
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item text-danger" href="#">Archive Card</a>
+                                                    <a href="javascript:;" class="dropdown-item" v-on:click="EditTask(task, index, index)">Edit</a>
+                                                    <a href="javascript:;" class="dropdown-item text-danger" v-on:click="DeleteTask(task.id, index, index)">Delete</a>
                                                 </div>
                                             </div>
                                             <div class="card-title">
-                                                <a href="#" data-toggle="modal" data-target="#task-modal">
+                                                <span>
                                                     {{ task.name }}
-                                                </a>
+                                                </span>
                                             </div>
 
                                             <ul class="avatars">
@@ -433,10 +443,9 @@
                                             </ul>
 
                                             <div class="card-meta d-flex justify-content-between">
-                                                <span><b-badge pill variant="success" data-toggle="tooltip" data-placement="bottom" title="Task Priority">Priority?</b-badge></span>
                                                 <div class="d-flex align-items-center">
                                                     <i class="material-icons">playlist_add_check</i>
-                                                    <span>{{ task.subTasks.length }}</span>
+                                                    <span>{{ task.subTasks.filter((x,i) => { return x.isCompleted; }).length }}/{{ task.subTasks.length }}</span>
                                                 </div>
                                             </div>
 

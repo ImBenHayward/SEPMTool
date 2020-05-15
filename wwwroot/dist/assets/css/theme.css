@@ -13766,19 +13766,19 @@ pre[class*="language-"] {
     margin-top: 4px;
 }
 
-.checkboxes label {
-    display: inline-block;
-    padding-right: 10px;
-    white-space: nowrap;
-}
+    .checkboxes label {
+        display: inline-block;
+        padding-right: 10px;
+        white-space: nowrap;
+    }
 
-.checkboxes input {
-    vertical-align: middle;
-}
+    .checkboxes input {
+        vertical-align: middle;
+    }
 
-.checkboxes label span {
-    vertical-align: middle;
-}
+    .checkboxes label span {
+        vertical-align: middle;
+    }
 
 /*.tableCheckboxLabel{
     margin-top: 5px;
@@ -13797,7 +13797,7 @@ pre[class*="language-"] {
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
     background-color: #17A2B8;
-    float:right;
+    float: right;
 }
 
 .dropdown-menu-notifications {
@@ -14014,7 +14014,7 @@ pre[class*="language-"] {
     margin-bottom: 0;
 }
 
-.requirement-number{
+.requirement-number {
     padding: 10px;
     color: white;
     display: flex;
@@ -14046,11 +14046,11 @@ hr.requirement-heading-hr {
     font-size: 15px;
 }
 
-.media{
+.media {
     margin-top: 20px;
 }
 
-.media-heading{
+.media-heading {
     margin-bottom: 5px;
 }
 
@@ -14114,8 +14114,35 @@ project-status-badge {
     margin: 0 auto;
 }
 
-.home-card-container{
+.home-card-container {
     margin-top: 70px;
-    margin-right: 120px;
-    margin-left: 120px;
+}
+
+.image-box {
+    position: relative;
+    margin: auto;
+    overflow: hidden;
+    width: 540px;
+}
+
+    .image-box img {
+        max-width: 100%;
+        transition: all 0.3s;
+        display: block;
+        width: 100%;
+        height: auto;
+        transform: scale(1);
+    }
+
+.image-box:hover img {
+    transform: scale(1.1);
+}
+
+.btn-landing-page-container {
+ text-align: center;
+}
+
+
+.btn-landing-page {
+    margin-top: 70px;
 }
