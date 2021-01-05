@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@vue/component-compiler-utils": "^3.1.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "vue": "^2.6.11",
     "vue-custom-element": "^3.2.13",
     "vue-template-compiler": "^2.6.11"
